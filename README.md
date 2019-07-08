@@ -1,4 +1,11 @@
 # FPCollector
+This Program is collecting False Positives when we using static analysis tool.  
+Collecting is based on the version of a target project.  
+It means that this tool compare result of PMD   
+on current version of the target project with past version of it.  
+  
+__Using This Tool, You Could Get False Positive Suspects More Easily__
+
 ## Package Specification
 ### 1. Init  
 	-Input : rule, target project  
