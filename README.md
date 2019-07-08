@@ -3,7 +3,7 @@ FPCollector
 
 Package Specification
 1. Init
-	-Input : rule, target project
+	-Input : rule, target project '\n'
 	-Output : result of pmd on target project(current version) as a csv file
 	-Functions 
 		1) Git cloning
