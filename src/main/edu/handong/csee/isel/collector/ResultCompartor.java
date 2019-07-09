@@ -1,6 +1,6 @@
-package collector;
+package edu.handong.csee.isel.collector;
 
-public class CompareResults {
+public class ResultCompartor {
 	/*
 	 * In compare, we have to deal with several cases
 	 * 1) a file and a Directory haven't changed
