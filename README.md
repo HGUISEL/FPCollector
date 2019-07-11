@@ -25,6 +25,7 @@ __Using This Tool, You Could Get False Positive Suspects More Easily__
 		-Output : The file's contents
 		-Functions
 			1) Read a file and return as its usage
+			
 	2) ToolExecutor
 		-Input : 1) A file path which indicate target project exists
 			 2) A rule context
