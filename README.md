@@ -19,9 +19,7 @@ __Using This Tool, You Could Get False Positive Suspects More Easily__
 	-Functions  
 		1) Git checkout    
 
-### 3. collector  
-
-### 4. utils
+### 3. utils
 	## 1) Reader
 		-Input : A file path which user want to read
 		-Output : The file's contents
@@ -38,6 +36,7 @@ __Using This Tool, You Could Get False Positive Suspects More Easily__
 
 # In Concepting
 
+### 4. collector  
 ### 5. patternfinder
 ### 6. ContextExtractor  
 ### 7. AbstractContext  
