@@ -7,28 +7,38 @@ on current version of the target project with past version of it.
 __Using This Tool, You Could Get False Positive Suspects More Easily__
 
 ## Package Specification
-### 1. Init  
-	-Input : rule, target project  
-	-Output : result of pmd on target project(current version) as a csv file  
+### 1. clone  
+	-Input : Target project git address
+	-Output : The path which indicate the location of target project
 	-Functions  
-		- Git cloning  
-		- Run pmd on target project(current version)  
+		1) Git cloning  
 
-### 2. Checkout  
-	-Input : rule, target project  
-	-Output : result of pmd on target project(past version) as a csv file  
+### 2. checkout  
+	-Input : target project  
+	-Output : The path which indicate the location of target project  
 	-Functions  
-		1) Git checkout  
-		2) Run pmd on target project(past version)  
+		1) Git checkout    
 
-### 3. Collector  
-	-Input : Two csv files(results of the project)  
-	-Output : A csv file which contains information about FP suspects  
-	-Functions  
-		1) Compare two result files  
-		2) Collect same alarms  
-		3) Save it as a csv file  
-  
-### 4. ContextExtractor  
-### 5. AbstractContext  
-### 6. GetCommonContext  
+### 3. collector  
+
+### 4. utils
+	## 1) Reader
+		-Input : A file path which user want to read
+		-Output : The file's contents
+		-Functions
+			1) Read a file and return as its usage
+	## 2) ToolExecutor
+		-Input : 1) A file path which indicate target project exists
+			 2) A rule context
+			 3) An information that indicate run tool on Current version or Past version
+		-Output : A report file(csv) location
+		-Functions
+			1) Run a static ananlysis tool
+			2) Get the report of analysis
+
+# In Concepting
+
+### 5. patternfinder
+### 6. ContextExtractor  
+### 7. AbstractContext  
+### 8. GetCommonContext  
