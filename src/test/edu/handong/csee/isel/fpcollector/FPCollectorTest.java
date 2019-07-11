@@ -9,15 +9,15 @@ import org.junit.Test;
 // make test case per each methods
 public class FPCollectorTest {
 
-	@Test
-	public void testMain() {
-		String[] args = {"01_Project_address.txt", "02_Rule_Context.txt", "03_Output_path.txt"};
-		FPCollector.main(args);
-	}
-	
 //	@Test
-//	public void testRun() {
-//		
+//	public void testMain() {
+//		String[] args = {"01_Project_address.txt", "02_Rule_Context.txt", "03_Output_path.txt"};
+//		FPCollector.main(args);
 //	}
+	
+	@Test
+	public void testCheckOut() {
+		
+	}
 
 }

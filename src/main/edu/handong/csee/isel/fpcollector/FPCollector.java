@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import edu.handong.csee.isel.checkout.*;
 import edu.handong.csee.isel.collector.*;
 import edu.handong.csee.isel.init.*;
+import edu.handong.csee.isel.patternfinder.*;
+import edu.handong.csee.isel.utils.*;
 
 public class FPCollector{
 	/*
@@ -19,6 +21,9 @@ public class FPCollector{
 	 * outputpastPath : csv file path where it has past result of tool
 	 * outputResultPath : csv file path where it has total result of this tool
 	 */
+	final static int CURRENT = 0;
+	final static int PAST = 1;
+	
 	String project;
 	String clonedPath;
 	String rule;
@@ -39,17 +44,22 @@ public class FPCollector{
 	}
 	
 	public String initiate(String[] list) {
+		ArrayList<String[]> toolReport = new ArrayList<>();
 		Reader read = new Reader();
 		CloneMaker clone = new CloneMaker();
 		ToolExecutor tool = new ToolExecutor();
+		PatternFinder finder = new PatternFinder();
 		String resultPath;
 		
-		project = read.readFile(list[0]);
-		rule = read.readFile(list[1]);
-		outputResultPath = read.readFile(list[2]);
+		project = read.readTextFile(list[0]);
+		rule = read.readTextFile(list[1]);
+		outputResultPath = read.readTextFile(list[2]);
 		
 		clonedPath = clone.gitClone(project);
-		resultPath = tool.runPMD(clonedPath, rule);
+		resultPath = tool.runPMD(clonedPath, rule, CURRENT);
+		
+		toolReport = read.readPmdReport(resultPath);
+		finder.findPattern(toolReport);
 		
 		return resultPath;
 	}
@@ -61,7 +71,7 @@ public class FPCollector{
 		String resultPath;
 		
 		filePath = checkOut.gitCheckOut(clonedPath);
-		resultPath = tool.runPMD(filePath, rule);
+		resultPath = tool.runPMD(filePath, rule, PAST);
 				
 		return resultPath;
 	}

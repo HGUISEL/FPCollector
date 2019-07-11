@@ -1,14 +1,29 @@
-package edu.handong.csee.isel.init;
+package edu.handong.csee.isel.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ToolExecutor {
-	public String runPMD(String path, String rule) {
+	final static int CURRENT = 0;
+	
+	public String runPMD(String path, String rule, int flag) {
+		String name = path.split(File.separator)[1];
+		String reportPath = "";
+		
+		if(flag == CURRENT) {
+			reportPath = name +"_Current.csv";
+		}
+		else {
+			reportPath = name + "_Past.csv";
+		}
+		
 		System.out.println("----- Running the Tool -----");
-		String[] command = {"/Users/yoonhochoi/Documents/ISEL/pmd/pmd-bin-6.15.0/bin/run.sh", "pmd", "-d", path, "-R", rule, "-f", "csv"};
-		//String command = "/Users/yoonhochoi/Documents/ISEL/pmd/pmd-bin-6.15.0/bin/run.sh pmd -d git/MaterialDesignLibrary -R category/java/errorprone.xml/AssignmentToNonFinalStatic -f csv >Current.csv";
+		String command = "/Users/yoonhochoi/Documents/ISEL/pmd/pmd-bin-6.15.0/bin/run.sh pmd "
+				+ "-d " + path
+				+ " -R " + rule
+				+ " -reportfile " + reportPath;
 		try {
 			Process pro = Runtime.getRuntime().exec(command);
 			String line = "";
@@ -26,7 +41,7 @@ public class ToolExecutor {
 			pro.waitFor();
 			
 			if(pro.exitValue() >= 1) {
-				System.err.println("!!!!! " +pro.exitValue() + "Run Failed");
+				System.err.println("!!!!! " + pro.exitValue()+ "Run Failed");
 			}
 			else {
 				System.out.println("@@@@@ Run Successfully");
@@ -37,6 +52,6 @@ public class ToolExecutor {
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
-		return "";
+		return reportPath;
 	}
 }
