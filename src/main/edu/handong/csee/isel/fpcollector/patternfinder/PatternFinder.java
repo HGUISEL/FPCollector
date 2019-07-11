@@ -1,4 +1,4 @@
-package edu.handong.csee.isel.patternfinder;
+package edu.handong.csee.isel.fpcollector.patternfinder;
 
 import java.util.ArrayList;
 

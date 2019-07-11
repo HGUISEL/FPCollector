@@ -1,4 +1,4 @@
-package edu.handong.csee.isel.init;
+package edu.handong.csee.isel.fpcollector.init;
 
 import java.io.BufferedReader;
 import java.io.File;

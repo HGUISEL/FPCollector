@@ -2,11 +2,11 @@ package edu.handong.csee.isel.fpcollector;
 
 import java.util.ArrayList;
 
-import edu.handong.csee.isel.checkout.*;
-import edu.handong.csee.isel.collector.*;
-import edu.handong.csee.isel.init.*;
-import edu.handong.csee.isel.patternfinder.*;
-import edu.handong.csee.isel.utils.*;
+import edu.handong.csee.isel.fpcollector.checkout.*;
+import edu.handong.csee.isel.fpcollector.collector.*;
+import edu.handong.csee.isel.fpcollector.init.*;
+import edu.handong.csee.isel.fpcollector.patternfinder.*;
+import edu.handong.csee.isel.fpcollector.utils.*;
 
 public class FPCollector{
 	/*
