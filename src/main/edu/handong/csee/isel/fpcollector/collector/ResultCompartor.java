@@ -10,6 +10,8 @@ public class ResultCompartor {
 	 *    (same contents, but different directory)
 	 * 4) The directory have changed, and the file also have changed
 	 *    (same contents, but different directory and line)
+	 *    jgit library
+	 *    git blame -M
 	 */
 	
 }

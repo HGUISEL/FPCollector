@@ -1,10 +1,21 @@
+/*
+ * Todo
+ * 1) make git checkout
+ * 2-1) make git blame
+ * 2-2) make compare blame result
+ * 2-3) make get result
+ * 3-1) make pattern extractor
+ * 3-2) make pattern comparator
+ * 3-3) make get result
+ */
 package edu.handong.csee.isel.fpcollector;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
 import edu.handong.csee.isel.fpcollector.checkout.*;
+import edu.handong.csee.isel.fpcollector.clone.*;
 import edu.handong.csee.isel.fpcollector.collector.*;
-import edu.handong.csee.isel.fpcollector.init.*;
 import edu.handong.csee.isel.fpcollector.patternfinder.*;
 import edu.handong.csee.isel.fpcollector.utils.*;
 
@@ -24,56 +35,107 @@ public class FPCollector{
 	final static int CURRENT = 0;
 	final static int PAST = 1;
 	
-	String project;
-	String clonedPath;
-	String rule;
-	String outputCurrentPath;
+//	String project;
+//	String clonedPath;
+//	String rule;
+//	String currentPath;
 	String outputPastPath;
-	String outputResultPath;
-	
-	public static void main(String[] args) {
-		FPCollector start = new FPCollector();
-		start.run(args);
-		
-	}
+//	String outputResultPath;
 	
 	public void run(String[] args) {
-		outputCurrentPath = initiate(args);
-		outputPastPath = checkOut(rule);
-		//collect(outputCurrentPath, outputPastPath, outputResultPath);
+		ArrayList<SimpleEntry<String, Integer>> currentReportInfo = new ArrayList<>();
+		ArrayList<SimpleEntry<String, Integer>> pastReportInfo = new ArrayList<>();
+		String project = "";
+		String rule = "";
+		String outputResultPath = "";
+		String clonedPath = "";
+		String checkoutPath = "";
+		String currentReportPath = "";
+		String pastReportPath = "";
+		
+		project = init(args[0]);
+		rule = init(args[1]);
+		outputResultPath = init(args[2]);
+		
+		//clone the target project
+		clonedPath = clone(project);
+		//applying pmd to the target project
+		currentReportPath = executeTool(clonedPath, rule, CURRENT);
+		//get violation informations(Directory, line number)
+		currentReportInfo = getInfo(currentReportPath);
+		
+		//check out the target project to a year ago
+		checkoutPath = checkOut(clonedPath);
+		//applying pmd to the target project
+		pastReportPath = executeTool(checkoutPath, rule, PAST);
+		//get violation informations(Directory, line number)
+		pastReportInfo = getInfo(pastReportPath);
+	
+		//1) get git blame/annotate and line info
+		
+		//compare git blame and line info
+		
+		//get suspects
+		
+		//2) get pattern of line info
+		
+		//compare pattern
+		
+		//get suspects
+		
 	}
 	
-	public String initiate(String[] list) {
-		ArrayList<String[]> toolReport = new ArrayList<>();
+	public String init(String file) {
 		Reader read = new Reader();
-		CloneMaker clone = new CloneMaker();
-		ToolExecutor tool = new ToolExecutor();
-		PatternFinder finder = new PatternFinder();
-		String resultPath;
+		String contents;
 		
-		project = read.readTextFile(list[0]);
-		rule = read.readTextFile(list[1]);
-		outputResultPath = read.readTextFile(list[2]);
+		contents = read.readTextFile(file);
+		
+		return contents;
+	}
+	
+	public String clone(String project) {
+		CloneMaker clone = new CloneMaker();
+		String clonedPath;
 		
 		clonedPath = clone.gitClone(project);
-		resultPath = tool.runPMD(clonedPath, rule, CURRENT);
 		
-		toolReport = read.readPmdReport(resultPath);
-		finder.findPattern(toolReport);
+		return clonedPath;
+	}
+	
+	public String checkOut(String path) {
+		CheckOutMaker checkOut = new CheckOutMaker();
+		String checkoutPath;
+		
+		checkoutPath = checkOut.gitCheckOut(path);
+
+		return checkoutPath;
+	}
+	
+	public String executeTool(String path, String rule, int flag) {
+		ToolExecutor tool = new ToolExecutor();
+		String resultPath;
+		
+		if(flag == CURRENT) {
+			resultPath = tool.runPMD(path, rule, CURRENT);
+		} else {
+			resultPath = tool.runPMD(path,  rule, PAST);
+		}
 		
 		return resultPath;
 	}
 	
-	public String checkOut(String rule) {
-		CheckOutMaker checkOut = new CheckOutMaker();
-		ToolExecutor tool = new ToolExecutor();
-		String filePath;
-		String resultPath;
+	public ArrayList<SimpleEntry<String, Integer>> getInfo(String path){
+		Reader read = new Reader();
+		PatternFinder finder = new PatternFinder();
+		ArrayList<String[]> readReport = new ArrayList<>();
+		ArrayList<SimpleEntry<String, Integer>> reportInfo = new ArrayList<>();
 		
-		filePath = checkOut.gitCheckOut(clonedPath);
-		resultPath = tool.runPMD(filePath, rule, PAST);
-				
-		return resultPath;
+		readReport = read.readPmdReport(path);
+		reportInfo = finder.getDirLine(readReport); 
+		
+		return reportInfo;
+		
 	}
 	
 	//method name -> verb
