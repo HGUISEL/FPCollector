@@ -39,7 +39,8 @@ public class ToolExecutor {
 			}
 			
 			pro.waitFor();
-			
+			//ExitVaule : 4 Network failure.
+			//https://drupal.stackexchange.com/questions/82737/what-does-cron-error-exit-status-4-mean-in-syslog-ubuntu
 			if(pro.exitValue() >= 1) {
 				System.err.println("!!!!! " + pro.exitValue()+ "Run Failed");
 			}
