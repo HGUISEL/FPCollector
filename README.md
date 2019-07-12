@@ -37,6 +37,20 @@ __Using This Tool, You Could Get False Positive Suspects More Easily__
 
 # In Concepting
 
+## - Comparison Idea
+	1) Using git blame/annotate  
+		-> get commit ID and String information of the line of Current suspects by using git blame/annotate  
+		-> get commit ID and String information of the line of Past suspects by using git blame/annoate  
+		-> compare line first, and then, compare commit ID  
+		-> if they are all same, it is classified into suspects  
+		-> get pattern of suspects  
+		  
+	2) Using pattern
+		-> get String information of the line of Current suspects as a pattern
+		-> get String information of the line of Past suspects as a pattern
+		-> compare they have same pattern
+		-> If, they are same, get patterns 
+
 ### 4. collector  
 ### 5. patternfinder
 ### 6. ContextExtractor  
