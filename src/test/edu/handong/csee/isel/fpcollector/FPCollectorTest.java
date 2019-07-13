@@ -1,8 +1,12 @@
 package edu.handong.csee.isel.fpcollector;
 
+import java.io.File;
+
 //import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import edu.handong.csee.isel.fpcollector.checkout.CheckOutMaker;
 
 // unit test : input test case that check input output is correct
 // test drip : when we programming, make test case firstly, build as it could pass test cases
@@ -17,7 +21,8 @@ public class FPCollectorTest {
 	
 	@Test
 	public void testCheckOut() {
-		
+		String arg = "git" + "/" + "MaterialDesignLibrary";
+		CheckOutMaker.gitCheckOut(arg);
 	}
 
 }

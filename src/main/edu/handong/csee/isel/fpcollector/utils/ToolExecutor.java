@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 public class ToolExecutor {
 	final static int CURRENT = 0;
 	
-	public String runPMD(String path, String rule, int flag) {
+	public String runPMD(String toolCommand,String path, String rule, int flag) {
 		String name = path.split(File.separator)[1];
 		String reportPath = "";
 		
@@ -20,8 +20,8 @@ public class ToolExecutor {
 		}
 		
 		System.out.println("----- Running the Tool -----");
-		String command = "/Users/yoonhochoi/Documents/ISEL/pmd/pmd-bin-6.15.0/bin/run.sh pmd "
-				+ "-d " + path
+		String command = toolCommand
+				+ " -d " + path
 				+ " -R " + rule
 				+ " -reportfile " + reportPath;
 		try {
@@ -42,7 +42,7 @@ public class ToolExecutor {
 			//ExitVaule : 4 Network failure.
 			//https://drupal.stackexchange.com/questions/82737/what-does-cron-error-exit-status-4-mean-in-syslog-ubuntu
 			if(pro.exitValue() >= 1) {
-				System.err.println("!!!!! " + pro.exitValue()+ "Run Failed");
+				System.err.println("!!!!! " + pro.exitValue()+ " Run Failed");
 			}
 			else {
 				System.out.println("@@@@@ Run Successfully");

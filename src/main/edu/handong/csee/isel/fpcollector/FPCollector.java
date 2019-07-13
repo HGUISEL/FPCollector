@@ -34,20 +34,14 @@ public class FPCollector{
 	 */
 	final static int CURRENT = 0;
 	final static int PAST = 1;
-	
-//	String project;
-//	String clonedPath;
-//	String rule;
-//	String currentPath;
-	String outputPastPath;
-//	String outputResultPath;
-	
+
 	public void run(String[] args) {
 		ArrayList<SimpleEntry<String, Integer>> currentReportInfo = new ArrayList<>();
 		ArrayList<SimpleEntry<String, Integer>> pastReportInfo = new ArrayList<>();
 		String project = "";
 		String rule = "";
 		String outputResultPath = "";
+		String toolCommand = "";
 		String clonedPath = "";
 		String checkoutPath = "";
 		String currentReportPath = "";
@@ -56,18 +50,19 @@ public class FPCollector{
 		project = init(args[0]);
 		rule = init(args[1]);
 		outputResultPath = init(args[2]);
+		toolCommand = init(args[4]);
 		
 		//clone the target project
 		clonedPath = clone(project);
 		//applying pmd to the target project
-		currentReportPath = executeTool(clonedPath, rule, CURRENT);
+		currentReportPath = executeTool(toolCommand, clonedPath, rule, CURRENT);
 		//get violation informations(Directory, line number)
 		currentReportInfo = getInfo(currentReportPath);
 		
 		//check out the target project to a year ago
 		checkoutPath = checkOut(clonedPath);
 		//applying pmd to the target project
-		pastReportPath = executeTool(checkoutPath, rule, PAST);
+		pastReportPath = executeTool(toolCommand, checkoutPath, rule, PAST);
 		//get violation informations(Directory, line number)
 		pastReportInfo = getInfo(pastReportPath);
 	
@@ -108,18 +103,18 @@ public class FPCollector{
 		String checkoutPath;
 		
 		checkoutPath = checkOut.gitCheckOut(path);
-
+		
 		return checkoutPath;
 	}
 	
-	public String executeTool(String path, String rule, int flag) {
+	public String executeTool(String command,String path, String rule, int flag) {
 		ToolExecutor tool = new ToolExecutor();
 		String resultPath;
 		
 		if(flag == CURRENT) {
-			resultPath = tool.runPMD(path, rule, CURRENT);
+			resultPath = tool.runPMD(command, path , rule, CURRENT);
 		} else {
-			resultPath = tool.runPMD(path,  rule, PAST);
+			resultPath = tool.runPMD(command ,path ,  rule, PAST);
 		}
 		
 		return resultPath;
