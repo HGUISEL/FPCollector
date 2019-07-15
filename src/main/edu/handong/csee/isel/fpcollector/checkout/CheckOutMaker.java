@@ -1,10 +1,15 @@
 package edu.handong.csee.isel.fpcollector.checkout;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
 
 public class CheckOutMaker {
@@ -35,39 +40,41 @@ public class CheckOutMaker {
 			 *  3) get directory path which indicate check out directory's location
 			 */
 			
-			String yearAgo = "";
-			//get current time
-			//make it a year ago
-			//get commit id of year ago
+			int yearAgo;
+			String[] currentDate;
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate localDate = LocalDate.now();
+			currentDate = dtf.format(localDate).toString().split("-");
+			yearAgo = Integer.parseInt(currentDate[0]) - 1;
 			
-			//git checkout
+			String command = "git rev-list -1 --before=\"" + yearAgo + "-"
+					+ currentDate[1] + "-" + currentDate[2] + "\" master";
+		
 			try {
-				Process pro = Runtime.getRuntime().exec("git rev-list -1 --before=\"" + yearAgo);
-				String line = "";
-				
-				BufferedReader in = new BufferedReader(new InputStreamReader(pro.getErrorStream()));
-				while((line = in.readLine()) != null) {
-					System.out.println(line);
-				}
-				
-				in = new BufferedReader(new InputStreamReader(pro.getInputStream()));
-				while((line= in.readLine()) != null) {
-					System.out.println(line);
-				}
-				
-				pro.waitFor();
-				//ExitVaule : 4 Network failure.
-				//https://drupal.stackexchange.com/questions/82737/what-does-cron-error-exit-status-4-mean-in-syslog-ubuntu
-				if(pro.exitValue() >= 1) {
-					System.err.println("!!!!! " + pro.exitValue()+ " Run Failed");
-				}
-				else {
-					System.out.println("@@@@@ Run Successfully");
-				}
-				
-				pro.destroy();
-				
-			} catch (IOException | InterruptedException e) {
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
+				Executor exec = new DefaultExecutor();
+				exec.setStreamHandler(streamHandler);
+				exec.setWorkingDirectory(new File(checkOutPath));
+
+				CommandLine cl = CommandLine.parse(command);
+				int[] exitValues = {0};
+				exec.setExitValues(exitValues);
+				int exitvalue = exec.execute(cl);
+				String dueCommitID = outputStream.toString();
+
+				String gitCO = "git checkout " + dueCommitID +" -f";
+				System.out.println("### " + gitCO);
+				cl = CommandLine.parse(gitCO);
+				exitvalue = exec.execute(cl);
+				System.out.println(outputStream.toString());
+
+				System.out.println("### GIT CHECKOUT: (" + exitvalue + ")" + name + " " + gitCO);
+				outputStream.close();
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
 		

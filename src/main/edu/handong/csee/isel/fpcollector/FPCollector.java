@@ -50,7 +50,7 @@ public class FPCollector{
 		project = init(args[0]);
 		rule = init(args[1]);
 		outputResultPath = init(args[2]);
-		toolCommand = init(args[4]);
+		toolCommand = init(args[3]);
 		
 		//clone the target project
 		clonedPath = clone(project);

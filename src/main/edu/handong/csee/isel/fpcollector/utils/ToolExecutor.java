@@ -16,7 +16,7 @@ public class ToolExecutor {
 			reportPath = name +"_Current.csv";
 		}
 		else {
-			reportPath = name + "_Past.csv";
+			reportPath = name + ".csv";
 		}
 		
 		System.out.println("----- Running the Tool -----");
