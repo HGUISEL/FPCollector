@@ -1,8 +1,7 @@
 /*
  * Todo
- * 1) make git checkout
- * 2-1) make git blame
- * 2-2) make compare blame result
+ * 
+ * 2-2) make compare blame result 7.16
  * 2-3) make get result
  * 3-1) make pattern extractor
  * 3-2) make pattern comparator
@@ -12,11 +11,12 @@ package edu.handong.csee.isel.fpcollector;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import edu.handong.csee.isel.fpcollector.checkout.*;
 import edu.handong.csee.isel.fpcollector.clone.*;
 import edu.handong.csee.isel.fpcollector.collector.*;
-import edu.handong.csee.isel.fpcollector.patternfinder.*;
+import edu.handong.csee.isel.fpcollector.reportanalysis.*;
 import edu.handong.csee.isel.fpcollector.utils.*;
 
 public class FPCollector{
@@ -36,8 +36,14 @@ public class FPCollector{
 	final static int PAST = 1;
 
 	public void run(String[] args) {
-		ArrayList<SimpleEntry<String, Integer>> currentReportInfo = new ArrayList<>();
-		ArrayList<SimpleEntry<String, Integer>> pastReportInfo = new ArrayList<>();
+		ArrayList<SimpleEntry<String, String>> currentReportInfo = new ArrayList<>();
+		ArrayList<SimpleEntry<String, String>> pastReportInfo = new ArrayList<>();
+
+		HashMap<String, SimpleEntry<String, String>> currentBlameInfo =
+				new HashMap<>();
+		HashMap<String, SimpleEntry<String, String>> pastBlameInfo =
+				new HashMap<>();
+		
 		String project = "";
 		String rule = "";
 		String outputResultPath = "";
@@ -66,11 +72,23 @@ public class FPCollector{
 		//get violation informations(Directory, line number)
 		pastReportInfo = getInfo(pastReportPath);
 	
-		//1) get git blame/annotate and line info
-		
-		//compare git blame and line info
+		//get git blame/annotate and line info
+		currentBlameInfo = blame(currentReportInfo, clonedPath);
+				
+		pastBlameInfo = blame(pastReportInfo, checkoutPath);
 		
 		//get suspects
+	
+		
+		//Start Here, compare currentBlame Info and pastBlameInfo
+		//Start Here, compare currentBlame Info and pastBlameInfo
+		//Start Here, compare currentBlame Info and pastBlameInfo
+		//Start Here, compare currentBlame Info and pastBlameInfo
+		//Start Here, compare currentBlame Info and pastBlameInfo
+		//Start Here, compare currentBlame Info and pastBlameInfo
+		//Start Here, compare currentBlame Info and pastBlameInfo
+		//Start Here, compare currentBlame Info and pastBlameInfo
+		
 		
 		//2) get pattern of line info
 		
@@ -120,17 +138,28 @@ public class FPCollector{
 		return resultPath;
 	}
 	
-	public ArrayList<SimpleEntry<String, Integer>> getInfo(String path){
+	public ArrayList<SimpleEntry<String, String>> getInfo(String path){
 		Reader read = new Reader();
-		PatternFinder finder = new PatternFinder();
+		ReportAnalyzer analyzer = new ReportAnalyzer();
 		ArrayList<String[]> readReport = new ArrayList<>();
-		ArrayList<SimpleEntry<String, Integer>> reportInfo = new ArrayList<>();
+		ArrayList<SimpleEntry<String, String>> reportInfo = new ArrayList<>();
 		
 		readReport = read.readPmdReport(path);
-		reportInfo = finder.getDirLine(readReport); 
+		reportInfo = analyzer.getDirLine(readReport); 
 		
 		return reportInfo;
 		
+	}
+	
+	public HashMap<String, SimpleEntry<String, String>>
+	blame(ArrayList<SimpleEntry<String, String>> reportInfo, String path){
+		HashMap<String, SimpleEntry<String, String>> blameInfo =
+				new HashMap<>();
+		ReportAnalyzer analyzer = new ReportAnalyzer();
+		
+		blameInfo = analyzer.gitBlame(reportInfo, path);
+		
+		return blameInfo;
 	}
 	
 	//method name -> verb

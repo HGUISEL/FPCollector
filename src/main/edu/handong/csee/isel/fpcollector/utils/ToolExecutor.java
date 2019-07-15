@@ -19,39 +19,45 @@ public class ToolExecutor {
 			reportPath = name + ".csv";
 		}
 		
-		System.out.println("----- Running the Tool -----");
-		String command = toolCommand
-				+ " -d " + path
-				+ " -R " + rule
-				+ " -reportfile " + reportPath;
-		try {
-			Process pro = Runtime.getRuntime().exec(command);
-			String line = "";
+		File checker = new File(reportPath);
+		if(checker.exists()) {
+			System.out.println("!!!!! The Report is aleady exists");
+		} else {
+		
+			System.out.println("----- Running the Tool -----");
+			String command = toolCommand
+							+ " -d " + path
+							+ " -R " + rule
+							+ " -reportfile " + reportPath;
+			try {
+				Process pro = Runtime.getRuntime().exec(command);
+				String line = "";
+				
+				BufferedReader in = new BufferedReader(new InputStreamReader(pro.getErrorStream()));
+				while((line = in.readLine()) != null) {
+					System.out.println(line);
+				}
 			
-			BufferedReader in = new BufferedReader(new InputStreamReader(pro.getErrorStream()));
-			while((line = in.readLine()) != null) {
-				System.out.println(line);
-			}
+				in = new BufferedReader(new InputStreamReader(pro.getInputStream()));
+				while((line= in.readLine()) != null) {
+					System.out.println(line);
+				}
 			
-			in = new BufferedReader(new InputStreamReader(pro.getInputStream()));
-			while((line= in.readLine()) != null) {
-				System.out.println(line);
-			}
-			
-			pro.waitFor();
+				pro.waitFor();
 			//ExitVaule : 4 Network failure.
 			//https://drupal.stackexchange.com/questions/82737/what-does-cron-error-exit-status-4-mean-in-syslog-ubuntu
-			if(pro.exitValue() >= 1) {
-				System.err.println("!!!!! " + pro.exitValue()+ " Run Failed");
-			}
-			else {
-				System.out.println("@@@@@ Run Successfully");
-			}
+				if(pro.exitValue() >= 1) {
+					System.err.println("!!!!! " + pro.exitValue()+ " Run Failed");
+				}
+				else {
+					System.out.println("@@@@@ Run Successfully");
+				}
 			
-			pro.destroy();
+				pro.destroy();
 			
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return reportPath;
 	}
