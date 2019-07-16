@@ -35,7 +35,12 @@ public class ReportAnalyzer {
 				//then we can get line info as third one
 		
 		try {
-			
+			int size = reportInfo.size();
+			int progress = 0;
+			int quater = size/4;
+			int half = size /2 ;
+			int halfNQuater = size * 3 / 4;
+			System.out.println("\n----- Start to Collect Line Information -----\n");
 			for(SimpleEntry<String, String> temp : reportInfo) {
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
@@ -58,6 +63,16 @@ public class ReportAnalyzer {
 				blameInfo.put(lineInfo, temp);
 				outputStream.flush();
 				outputStream.close();
+				progress ++;
+				if(progress == quater) {
+					System.out.println("@@@@@ 25% Complete");
+				}
+				else if(progress == half) {
+					System.out.println("@@@@@ 50% Complete");
+				}
+				else if (progress == halfNQuater) {
+					System.out.println("@@@@@ 75% Complete");
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -65,8 +80,27 @@ public class ReportAnalyzer {
 			e.printStackTrace();
 		}
 		
-		System.out.println("%%%%% " + exitvalue + " Collected All Information About Violation Lines Successfully");
+		System.out.println("@@@@@ " + exitvalue + " Collected All Information About Violation Lines Successfully");
 		
 		return blameInfo;
+	}
+	
+	public HashMap<String, SimpleEntry<String, String>> 
+	suspectsFinder(HashMap<String, SimpleEntry<String, String>> current,
+			HashMap<String, SimpleEntry<String, String>> past){
+		HashMap<String, SimpleEntry<String, String>> suspects = new HashMap<>();
+		
+		for(String currentLine : current.keySet()) {
+			for(String pastLine : past.keySet()) {
+				if(currentLine.equals(pastLine)) {
+					suspects.put(currentLine, current.get(currentLine));
+					past.remove(pastLine);
+					//The number of equal value is at most 1. Therefore, break
+					break;
+				}
+			}
+		}
+		
+		return suspects;
 	}
 }

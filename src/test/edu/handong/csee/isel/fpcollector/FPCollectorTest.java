@@ -19,7 +19,7 @@ public class FPCollectorTest {
 //	}
 	
 	@Test
-	public void testCheckOut() {
+	public void testSuspectsFinder() {
 	//	String arg = "git" + "/" + "MaterialDesignLibrary";
 		//CheckOutMaker.gitCheckOut(arg);
 	}

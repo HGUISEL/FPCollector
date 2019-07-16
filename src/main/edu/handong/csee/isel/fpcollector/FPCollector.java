@@ -3,9 +3,6 @@
  * 
  * 2-2) make compare blame result 7.16
  * 2-3) make get result
- * 3-1) make pattern extractor
- * 3-2) make pattern comparator
- * 3-3) make get result
  */
 package edu.handong.csee.isel.fpcollector;
 
@@ -15,7 +12,6 @@ import java.util.HashMap;
 
 import edu.handong.csee.isel.fpcollector.checkout.*;
 import edu.handong.csee.isel.fpcollector.clone.*;
-import edu.handong.csee.isel.fpcollector.collector.*;
 import edu.handong.csee.isel.fpcollector.reportanalysis.*;
 import edu.handong.csee.isel.fpcollector.utils.*;
 
@@ -43,6 +39,7 @@ public class FPCollector{
 				new HashMap<>();
 		HashMap<String, SimpleEntry<String, String>> pastBlameInfo =
 				new HashMap<>();
+		HashMap<String, SimpleEntry<String, String>> suspects = new HashMap<>();
 		
 		String project = "";
 		String rule = "";
@@ -78,23 +75,10 @@ public class FPCollector{
 		pastBlameInfo = blame(pastReportInfo, checkoutPath);
 		
 		//get suspects
-	
 		
-		//Start Here, compare currentBlame Info and pastBlameInfo
-		//Start Here, compare currentBlame Info and pastBlameInfo
-		//Start Here, compare currentBlame Info and pastBlameInfo
-		//Start Here, compare currentBlame Info and pastBlameInfo
-		//Start Here, compare currentBlame Info and pastBlameInfo
-		//Start Here, compare currentBlame Info and pastBlameInfo
-		//Start Here, compare currentBlame Info and pastBlameInfo
-		//Start Here, compare currentBlame Info and pastBlameInfo
-		
-		
-		//2) get pattern of line info
-		
-		//compare pattern
-		
-		//get suspects
+		suspects = getSuspects(currentBlameInfo, pastBlameInfo);
+		System.out.println("\nStart to write Result...\n");
+		writeOutput(suspects, outputResultPath);
 		
 	}
 	
@@ -162,15 +146,20 @@ public class FPCollector{
 		return blameInfo;
 	}
 	
-	//method name -> verb
-	//class name -> actor
-//	public void collect(String currentPath, String pastPath, String resultPath) {
-//		ResultCompartor compare = new ResultCompartor();
-//		SuspectsExtractor suspects = new SuspectsExtractor();
-//		ArrayList<String> suspectsList = new ArrayList<>();
-//		
-//		suspectsList = compare.compareResults(currentPath, pastPath);
-//		suspects.writeFile(suspectsList);
-//	}
-
+	public HashMap<String, SimpleEntry<String, String>> 
+	getSuspects(HashMap<String, SimpleEntry<String, String>> current,
+			HashMap<String, SimpleEntry<String, String>> past){
+		ReportAnalyzer analyzer = new ReportAnalyzer();
+		
+		HashMap<String, SimpleEntry<String, String>> suspects = new HashMap<>();
+		
+		suspects = analyzer.suspectsFinder(current, past);
+		
+		return suspects;
+	}
+	
+	public void writeOutput(HashMap<String, SimpleEntry<String, String>> suspects, String path) {
+		Writer writer = new Writer();
+		writer.writeSuspects(suspects, path);
+	}
 }
