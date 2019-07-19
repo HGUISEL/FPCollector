@@ -17,8 +17,9 @@ public class ReportAnalyzer {
 		ArrayList<SimpleEntry<String, String>> info = new ArrayList<>();
 		for(String[] temp : report) {			
 			String[] separate = temp[0].split(":");
+			String directoryPath = separate[0];
 			String atLine = separate[1];
-			info.add(new SimpleEntry<String, String>(separate[0], atLine));
+			info.add(new SimpleEntry<String, String>(directoryPath, atLine));
 		}
 		return info;
 	}

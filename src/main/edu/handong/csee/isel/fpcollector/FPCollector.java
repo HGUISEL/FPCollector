@@ -20,12 +20,12 @@ public class FPCollector{
 	 * 0 : project address
 	 * 1 : rule context
 	 * 2 : output path
-	 * 
+	 * 3 : tool command
 	 * project : project address
 	 * clonedPath : after git clone, the path where it is cloned
 	 * rule : Rule context which user want to test
-	 * outputCurrentPath : csv file path where it has current result of tool
-	 * outputpastPath : csv file path where it has past result of tool
+	 * currentReportPath : csv file path where it has current result of tool
+	 * pastReportPath : csv file path where it has past result of tool
 	 * outputResultPath : csv file path where it has total result of this tool
 	 */
 	final static int CURRENT = 0;
@@ -79,7 +79,8 @@ public class FPCollector{
 		suspects = getSuspects(currentBlameInfo, pastBlameInfo);
 		System.out.println("\nStart to write Result...\n");
 		writeOutput(suspects, outputResultPath);
-		
+		System.out.println("-------------------------------------");
+		System.out.println("\n@@@@@ Result File is created@@@@@\n");
 	}
 	
 	public String init(String file) {
