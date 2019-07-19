@@ -1,4 +1,4 @@
-package edu.handong.csee.isel.fpcollector.reportanalysis;
+package edu.handong.csee.isel.fpcollector.fpsuspectsgetter.reportanalysis;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,6 +43,75 @@ public class ReportAnalyzer {
 			int halfNQuater = size * 3 / 4;
 			System.out.println("\n----- Start to Collect Line Information -----\n");
 			for(SimpleEntry<String, String> temp : reportInfo) {
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
+				Executor exec = new DefaultExecutor();
+				exec.setStreamHandler(streamHandler);
+				exec.setWorkingDirectory(new File(path));
+
+				String tempDir = temp.getKey();
+				String tempLine = temp.getValue();
+				String command = "git blame " + tempDir + " -L " + tempLine+ "," +tempLine +" -l";
+				CommandLine cl = CommandLine.parse(command);
+				int[] exitValues = {0};
+			
+				exec.setExitValues(exitValues);
+				exitvalue = exec.execute(cl);
+				String blameResult = outputStream.toString();
+				
+				String lineInfo = blameResult.split("     *")[1].trim();
+
+				blameInfo.put(lineInfo, temp);
+				outputStream.flush();
+				outputStream.close();
+				progress ++;
+				if(progress == quater) {
+					System.out.println("@@@@@ 25% Complete");
+				}
+				else if(progress == half) {
+					System.out.println("@@@@@ 50% Complete");
+				}
+				else if (progress == halfNQuater) {
+					System.out.println("@@@@@ 75% Complete");
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		System.out.println("@@@@@ " + exitvalue + " Collected All Information About Violation Lines Successfully");
+		
+		return blameInfo;
+	}
+	
+	//START HERE
+	//START HERE
+	//START HERE
+	//START HERE
+	//START HERE
+	//START HERE
+	
+	public ArrayList<ArrayList<String>> getCtxUsingBlame(ArrayList<String> reportInfo, String path){
+		ArrayList<ArrayList<String>> blameInfo = new ArrayList<>();
+		
+		int exitvalue = -1;
+		//result : line contents of code, directory, line
+				//compare just line info
+				//when run git blame, it should be in root folder of cloned/checkout project
+				//and form is "git blame dir -L linenum, linenum, -l"
+				//then we can get line info as third one
+		
+		try {
+			int size = reportInfo.size();
+			int progress = 0;
+			int quater = size/4;
+			int half = size /2 ;
+			int halfNQuater = size * 3 / 4;
+			System.out.println("\n----- Start to Collect Line Context Information -----\n");
+			for(String temp : reportInfo) {
+				
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
 				Executor exec = new DefaultExecutor();

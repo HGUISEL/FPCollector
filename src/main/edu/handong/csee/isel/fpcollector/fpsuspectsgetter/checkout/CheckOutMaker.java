@@ -1,4 +1,4 @@
-package edu.handong.csee.isel.fpcollector.checkout;
+package edu.handong.csee.isel.fpcollector.fpsuspectsgetter.checkout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

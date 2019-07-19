@@ -1,18 +1,12 @@
-/*
- * Todo
- * 
- * 2-2) make compare blame result 7.16
- * 2-3) make get result
- */
-package edu.handong.csee.isel.fpcollector;
+package edu.handong.csee.isel.fpcollector.fpsuspectsgetter;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import edu.handong.csee.isel.fpcollector.checkout.*;
-import edu.handong.csee.isel.fpcollector.clone.*;
-import edu.handong.csee.isel.fpcollector.reportanalysis.*;
+import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.checkout.*;
+import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.clone.*;
+import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.reportanalysis.*;
 import edu.handong.csee.isel.fpcollector.utils.*;
 
 public class FPCollector{
@@ -30,8 +24,24 @@ public class FPCollector{
 	 */
 	final static int CURRENT = 0;
 	final static int PAST = 1;
-
-	public void run(String[] args) {
+	String clonedPath = "";
+	
+	public String[] initiate(String[] args){
+		String[] info = {} ;
+		info[0] = init(args[0]);
+		info[1] = init(args[1]);
+		info[2] = init(args[2]);
+		info[3] = init(args[3]);
+		
+		return info;
+	}
+	
+	public String getClonedPath() {
+		return clonedPath;
+	}
+	
+	public void run(String[] info) {
+		//Should I use SimpleEntry?? It could be changed to just String
 		ArrayList<SimpleEntry<String, String>> currentReportInfo = new ArrayList<>();
 		ArrayList<SimpleEntry<String, String>> pastReportInfo = new ArrayList<>();
 
@@ -45,15 +55,14 @@ public class FPCollector{
 		String rule = "";
 		String outputResultPath = "";
 		String toolCommand = "";
-		String clonedPath = "";
 		String checkoutPath = "";
 		String currentReportPath = "";
 		String pastReportPath = "";
 		
-		project = init(args[0]);
-		rule = init(args[1]);
-		outputResultPath = init(args[2]);
-		toolCommand = init(args[3]);
+		project = info[0];
+		rule = info[1];
+		outputResultPath = info[2];
+		toolCommand = info[3];
 		
 		//clone the target project
 		clonedPath = clone(project);
@@ -87,7 +96,7 @@ public class FPCollector{
 		Reader read = new Reader();
 		String contents;
 		
-		contents = read.readTextFile(file);
+		contents = read.readInputFiles(file);
 		
 		return contents;
 	}

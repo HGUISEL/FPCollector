@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Reader {
 	
-	public String readTextFile(String path) {
+	public String readInputFiles(String path) {
 		File f = new File(path);
 		try {
 			FileReader fReader =new FileReader(f);
@@ -50,6 +50,25 @@ public class Reader {
 		
 		
 		return null;
+	}
+	
+	public ArrayList<String> readResult(String path){
+		ArrayList<String> resultInfo = new ArrayList<>();
+		File f = new File(path);
+		try {
+			FileReader fReader =new FileReader(f);
+			BufferedReader fBufReader = new BufferedReader(fReader);
+			String str = "";
+			
+			while((str = fBufReader.readLine()) != null) {
+				resultInfo.add(str);
+			}
+			fBufReader.close();
+		} 
+		catch (IOException e) {
+				e.printStackTrace();
+		}
+		return resultInfo;
 	}
 	
 }

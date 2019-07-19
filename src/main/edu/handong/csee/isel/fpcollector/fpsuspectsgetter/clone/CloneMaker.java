@@ -1,4 +1,4 @@
-package edu.handong.csee.isel.fpcollector.clone;
+package edu.handong.csee.isel.fpcollector.fpsuspectsgetter.clone;
 
 import java.io.BufferedReader;
 import java.io.File;
