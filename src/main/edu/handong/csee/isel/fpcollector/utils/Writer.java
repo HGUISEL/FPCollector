@@ -2,11 +2,18 @@ package edu.handong.csee.isel.fpcollector.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 
 public class Writer {
 	public void writeSuspects(HashMap<String, SimpleEntry<String, String>> suspects, String path) {
@@ -36,4 +43,23 @@ public class Writer {
 				}
 		}
 	}
+	
+	//To do this, I should use my own Delimiter. So, tomorrow, I should check about it
+	public void writeContexts
+	(ArrayList<ArrayList<String>> context, ArrayList<String> result, String path) {
+		String fileName = path.split("\\.")[0];
+		try(
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName + "_w_Context.csv"));
+			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
+					.withHeader("File Path", "Line number", "Code Context"));
+			) {			
+				
+			csvPrinter.printRecords(result);
+			writer.flush();
+			writer.close();
+		}catch(IOException e){
+			e.printStackTrace();
+		} 
+	}
 }
+

@@ -24,20 +24,15 @@ public class FPCollector{
 	 */
 	final static int CURRENT = 0;
 	final static int PAST = 1;
-	String clonedPath = "";
 	
 	public String[] initiate(String[] args){
-		String[] info = {} ;
+		String[] info = new String[4];
 		info[0] = init(args[0]);
 		info[1] = init(args[1]);
 		info[2] = init(args[2]);
 		info[3] = init(args[3]);
 		
 		return info;
-	}
-	
-	public String getClonedPath() {
-		return clonedPath;
 	}
 	
 	public void run(String[] info) {
@@ -52,6 +47,7 @@ public class FPCollector{
 		HashMap<String, SimpleEntry<String, String>> suspects = new HashMap<>();
 		
 		String project = "";
+		String clonedPath = "";
 		String rule = "";
 		String outputResultPath = "";
 		String toolCommand = "";

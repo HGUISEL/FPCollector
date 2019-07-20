@@ -93,8 +93,8 @@ public class ReportAnalyzer {
 	//START HERE
 	//START HERE
 	
-	public ArrayList<ArrayList<String>> getCtxUsingBlame(ArrayList<String> reportInfo, String path){
-		ArrayList<ArrayList<String>> blameInfo = new ArrayList<>();
+	public ArrayList<ArrayList<String>> getCtxUsingBlame(ArrayList<String> resultInfo, String name){
+		ArrayList<ArrayList<String>> contextInfo = new ArrayList<>();
 		
 		int exitvalue = -1;
 		//result : line contents of code, directory, line
@@ -104,35 +104,48 @@ public class ReportAnalyzer {
 				//then we can get line info as third one
 		
 		try {
-			int size = reportInfo.size();
+			int size = resultInfo.size();
 			int progress = 0;
 			int quater = size/4;
 			int half = size /2 ;
 			int halfNQuater = size * 3 / 4;
 			System.out.println("\n----- Start to Collect Line Context Information -----\n");
-			for(String temp : reportInfo) {
+			for(String temp : resultInfo) {
+				ArrayList<String> lineContextInfo = new ArrayList<>();
+				String tempDir = temp.split(",")[0];
+				String tempLine = temp.split(",")[1].trim();
+				int startLine = Integer.parseInt(tempLine) -5;
+				int endLine = Integer.parseInt(tempLine) +5;
+				
+				if(startLine <1) {
+					startLine = 1;
+					endLine = 11;
+				}
 				
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
 				Executor exec = new DefaultExecutor();
 				exec.setStreamHandler(streamHandler);
-				exec.setWorkingDirectory(new File(path));
+				exec.setWorkingDirectory(new File("git/" + name));
 
-				String tempDir = temp.getKey();
-				String tempLine = temp.getValue();
-				String command = "git blame " + tempDir + " -L " + tempLine+ "," +tempLine +" -l";
+				
+				String command = "git blame " + tempDir + " -L " + startLine+ "," + endLine;
 				CommandLine cl = CommandLine.parse(command);
 				int[] exitValues = {0};
 			
 				exec.setExitValues(exitValues);
 				exitvalue = exec.execute(cl);
-				String blameResult = outputStream.toString();
+				String lineContext = outputStream.toString();
+				String[] lineInfo = lineContext.split("\n");
 				
-				String lineInfo = blameResult.split("     *")[1].trim();
-
-				blameInfo.put(lineInfo, temp);
+				for(String line : lineInfo) {
+					if(line.split("\\) ").length > 1)
+					lineContextInfo.add(line.split("\\) ")[1].trim());
+				}
+				
 				outputStream.flush();
 				outputStream.close();
+				contextInfo.add(lineContextInfo);
 				progress ++;
 				if(progress == quater) {
 					System.out.println("@@@@@ 25% Complete");
@@ -152,7 +165,7 @@ public class ReportAnalyzer {
 		
 		System.out.println("@@@@@ " + exitvalue + " Collected All Information About Violation Lines Successfully");
 		
-		return blameInfo;
+		return contextInfo;
 	}
 	
 	public HashMap<String, SimpleEntry<String, String>> 

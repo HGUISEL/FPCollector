@@ -2,35 +2,36 @@ package edu.handong.csee.isel.fpcollector.contextextractor;
 
 import java.util.ArrayList;
 
-import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.FPCollector;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.reportanalysis.ReportAnalyzer;
 import edu.handong.csee.isel.fpcollector.utils.Reader;
+import edu.handong.csee.isel.fpcollector.utils.Writer;
 
 public class ContextExtractor {
 	/*
 	 * Input : A csv file, result of fpsuspectsgetter
 	 * Output : A csv file, directory and line number and context information
 	 */
-	public void run(String OutputPath) {
+	public void run(String[] infos) {
 		//read result file
 		ArrayList<String> resultInfo = new ArrayList<>();
-		ArrayList<ArrayList<String>> lineInfo = new ArrayList<>();
-		FPCollector collector = new FPCollector();
-		String clonedPath = collector.getClonedPath();
+		ArrayList<ArrayList<String>> lineContext = new ArrayList<>();
+		String OutputPath = infos[2];
+		
+		String project = infos[0];
+		String[] getName = project.split("/");
+		String gitName = getName[getName.length - 1];
+		String projectName = gitName.split("\\.")[0];
 		resultInfo = readResultFile(OutputPath);
 		
 		//get lines of code
-			//using git blame
-			lineInfo = getContextUsingBlame(resultInfo, clonedPath);
-				//process build
-				//execute git blame
-				//split and store *11 times
+			lineContext = getContextUsingBlame(resultInfo, projectName);
 			//using reader
 				//file open
 				//read lines
 				//store 11 lines
 		//write a file
 			
+			writeContext(lineContext, resultInfo, OutputPath);
 	}
 	
 	public ArrayList<String> readResultFile(String path){
@@ -41,12 +42,17 @@ public class ContextExtractor {
 		return resultInfo;	
 	}
 	
-	public ArrayList<ArrayList<String>> getContextUsingBlame(ArrayList<String> result, String path){
+	public ArrayList<ArrayList<String>> getContextUsingBlame(ArrayList<String> result, String name){
 		ArrayList<ArrayList<String>> lineInfo = new ArrayList<>();
 		ReportAnalyzer analyzer = new ReportAnalyzer();
 		
-		lineInfo = analyzer.getCtxUsingBlame(result, path);
+		lineInfo = analyzer.getCtxUsingBlame(result, name);
 		
 		return lineInfo;
+	}
+	
+	public void writeContext(ArrayList<ArrayList<String>> context, ArrayList<String> result,String path) {
+		Writer writer = new Writer();
+		writer.writeContexts(context, result, path);
 	}
 }
