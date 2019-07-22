@@ -1,6 +1,5 @@
 package edu.handong.csee.isel.fpcollector.fpsuspectsgetter;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,14 +36,12 @@ public class FPCollector{
 	
 	public void run(String[] info) {
 		//Should I use SimpleEntry?? It could be changed to just String
-		ArrayList<SimpleEntry<String, String>> currentReportInfo = new ArrayList<>();
-		ArrayList<SimpleEntry<String, String>> pastReportInfo = new ArrayList<>();
+		ArrayList<String> currentReportInfo = new ArrayList<>();
+		ArrayList<String> pastReportInfo = new ArrayList<>();
 
-		HashMap<String, SimpleEntry<String, String>> currentBlameInfo =
-				new HashMap<>();
-		HashMap<String, SimpleEntry<String, String>> pastBlameInfo =
-				new HashMap<>();
-		HashMap<String, SimpleEntry<String, String>> suspects = new HashMap<>();
+		HashMap<String, String> currentBlameInfo = 	new HashMap<>();
+		HashMap<String, String> pastBlameInfo = new HashMap<>();
+		HashMap<String, String> suspects = new HashMap<>();
 		
 		String project = "";
 		String clonedPath = "";
@@ -85,7 +82,7 @@ public class FPCollector{
 		System.out.println("\nStart to write Result...\n");
 		writeOutput(suspects, outputResultPath);
 		System.out.println("-------------------------------------");
-		System.out.println("\n@@@@@ Result File is created@@@@@\n");
+		System.out.println("@@@@@ Result File is created@@@@@");
 	}
 	
 	public String init(String file) {
@@ -128,22 +125,22 @@ public class FPCollector{
 		return resultPath;
 	}
 	
-	public ArrayList<SimpleEntry<String, String>> getInfo(String path){
+	public ArrayList<String> getInfo(String path){
 		Reader read = new Reader();
 		ReportAnalyzer analyzer = new ReportAnalyzer();
 		ArrayList<String[]> readReport = new ArrayList<>();
-		ArrayList<SimpleEntry<String, String>> reportInfo = new ArrayList<>();
+		ArrayList<String> reportInfo = new ArrayList<>();
 		
 		readReport = read.readPmdReport(path);
-		reportInfo = analyzer.getDirLine(readReport); 
+		reportInfo = analyzer.getDirLineErrmsg(readReport); 
 		
 		return reportInfo;
 		
 	}
 	
-	public HashMap<String, SimpleEntry<String, String>>
-	blame(ArrayList<SimpleEntry<String, String>> reportInfo, String path){
-		HashMap<String, SimpleEntry<String, String>> blameInfo =
+	public HashMap<String, String>
+	blame(ArrayList<String> reportInfo, String path){
+		HashMap<String, String> blameInfo =
 				new HashMap<>();
 		ReportAnalyzer analyzer = new ReportAnalyzer();
 		
@@ -152,19 +149,19 @@ public class FPCollector{
 		return blameInfo;
 	}
 	
-	public HashMap<String, SimpleEntry<String, String>> 
-	getSuspects(HashMap<String, SimpleEntry<String, String>> current,
-			HashMap<String, SimpleEntry<String, String>> past){
+	public HashMap<String, String> 
+	getSuspects(HashMap<String, String> current,
+			HashMap<String, String> past){
 		ReportAnalyzer analyzer = new ReportAnalyzer();
 		
-		HashMap<String, SimpleEntry<String, String>> suspects = new HashMap<>();
+		HashMap<String, String> suspects = new HashMap<>();
 		
 		suspects = analyzer.suspectsFinder(current, past);
 		
 		return suspects;
 	}
 	
-	public void writeOutput(HashMap<String, SimpleEntry<String, String>> suspects, String path) {
+	public void writeOutput(HashMap<String, String> suspects, String path) {
 		Writer writer = new Writer();
 		writer.writeSuspects(suspects, path);
 	}

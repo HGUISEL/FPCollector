@@ -4,8 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.AbstractMap.SimpleEntry;
-
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.Executor;
@@ -13,20 +11,21 @@ import org.apache.commons.exec.PumpStreamHandler;
 
 public class ReportAnalyzer {
 	
-	public ArrayList<SimpleEntry<String, String>> getDirLine(ArrayList<String[]> report) {
-		ArrayList<SimpleEntry<String, String>> info = new ArrayList<>();
+	public ArrayList<String> getDirLineErrmsg(ArrayList<String[]> report) {
+		ArrayList<String> info = new ArrayList<>();
 		for(String[] temp : report) {			
 			String[] separate = temp[0].split(":");
 			String directoryPath = separate[0];
 			String atLine = separate[1];
-			info.add(new SimpleEntry<String, String>(directoryPath, atLine));
+			String errorMessage = temp[1].trim();
+			info.add(directoryPath + "," + atLine + "," + errorMessage);
 		}
 		return info;
 	}
 	
-	public HashMap<String, SimpleEntry<String, String>> gitBlame
-	(ArrayList<SimpleEntry<String, String>> reportInfo, String path){
-		HashMap<String, SimpleEntry<String, String>> blameInfo =
+	public HashMap<String, String> gitBlame
+	(ArrayList<String> reportInfo, String path){
+		HashMap<String, String> blameInfo =
 				new HashMap<>();
 		int exitvalue = -1;
 		//result : line contents of code, directory, line
@@ -42,15 +41,15 @@ public class ReportAnalyzer {
 			int half = size /2 ;
 			int halfNQuater = size * 3 / 4;
 			System.out.println("\n----- Start to Collect Line Information -----\n");
-			for(SimpleEntry<String, String> temp : reportInfo) {
+			for(String temp : reportInfo) {
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
 				Executor exec = new DefaultExecutor();
 				exec.setStreamHandler(streamHandler);
 				exec.setWorkingDirectory(new File(path));
 
-				String tempDir = temp.getKey();
-				String tempLine = temp.getValue();
+				String tempDir = temp.split(",")[0];
+				String tempLine = temp.split(",")[1];
 				String command = "git blame " + tempDir + " -L " + tempLine+ "," +tempLine +" -l";
 				CommandLine cl = CommandLine.parse(command);
 				int[] exitValues = {0};
@@ -139,8 +138,8 @@ public class ReportAnalyzer {
 				String[] lineInfo = lineContext.split("\n");
 				
 				for(String line : lineInfo) {
-					if(line.split("\\) ").length > 1)
-					lineContextInfo.add(line.split("\\) ")[1].trim());
+					if(line.split(" [0-9]?[0-9]?[0-9]?[0-9]\\) ").length > 1)
+					lineContextInfo.add(line.split(" [0-9]?[0-9]?[0-9]?[0-9]\\)")[1].trim());
 				}
 				
 				outputStream.flush();
@@ -168,10 +167,10 @@ public class ReportAnalyzer {
 		return contextInfo;
 	}
 	
-	public HashMap<String, SimpleEntry<String, String>> 
-	suspectsFinder(HashMap<String, SimpleEntry<String, String>> current,
-			HashMap<String, SimpleEntry<String, String>> past){
-		HashMap<String, SimpleEntry<String, String>> suspects = new HashMap<>();
+	public HashMap<String, String> 
+	suspectsFinder(HashMap<String, String> current,
+			HashMap<String, String> past){
+		HashMap<String, String> suspects = new HashMap<>();
 		
 		for(String currentLine : current.keySet()) {
 			for(String pastLine : past.keySet()) {

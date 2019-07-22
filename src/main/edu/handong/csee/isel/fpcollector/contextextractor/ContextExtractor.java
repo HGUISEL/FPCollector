@@ -3,6 +3,7 @@ package edu.handong.csee.isel.fpcollector.contextextractor;
 import java.util.ArrayList;
 
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.reportanalysis.ReportAnalyzer;
+import edu.handong.csee.isel.fpcollector.structures.DirLineErrmsgContext;
 import edu.handong.csee.isel.fpcollector.utils.Reader;
 import edu.handong.csee.isel.fpcollector.utils.Writer;
 
@@ -17,6 +18,7 @@ public class ContextExtractor {
 		ArrayList<ArrayList<String>> lineContext = new ArrayList<>();
 		String OutputPath = infos[2];
 		
+		DirLineErrmsgContext context;
 		String project = infos[0];
 		String[] getName = project.split("/");
 		String gitName = getName[getName.length - 1];
@@ -30,8 +32,11 @@ public class ContextExtractor {
 				//read lines
 				//store 11 lines
 		//write a file
-			
-			writeContext(lineContext, resultInfo, OutputPath);
+			System.out.println("\n----- Start to Rearrange Data -----\n");
+			context = new DirLineErrmsgContext(lineContext, resultInfo);
+			System.out.println("\n----- Start to Write a File -----\n");
+			writeContext(context, OutputPath);
+			System.out.println("\n----- All Process is Completed");
 	}
 	
 	public ArrayList<String> readResultFile(String path){
@@ -51,8 +56,8 @@ public class ContextExtractor {
 		return lineInfo;
 	}
 	
-	public void writeContext(ArrayList<ArrayList<String>> context, ArrayList<String> result,String path) {
+	public void writeContext(DirLineErrmsgContext context, String path) {
 		Writer writer = new Writer();
-		writer.writeContexts(context, result, path);
+		writer.writeContexts(context, path);
 	}
 }
