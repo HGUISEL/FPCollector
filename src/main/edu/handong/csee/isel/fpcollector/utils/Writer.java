@@ -53,14 +53,16 @@ public class Writer {
 		try(
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName + "_w_Context.csv"));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-									.withHeader("File Path", "Line number", "Error Message", "Code Context"));
+									.withHeader("File Path", "Line number", "Anomaly", "Variable", "Code Context"));
 			) {			
 			for(String line : context.getDirLineContext()) {
 				String dir = line.split(",")[0];
 				String lineNum = line.split(",")[1].trim();
-				String Errmsg = line.split(",")[2];
+				String errmsg = line.split(",")[2];
+				String anomaly = errmsg.split("-anomaly for")[0];
+				String var = errmsg.split("-anomaly for")[1];
 				String contexts = line.split("!@#")[1];
-				csvPrinter.printRecord(dir, lineNum, Errmsg, contexts);
+				csvPrinter.printRecord(dir, lineNum, anomaly, var, contexts);
 			}
 			writer.flush();
 			writer.close();
