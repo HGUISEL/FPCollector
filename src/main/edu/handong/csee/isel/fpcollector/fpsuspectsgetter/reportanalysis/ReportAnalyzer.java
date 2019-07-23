@@ -138,8 +138,8 @@ public class ReportAnalyzer {
 				String[] lineInfo = lineContext.split("\n");
 				
 				for(String line : lineInfo) {
-					if(line.split("[0-9][0-9]:[0-9][0-9]:[0-9][0-9] ").length > 1)
-					lineContextInfo.add(line.split("[0-9][0-9]:[0-9][0-9]:[0-9][0-9] ")[1].trim());
+					if(line.split("\\d\\d:\\d\\d:\\d\\d \\D\\d\\d\\d\\d").length > 1)
+					lineContextInfo.add(line.split("\\d\\d:\\d\\d:\\d\\d \\D\\d\\d\\d\\d")[1].trim());
 				}
 				
 				outputStream.flush();

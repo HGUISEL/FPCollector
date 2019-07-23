@@ -34,9 +34,8 @@ public class ContextExtractor {
 		//write a file
 			System.out.println("\n----- Start to Rearrange Data -----\n");
 			context = new DirLineErrmsgContext(lineContext, resultInfo);
-			System.out.println("\n----- Start to Write a File -----\n");
 			writeContext(context, OutputPath);
-			System.out.println("\n----- All Process is Completed");
+			System.out.println("@@@@@ Context Extracting Process is Completed");
 	}
 	
 	public ArrayList<String> readResultFile(String path){
