@@ -25,11 +25,12 @@ public class FPCollector{
 	final static int PAST = 1;
 	
 	public String[] initiate(String[] args){
-		String[] info = new String[4];
+		String[] info = new String[5];
 		info[0] = init(args[0]);
 		info[1] = init(args[1]);
 		info[2] = init(args[2]);
 		info[3] = init(args[3]);
+		info[4] = init(args[4]);
 		
 		return info;
 	}
@@ -51,11 +52,13 @@ public class FPCollector{
 		String checkoutPath = "";
 		String currentReportPath = "";
 		String pastReportPath = "";
+		String inputTime = "";
 		
 		project = info[0];
 		rule = info[1];
 		outputResultPath = info[2];
 		toolCommand = info[3];
+		inputTime = info[4];
 		
 		//clone the target project
 		clonedPath = clone(project);
@@ -65,16 +68,16 @@ public class FPCollector{
 		currentReportInfo = getInfo(currentReportPath);
 		
 		//check out the target project to a year ago
-		checkoutPath = checkOut(clonedPath);
+		checkoutPath = checkOut(clonedPath, inputTime);
 		//applying pmd to the target project
 		pastReportPath = executeTool(toolCommand, checkoutPath, rule, PAST);
 		//get violation informations(Directory, line number)
 		pastReportInfo = getInfo(pastReportPath);
 	
 		//get git blame/annotate and line info
-		currentBlameInfo = blame(currentReportInfo, clonedPath);
+		currentBlameInfo = getViolationLine(currentReportInfo, clonedPath);
 				
-		pastBlameInfo = blame(pastReportInfo, checkoutPath);
+		pastBlameInfo = getViolationLine(pastReportInfo, checkoutPath);
 		
 		//get suspects
 		
@@ -103,11 +106,11 @@ public class FPCollector{
 		return clonedPath;
 	}
 	
-	public String checkOut(String path) {
+	public String checkOut(String path, String time) {
 		CheckOutMaker checkOut = new CheckOutMaker();
 		String checkoutPath;
 		
-		checkoutPath = checkOut.gitCheckOut(path);
+		checkoutPath = checkOut.gitCheckOut(path, time);
 		
 		return checkoutPath;
 	}
@@ -139,12 +142,12 @@ public class FPCollector{
 	}
 	
 	public HashMap<String, String>
-	blame(ArrayList<String> reportInfo, String path){
+	getViolationLine(ArrayList<String> reportInfo, String path){
 		HashMap<String, String> blameInfo =
 				new HashMap<>();
 		ReportAnalyzer analyzer = new ReportAnalyzer();
 		
-		blameInfo = analyzer.gitBlame(reportInfo, path);
+		blameInfo = analyzer.getViolation(reportInfo, path);
 		
 		return blameInfo;
 	}

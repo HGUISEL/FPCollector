@@ -25,12 +25,11 @@ public class ContextExtractor {
 		String projectName = gitName.split("\\.")[0];
 		resultInfo = readResultFile(OutputPath);
 		
-		//get lines of code
-			lineContext = getContextUsingBlame(resultInfo, projectName);
-			//using reader
-				//file open
-				//read lines
-				//store 11 lines
+		//get lines of code Using File is far much faster
+			//lineContext = getContextUsingBlame(resultInfo, projectName);
+			lineContext = getContextUsingFile(resultInfo, projectName);
+
+
 		//write a file
 			System.out.println("\n----- Start to Rearrange Data -----\n");
 			context = new DirLineErrmsgContext(lineContext, resultInfo);
@@ -51,6 +50,15 @@ public class ContextExtractor {
 		ReportAnalyzer analyzer = new ReportAnalyzer();
 		
 		lineInfo = analyzer.getCtxUsingBlame(result, name);
+		
+		return lineInfo;
+	}
+	
+	public ArrayList<ArrayList<String>> getContextUsingFile(ArrayList<String> result, String name){
+		ArrayList<ArrayList<String>> lineInfo = new ArrayList<>();
+		ReportAnalyzer analyzer = new ReportAnalyzer();
+		
+		lineInfo = analyzer.getCtxUsingFile(result, name);
 		
 		return lineInfo;
 	}

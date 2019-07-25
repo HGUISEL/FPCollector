@@ -1,4 +1,15 @@
-/* What I miss
+/* To-do
+ * 1) get related source code
+ * 2) make a AST tree for the source code
+ * 3) make class which could store base-line and other information
+ * 4) read AST and store information in the 3) class
+ * 5) 4)'s information means that get all parents nodes and children nodes of base-line
+ * 6)----------------------------------------------------------------------------------
+ * 7) data mining using frequency
+ * 8) get common context as a number
+ * 9) translate the number to class name
+ * 
+ * What I miss
  * 1) generalize method
  * 2) avoid using nested data structure
  * 3) find external library which could simplify my code
@@ -16,6 +27,7 @@ public class Main {
 	 * information[1] : Rule Context
 	 * information[2] : Output Path
 	 * information[3] : Tool command
+	 * information[4] : Time
 	 */
 		public static void main(String[] args) {
 			FPCollector getFPSuspects = new FPCollector();

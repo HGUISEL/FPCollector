@@ -3,8 +3,9 @@ package edu.handong.csee.isel.fpcollector.fpsuspectsgetter.checkout;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+//applying current time
+//import java.time.LocalDate;
+//import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -13,7 +14,7 @@ import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
 
 public class CheckOutMaker {
-	public String gitCheckOut(String clonedPath) {
+	public String gitCheckOut(String clonedPath, String time) {
 		String separator = "/";
 		
 			String name = clonedPath.split(separator)[1];
@@ -23,6 +24,7 @@ public class CheckOutMaker {
 			
 			if(!clonedDir.exists()) {
 				System.out.println("!!!!! File Doesn't Cloned Yet");
+				System.exit(-1);
 			}
 			
 			File checkoutDir = new File(checkOutPath);
@@ -41,10 +43,15 @@ public class CheckOutMaker {
 			 */
 			
 			int yearAgo;
-			String[] currentDate;
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			LocalDate localDate = LocalDate.now();
-			currentDate = dtf.format(localDate).toString().split("-");
+			//applying current time
+//			String[] currentDate;
+//			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//			LocalDate localDate = LocalDate.now();
+//			currentDate = dtf.format(localDate).toString().split("-");
+//			yearAgo = Integer.parseInt(currentDate[0]) - 1;
+			
+			//applying input time
+			String[] currentDate = time.split("-");
 			yearAgo = Integer.parseInt(currentDate[0]) - 1;
 			
 			String command = "git rev-list -1 --before=\"" + yearAgo + "-"
