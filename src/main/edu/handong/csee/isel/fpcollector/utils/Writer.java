@@ -47,7 +47,7 @@ public class Writer {
 	}
 	
 	//To do this, I should use my own Delimiter. So, tomorrow, I should check about it
-	public void writeContexts
+	public void writeContextsForDFA
 	(DirLineErrmsgContext context, String path) {
 		String fileName = "./Result";/* ./Result.csv */
 		try(
