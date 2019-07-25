@@ -2,6 +2,9 @@ package edu.handong.csee.isel.fpcollector.contextextractor;
 
 import java.util.ArrayList;
 
+import edu.handong.csee.isel.fpcollector.contextextractor.astvector.DataDependentLineGetter;
+import edu.handong.csee.isel.fpcollector.contextextractor.astvector.ViolationControlFlowGetter;
+import edu.handong.csee.isel.fpcollector.contextextractor.astvector.ViolationVariableGetter;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.reportanalysis.ReportAnalyzer;
 import edu.handong.csee.isel.fpcollector.structures.DirLineErrmsgContext;
 import edu.handong.csee.isel.fpcollector.utils.Reader;
@@ -37,7 +40,7 @@ public class ContextExtractor {
 		ArrayList<String> dataDependentLines = new ArrayList<>();
 		dataDependentLines = getDataDependentLines(varPath);
 		//get control flow of lines
-		ArrayList<String> relatedControlFlow = new ArrayList<>();
+		ArrayList<String> abstractedContext = new ArrayList<>();
 			/*
 			 * It would works like below
 			 * 1) find { or } in source code
@@ -54,7 +57,7 @@ public class ContextExtractor {
 			 * 3) sorting as its line number
 			 * 4) then, all process is done with control flow and data dependency
 			 */
-		realtedControlFlow = getRealtedControlFlow(dataDependentLines);
+		abstractedContext = getRealtedControlFlow(dataDependentLines);
 		//Make AST
 			//using library
 		//get all nodes in vector
@@ -100,5 +103,28 @@ public class ContextExtractor {
 	public void writeContext(DirLineErrmsgContext context, String path) {
 		Writer writer = new Writer();
 		writer.writeContextsForDFA(context, path);
+	}
+	
+	public ArrayList<String> getViolationVarPath(ArrayList<String> result){
+		ArrayList<String> varPath = new ArrayList<>();
+		ViolationVariableGetter vVGetter = new ViolationVariableGetter();
+		
+		varPath = vVGetter.getViolationVariable(result);
+		
+		return varPath;
+	}
+	
+	public ArrayList<String> getDataDependentLines(ArrayList<String> varPath){
+		ArrayList<String> dpLine = new ArrayList<>();
+		DataDependentLineGetter dDLGetter = new DataDependentLineGetter();
+		
+		return dpLine;
+	}
+	
+	public ArrayList<String> getRealtedControlFlow(ArrayList<String> dpLine){
+		ArrayList<String> relatedCF = new ArrayList<>();
+		ViolationControlFlowGetter vCFGetter = new ViolationControlFlowGetter();
+		
+		return relatedCF;
 	}
 }
