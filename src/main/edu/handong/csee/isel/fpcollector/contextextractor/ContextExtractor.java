@@ -40,7 +40,7 @@ public class ContextExtractor {
 		ArrayList<String> dataDependentLines = new ArrayList<>();
 		dataDependentLines = getDataDependentLines(varPath);
 		//get control flow of lines
-		ArrayList<String> abstractedContext = new ArrayList<>();
+		//ArrayList<String> abstractedContext = new ArrayList<>();
 			/*
 			 * It would works like below
 			 * 1) find { or } in source code
@@ -57,7 +57,7 @@ public class ContextExtractor {
 			 * 3) sorting as its line number
 			 * 4) then, all process is done with control flow and data dependency
 			 */
-		abstractedContext = getRealtedControlFlow(dataDependentLines);
+		//abstractedContext = getRealtedControlFlow(dataDependentLines);
 		//Make AST
 			//using library
 		//get all nodes in vector

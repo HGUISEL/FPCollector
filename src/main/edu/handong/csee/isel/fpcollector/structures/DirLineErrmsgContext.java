@@ -46,6 +46,12 @@ public class DirLineErrmsgContext {
 		this.dirLineContext.addAll(contextContainer);
 	}
 	
+	public DirLineErrmsgContext(ArrayList<String> context){
+		this.dirLineContext = context;
+		
+		}
+		
+	
 	public ArrayList<String> getDirLineContext(){
 		
 		return dirLineContext;

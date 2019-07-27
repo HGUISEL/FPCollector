@@ -61,6 +61,7 @@ public class Writer {
 				String errmsg = line.split(",")[2];
 				String anomaly = errmsg.split("-anomaly for")[0];
 				String var = errmsg.split("-anomaly for")[1];
+				//String contexts = line.split(",%%%%%")[1];
 				String contexts = line.split("!@#")[1];
 				csvPrinter.printRecord(dir, lineNum, anomaly, var, contexts);
 			}

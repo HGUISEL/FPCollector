@@ -26,8 +26,11 @@ public class DataDependentLineGetter {
 				
 				while((line = bufReader.readLine()) != null) {
 					lineNum ++;
-					if(line.contains(var)) {
-						lineInfo = lineInfo.concat("" + lineNum + ") " +line + "\n");
+					int startIdx = line.indexOf(var);
+					//int endIdx = startIdx + var.length();
+					String lineMatches= ".+\\b"+var+"\\b.+";
+					if(line.matches(lineMatches)) {
+						lineInfo = lineInfo.concat("" + lineNum + ") " + line + "\n");
 					}
 				}
 				bufReader.close();
