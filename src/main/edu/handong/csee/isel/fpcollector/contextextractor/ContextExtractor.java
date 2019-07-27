@@ -117,6 +117,7 @@ public class ContextExtractor {
 	public ArrayList<String> getDataDependentLines(ArrayList<String> varPath){
 		ArrayList<String> dpLine = new ArrayList<>();
 		DataDependentLineGetter dDLGetter = new DataDependentLineGetter();
+		dpLine = dDLGetter.getDataDependentLines(varPath);
 		
 		return dpLine;
 	}
