@@ -33,6 +33,12 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-csv
 	compile group: 'org.apache.commons', name: 'commons-csv', version: '1.7'
     
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.common
+	compile group: 'org.eclipse.platform', name: 'org.eclipse.equinox.common', version: '3.10.400'
+    
+    // https://mvnrepository.com/artifact/org.eclipse.jdt/org.eclipse.jdt.core
+	compile group: 'org.eclipse.jdt', name: 'org.eclipse.jdt.core', version: '3.18.0'
+    
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
