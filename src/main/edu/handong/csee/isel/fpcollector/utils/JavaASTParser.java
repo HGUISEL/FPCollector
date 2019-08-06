@@ -2,6 +2,7 @@ package edu.handong.csee.isel.fpcollector.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,25 +49,25 @@ public class JavaASTParser {
 	}
 
 	public void praseJavaFile(String source){
-
-		ASTParser parser = ASTParser.newParser(AST.JLS12);
+		//String sourceCode = source;
+		ASTParser parser = ASTParser.newParser(AST.JLS11);
 
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		char[] content = source.toCharArray();
 		parser.setSource(content);
 		//parser.setUnitName("temp.java");
 		Map<String, String> options = JavaCore.getOptions();
-		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_12);
+		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
 		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
-				JavaCore.VERSION_12);
-		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_12);
+				JavaCore.VERSION_1_8);
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
 		String[] sources = {};
 		String[] classPaths = {};
 		parser.setEnvironment(classPaths, sources, null, true);
 		parser.setResolveBindings(false);
 		parser.setCompilerOptions(options);
 		parser.setStatementsRecovery(true);
-
+		
 		try {
 			final CompilationUnit unit = (CompilationUnit) parser.createAST(null);
 			cUnit = unit;
@@ -1097,4 +1098,74 @@ public class JavaASTParser {
 		
 		return getInterface(node.getParent());
 	}
+	
+	public ArrayList<SimpleName> getViolatedNames(String name){
+		final ArrayList<SimpleName> violatedNames = new ArrayList<SimpleName>();
+//		Collections.sort(lstSimpleName, new Comparator<Object>() {	
+//			public int compare(Object o1, Object o2) { 
+//				String sa = (String)o1.toString();
+//        		String sb = (String)o2.toString();
+//        		int v = sa.compareTo(sb);
+//
+//        		return v;           
+//         		}
+//        	});
+		//  1) 40 -> 35 2) 40 -> 40 -> 15 3) 40 -> 40 -> 35 4) 40 -> 40 -> 26 5) 40-> 40-> 23
+		for(SimpleName simpleName : lstSimpleName) {
+			int flag = 0;
+			if(simpleName.getParent() != null && name.equals(simpleName.toString())) {
+				
+				if(simpleName.getParent().getNodeType() == 40) {
+					ASTNode temp = simpleName.getParent();
+					
+					while(temp.getNodeType() == 40) {
+						temp = temp.getParent();
+					}
+					
+					if(temp.getNodeType() == 35 || temp.getNodeType() == 15 ||
+							temp.getNodeType() == 26 ) {
+						flag = 1;
+					}
+				}
+				
+				if(flag == 0)
+					violatedNames.add(simpleName);
+			}
+		}
+		return violatedNames;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private static void printChild(ASTNode node) {
+    	List properties = node.structuralPropertiesForType();
+    	
+    	for(Iterator itertor = properties.iterator(); itertor.hasNext();) {
+    		Object desciptor = itertor.next();
+    		if(desciptor instanceof SimplePropertyDescriptor) {
+    			SimplePropertyDescriptor simple = (SimplePropertyDescriptor)desciptor;
+    			Object value = node.getStructuralProperty(simple);
+    			System.out.println(simple.getId() + " SimpleProperty (" + value.toString() + ")");
+    		} else if (desciptor instanceof ChildPropertyDescriptor) {
+    			ChildPropertyDescriptor child = (ChildPropertyDescriptor) desciptor;
+    			ASTNode childNode = (ASTNode) node.getStructuralProperty(child);
+    			if(childNode != null) {
+    				System.out.println("Child ( " + child.getId() + ") {");
+    				printChild(childNode);
+    				System.out.println("}\n");
+    			}
+    		} else { 
+    			ChildListPropertyDescriptor list = (ChildListPropertyDescriptor) desciptor;
+    			System.out.println("ChildList (" + list.getId()+ ") {");
+    			printChild((List)node.getStructuralProperty(list));
+    			System.out.println("}\n");
+    		}
+    	}
+    }
+    @SuppressWarnings("rawtypes")
+	private static void printChild(List nodes) {
+    	for ( Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+    		ASTNode node = (ASTNode) iterator.next();
+    		printChild(node);
+    	}
+    }
 }
