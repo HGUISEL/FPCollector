@@ -6,12 +6,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class DataDependentLineGetter {
-	public ArrayList<String> getDataDependentLines(ArrayList<String> pathLineErrVar){
-		ArrayList<String> dpLines = new ArrayList<>();
+import org.eclipse.jdt.core.dom.*;
+
+import edu.handong.csee.isel.fpcollector.structures.VectorNode;
+import edu.handong.csee.isel.fpcollector.utils.JavaASTParser;
+
+public class ContextVectorGetter {
+	public ArrayList<ArrayList<ASTNode>> getContextNode(ArrayList<String> pathLineErrVar){
+		ArrayList<ArrayList<ASTNode>> contextInfo = new ArrayList<>();
 		
 		try {
-			int FileNum = 0;
 			for(String pathVariable : pathLineErrVar) {
 				String path = pathVariable.split(",")[0];
 				String var = pathVariable.split(",")[3].trim();
@@ -20,89 +24,66 @@ public class DataDependentLineGetter {
 				FileReader fReader = new FileReader(f);
 				BufferedReader bufReader = new BufferedReader(fReader);
 				
+				String source = "";
 				String line = "";
-				String lineInfo = ",%%%%%";
-				ArrayList<Integer> controlFlow = new ArrayList<>();
-				ArrayList<Integer> dataDependency = new ArrayList<>();
-				ArrayList<String> blocks = new ArrayList<>();
-				ArrayList<String> blockPairs = new ArrayList<>();
-				//ArrayList<Integer> endBlock = new ArrayList<>();
-				
-				int lineNum = 0;
-				//for ArrayList.get(i), initiate as -1
-				int blockNum = -1;
-				int blockPairNum = 0;
-				int controlNum =0 ;
 				
 				while((line = bufReader.readLine()) != null) {
-					lineNum ++;
-					if(!line.trim().startsWith("*") && 
-							!line.trim().startsWith("/*") &&
-							!line.trim().startsWith("//") &&
-							(line.matches(".+\\bif\\b.+") || line.contains(".+\\belse\\b.+") 
-							|| line.contains(".+\\bwhile\\b.+") || line.contains(".+\\bfor\\b.+")
-							|| line.contains(".+\\bswitch\\b.+") || line.contains(".+\\btry\\b.+")
-							|| line.contains(".+\\bcatch\\b.+"))) {
-						controlFlow.add(lineNum);
-						controlNum ++;
-					}
-					
-					if(lineNum == 36) {
-						System.out.println("a");
-					}
-					
-					if(controlNum > 0 && line.matches(".+\\{.+\\}.+")&&
-							!line.trim().substring(0, 1).contains("*") && 
-							!line.trim().substring(0, 1).contains("/*") &&
-							!line.trim().substring(0, 1).contains("//")) {
-						String blockPair = "" + lineNum + "-" + lineNum;
-						blockPairs.add(blockPairNum, blockPair);
-						blockPairNum ++;
-					} else if(true) 
-						{if (controlNum > 0 &&
-							line.contains("}") &&
-							!line.trim().startsWith("*") && 
-							!line.trim().startsWith("/*") &&
-							!line.trim().startsWith("//")) {
-								String blockPair = blocks.get(blockNum) + "-" + lineNum;
-								blocks.remove(blockNum);
-								blockPairs.add(blockPairNum, blockPair);
-								blockNum --;
-								controlNum --;
-								blockPairNum ++;
-					} if(controlNum > 0 &&
-							line.contains("{") &&
-							!line.trim().startsWith("*") && 
-							!line.trim().startsWith("/*") &&
-							!line.trim().startsWith("//")) {
-								blockNum ++;
-								blocks.add(""+lineNum);
-						}
-					}
-					
-					String lineMatches= ".+\\b"+var+"\\b.+";
-					if(line.matches(lineMatches)) {
-						lineInfo = lineInfo.concat("" + lineNum + ") " + line + "\n");
-						dataDependency.add(lineNum);
-					}
-					
-					System.out.println("line" + lineNum);
+					source = source.concat(line + "\n");
 				}
-				FileNum ++;
-				System.out.println(FileNum);
-				if(FileNum == 16)
-					System.out.println(FileNum);
-				
 				bufReader.close();
 				
-//				for(int i = 0 ; i < lineNum; i ++) {
-//					if(startBlock.get(i))
-//				}
-				//dpLines.add(pathVariable + lineInfo);
-			}
+				JavaASTParser codeAST = new JavaASTParser(source);
+				ArrayList<SimpleName> names = new ArrayList<>();
+				
+				names = codeAST.getViolatedNames(var);
+				ArrayList<ASTNode> contexts = new ArrayList<>();
+				
+				for(SimpleName name : names) {
+					for(ASTNode parent = name ; !(parent instanceof TypeDeclaration) ; parent = parent.getParent()) {
+						if(!((parent instanceof Annotation) ||
+							 (parent instanceof AnnotationTypeDeclaration) ||
+							 (parent instanceof AnnotatableType) ||
+							 (parent instanceof AnnotationTypeMemberDeclaration) ||
+							 (parent instanceof Block) ||
+							 (parent instanceof BlockComment) ||
+							 (parent instanceof Comment) ||
+							 (parent instanceof ImportDeclaration) ||
+							 (parent instanceof LineComment)||
+							 (parent instanceof MarkerAnnotation) ||
+							 (parent instanceof MemberRef)||
+							 (parent instanceof MethodRef) ||
+							 (parent instanceof MethodReference) ||
+							 (parent instanceof MethodRefParameter) ||
+							 (parent instanceof NormalAnnotation) ||
+							 (parent instanceof PackageDeclaration) ||
+							 (parent instanceof SingleMemberAnnotation) ||
+							 (parent instanceof TagElement) ||
+							 contexts.contains(parent))) {
+							contexts.add(parent);
+						}	
+					}
+				}
+				
+			contextInfo.add(contexts);
+			}			
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		return dpLines;
+		return contextInfo;
+	}
+	
+	public ArrayList<ArrayList<VectorNode>> getContextVector(ArrayList<ArrayList<ASTNode>> contextNodes){
+		ArrayList<ArrayList<VectorNode>> contextVector = new ArrayList<>();
+		
+		for(ArrayList<ASTNode> nodes : contextNodes) {
+			ArrayList<VectorNode> vectorizedNodes = new ArrayList<>();
+			for(ASTNode node : nodes) {
+				VectorNode tempVectorNode = new VectorNode(node);
+				vectorizedNodes.add(tempVectorNode);
+			}
+			contextVector.add(vectorizedNodes);
+		}
+		
+		return contextVector;
 	}
 }

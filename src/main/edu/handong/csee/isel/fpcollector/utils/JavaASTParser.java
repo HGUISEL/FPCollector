@@ -1101,16 +1101,6 @@ public class JavaASTParser {
 	
 	public ArrayList<SimpleName> getViolatedNames(String name){
 		final ArrayList<SimpleName> violatedNames = new ArrayList<SimpleName>();
-//		Collections.sort(lstSimpleName, new Comparator<Object>() {	
-//			public int compare(Object o1, Object o2) { 
-//				String sa = (String)o1.toString();
-//        		String sb = (String)o2.toString();
-//        		int v = sa.compareTo(sb);
-//
-//        		return v;           
-//         		}
-//        	});
-		//  1) 40 -> 35 2) 40 -> 40 -> 15 3) 40 -> 40 -> 35 4) 40 -> 40 -> 26 5) 40-> 40-> 23
 		for(SimpleName simpleName : lstSimpleName) {
 			int flag = 0;
 			if(simpleName.getParent() != null && name.equals(simpleName.toString())) {

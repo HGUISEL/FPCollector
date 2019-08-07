@@ -1,12 +1,17 @@
 package edu.handong.csee.isel.fpcollector.contextextractor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import edu.handong.csee.isel.fpcollector.contextextractor.astvector.DataDependentLineGetter;
-import edu.handong.csee.isel.fpcollector.contextextractor.astvector.ViolationControlFlowGetter;
+import org.eclipse.jdt.core.dom.ASTNode;
+
+import edu.handong.csee.isel.fpcollector.contextextractor.astvector.ContextVectorGetter;
 import edu.handong.csee.isel.fpcollector.contextextractor.astvector.ViolationVariableGetter;
+import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternFinder;
+import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.SupportCountGetter;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.reportanalysis.ReportAnalyzer;
 import edu.handong.csee.isel.fpcollector.structures.DirLineErrmsgContext;
+import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 import edu.handong.csee.isel.fpcollector.utils.Reader;
 import edu.handong.csee.isel.fpcollector.utils.Writer;
 
@@ -22,58 +27,43 @@ public class ContextExtractor {
 		String OutputPath = infos[2];
 		
 		DirLineErrmsgContext context;
-		String project = infos[0];
-		String[] getName = project.split("/");
-		String gitName = getName[getName.length - 1];
-		String projectName = gitName.split("\\.")[0];
 		resultInfo = readResultFile(OutputPath);
-		
-		//get lines of code Using File is far much faster
-			//lineContext = getContextUsingBlame(resultInfo, projectName);
-			lineContext = getContextUsingFile(resultInfo, projectName);
 			
 		//part 1 : get AST Vector
 		//find violated variable and its path
 		ArrayList<String> varPath = new ArrayList<>();
-		varPath = getViolationVarPath(resultInfo);
-		//get all line where violated variable is located
-		ArrayList<String> dataDependentLines = new ArrayList<>();
-		dataDependentLines = getDataDependentLines(varPath);
-		//get control flow of lines
-		ArrayList<String> abstractedContext = new ArrayList<>();
-			/*
-			 * It would works like below
-			 * 1) find { or } in source code
-			 * 		* if it is {
-			 * 			a. check its line number is less than dataDependentLine number
-			 * 				a-1. if it is less, store temporarily its line number 
-			 * 					 and its line contents
-			 * 				a-2. then find }
-			 * 				a-3. if }'s line number is bigger than dataDependentLine number,
-			 * 					 store its line number and its line contents
-			 * 				a-4. if more { is found, store it and wait for }
-			 * 				a-5. maybe, it would work by using stack
-			 * 2) if the pair of {} is found, store them with dependent lines
-			 * 3) sorting as its line number
-			 * 4) then, all process is done with control flow and data dependency
-			 */
-		abstractedContext = getRealtedControlFlow(dataDependentLines);
-		//Make AST
-			//using library
-		//get all nodes in vector
-			//just change into vector
+		ArrayList<ArrayList<ASTNode>> contextNodeInformation = new ArrayList<>();
+		ArrayList<ArrayList<VectorNode>> contextVectorInformation = new ArrayList<>();
+		HashMap<ArrayList<VectorNode>, Integer> allPatterns = new HashMap<>();
 		
-		//part 2 : get Frequent Node
+		System.out.println("Collecting violation occurred Variable and its Path...");
+		varPath = getViolationVarPath(resultInfo);
+		System.out.println("@@@@@ Collected Successfully\n");
+		System.out.println("Collecting violation occurred Method Context...");
+		contextNodeInformation = getContextNode(varPath);
+		System.out.println("@@@@@ Collected Successfully\n");
+		System.out.println("Vectorizing Collected Context...");
+		contextVectorInformation = getContextVectorInformation(contextNodeInformation);
+		System.out.println("@@@@@ Collected Successfully\n");
+		
+		//part 2 : get Frequent pattern
+		//get all pattern
+		allPatterns = getAllPatterns(contextVectorInformation);
+//		contextFilter = getContextFilter(contextFrequency);
+		
+		//get frequency on line
+//		ArrayList<SimpleEntry<Integer, Integer>> lineFrequency = new ArrayList<>();
+//		lineFrequency = getLineFrequency(violatedLineVectorInformation);
 		
 		//part 3 : how to choose Nodes as it is common and important(range, kind or etc.)
-
+		
 		//write a file
 			System.out.println("\n----- Start to Rearrange Data -----\n");
 			context = new DirLineErrmsgContext(lineContext, resultInfo);
 			writeContext(context, OutputPath);
 			System.out.println("@@@@@ Context Extracting Process is Completed");
 	}
-	
+
 	public ArrayList<String> readResultFile(String path){
 		Reader reader = new Reader();
 		ArrayList<String> resultInfo = new ArrayList<>();
@@ -114,18 +104,42 @@ public class ContextExtractor {
 		return varPath;
 	}
 	
-	public ArrayList<String> getDataDependentLines(ArrayList<String> varPath){
-		ArrayList<String> dpLine = new ArrayList<>();
-		DataDependentLineGetter dDLGetter = new DataDependentLineGetter();
-		dpLine = dDLGetter.getDataDependentLines(varPath);
+	public ArrayList<ArrayList<ASTNode>> getContextNode(ArrayList<String> varPath){
+		ArrayList<ArrayList<ASTNode>> contextVector = 
+				new ArrayList<>();
+		ContextVectorGetter ctxGetter = new ContextVectorGetter();
+		contextVector = ctxGetter.getContextNode(varPath);
 		
-		return dpLine;
+		return contextVector;
 	}
 	
-	public ArrayList<String> getRealtedControlFlow(ArrayList<String> dpLine){
-		ArrayList<String> relatedCF = new ArrayList<>();
-		ViolationControlFlowGetter vCFGetter = new ViolationControlFlowGetter();
+	public ArrayList<ArrayList<VectorNode>> 
+	getContextVectorInformation(ArrayList<ArrayList<ASTNode>> nodeInfo){
+		ArrayList<ArrayList<VectorNode>> contextVector = new ArrayList<>();
+		ContextVectorGetter vectorGetter = new ContextVectorGetter();
 		
-		return relatedCF;
+		contextVector = vectorGetter.getContextVector(nodeInfo);
+		
+		return contextVector;
+	}
+	
+	public ArrayList<ArrayList<VectorNode>> getContextFrequency
+	(ArrayList<ArrayList<VectorNode>> contextVectorInformation){
+		ArrayList<ArrayList<VectorNode>> frequencyPattern = new ArrayList<>();
+		SupportCountGetter supportCountGetter = new SupportCountGetter();
+
+		frequencyPattern = supportCountGetter.getSupportCount(contextVectorInformation);
+		
+		return frequencyPattern;
+	}
+	
+
+	public HashMap<ArrayList<VectorNode>, Integer> getAllPatterns
+	(ArrayList<ArrayList<VectorNode>> contextVectorInformation) {
+		HashMap<ArrayList<VectorNode>, Integer> patterns = new HashMap<>();
+		PatternFinder finder = new PatternFinder();	
+		
+		
+		return patterns;
 	}
 }
