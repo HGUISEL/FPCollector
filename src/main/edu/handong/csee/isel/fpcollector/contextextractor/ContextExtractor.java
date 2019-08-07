@@ -34,7 +34,7 @@ public class ContextExtractor {
 		ArrayList<String> varPath = new ArrayList<>();
 		ArrayList<ArrayList<ASTNode>> contextNodeInformation = new ArrayList<>();
 		ArrayList<ArrayList<VectorNode>> contextVectorInformation = new ArrayList<>();
-		HashMap<ArrayList<VectorNode>, Integer> allPatterns = new HashMap<>();
+		HashMap<ArrayList<Integer>, Integer> allPatterns = new HashMap<>();
 		
 		System.out.println("Collecting violation occurred Variable and its Path...");
 		varPath = getViolationVarPath(resultInfo);
@@ -134,11 +134,12 @@ public class ContextExtractor {
 	}
 	
 
-	public HashMap<ArrayList<VectorNode>, Integer> getAllPatterns
+	public HashMap<ArrayList<Integer>, Integer> getAllPatterns
 	(ArrayList<ArrayList<VectorNode>> contextVectorInformation) {
-		HashMap<ArrayList<VectorNode>, Integer> patterns = new HashMap<>();
+		HashMap<ArrayList<Integer>, Integer> patterns = new HashMap<>();
 		PatternFinder finder = new PatternFinder();	
 		
+		patterns = finder.mineAllPatterns(contextVectorInformation);
 		
 		return patterns;
 	}
