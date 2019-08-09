@@ -57,8 +57,15 @@ public class ContextVectorGetter {
 							 (parent instanceof NormalAnnotation) ||
 							 (parent instanceof PackageDeclaration) ||
 							 (parent instanceof SingleMemberAnnotation) ||
-							 (parent instanceof TagElement) ||
-							 contexts.contains(parent))) {
+							 (parent instanceof TagElement))) {
+//							if(parent instanceof PostfixExpression) {
+//								//contexts.add(((VariableDeclaration) parent).getInitializer());
+//								System.out.print(((PostfixExpression) parent).getNodeType() + " : ");
+//								System.out.print(((PostfixExpression) parent));
+//								//System.out.print("\nParent : " + ((MethodInvocation) parent).getParent());
+//								System.out.println("(" + ((PostfixExpression) parent).getClass() + ")");								
+//							}
+
 							contexts.add(parent);
 						}	
 					}

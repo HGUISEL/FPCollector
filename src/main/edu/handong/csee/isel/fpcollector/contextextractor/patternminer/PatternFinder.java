@@ -11,9 +11,9 @@ import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 
 public class PatternFinder {
 	//Key : Pattern, Value : Size of Pattern (e.g. if pattern is [ 1, 2 ] than size of pattern is 2)
-	public HashMap<ArrayList<Integer>, Integer> mineAllSequentialPatterns
+	public HashMap<ArrayList<String>, Integer> mineAllSequentialPatterns
 	(ArrayList<ArrayList<VectorNode>> contextVectorInformation){
-		HashMap<ArrayList<Integer>, Integer> patterns = new HashMap<>();
+		HashMap<ArrayList<String>, Integer> patterns = new HashMap<>();
 		int minSize = 99999;
 		int maxPatternSize = -1;
 		//get Maximum size of pattern which is the minimum of contextVector size
@@ -25,7 +25,7 @@ public class PatternFinder {
 		maxPatternSize = minSize;
 		
 		//get Patterns
-		//get Pattern size from two to max Pattern size
+		//get Pattern size from two to max Pattern size(i means minimum pattern size)
 		for(int i = 2; i<= maxPatternSize; i ++) {
 			//get context vector one by one
 			for(ArrayList<VectorNode> tempPattern : contextVectorInformation) {
@@ -37,15 +37,30 @@ public class PatternFinder {
 //				System.out.println("] ");
 				//get pattern according to pattern size and its rule(in this case, sequential)
 				for(int j = 0 ; j < tempPattern.size() - i + 1 ; j ++) {
-					ArrayList<Integer> tempPatternContext = new ArrayList<>();
+					ArrayList<String> tempPatternContext = new ArrayList<>();
 					int tempIdx = j;
 					int tempNumOfNode = i;
-					while(tempNumOfNode > 0) {
-					tempPatternContext.add(tempPattern.get(tempIdx).getNode().getNodeType());
-					tempIdx++;
-					tempNumOfNode--;
+					int flag = 0;
+					while(tempNumOfNode > 0 && tempIdx<tempPattern.size()) {
+						if(tempPattern.get(tempIdx).getVectorNodeInfo().equals("Useless")) {
+							tempIdx++;
+							continue;
+						}
+						if(tempPattern.get(tempIdx).getVectorNodeInfo().equals("SimpleName")) {
+							flag++;
+						}
+						if(flag == 2) {
+							break;
+						}
+						tempPatternContext.add(tempPattern.get(tempIdx).getVectorNodeInfo());
+						tempIdx++;
+						tempNumOfNode--;
 					}
-					patterns.put(tempPatternContext, i);
+					
+					if(tempPatternContext.get(0).equals("SimpleName") /*&&
+							!tempPatternContext.contains("Useless")*/) {
+						patterns.put(tempPatternContext, i);
+					}
 				}
 			}
 		}
@@ -63,24 +78,24 @@ public class PatternFinder {
 		return patterns;
 	}
 	
-	public HashMap<ArrayList<Integer>, Integer> getSPFrequency
+	public HashMap<ArrayList<String>, Integer> getSPFrequency
 	(ArrayList<ArrayList<VectorNode>> contextVectorInformation,
-	HashMap<ArrayList<Integer>, Integer> allSequentialPatterns){
-		HashMap<ArrayList<Integer>, Integer> frequency = new HashMap<>();
+	HashMap<ArrayList<String>, Integer> allSequentialPatterns){
+		HashMap<ArrayList<String>, Integer> frequency = new HashMap<>();
 		
-		ArrayList<ArrayList<Integer>> CVInNumber= new ArrayList<>();
+		ArrayList<ArrayList<String>> contextVectors= new ArrayList<>();
 		
 		for(ArrayList<VectorNode> contextVector : contextVectorInformation) {
-			ArrayList<Integer> tempVector = new ArrayList<>();
+			ArrayList<String> tempVector = new ArrayList<>();
 			for(VectorNode node : contextVector) {
-				tempVector.add(node.getNode().getNodeType());
+				tempVector.add(node.getVectorNodeInfo());
 			}
-			CVInNumber.add(tempVector);
+			contextVectors.add(tempVector);
 		}
 		//allow duplication in one vector(e.g. [1,2,3,1,2,3] -> pattern [1,2,3] twice
-		for(Map.Entry<ArrayList<Integer>, Integer> pattern : allSequentialPatterns.entrySet()) {
+		for(Map.Entry<ArrayList<String>, Integer> pattern : allSequentialPatterns.entrySet()) {
 			int count = 0;
-			for(ArrayList<Integer> vector : CVInNumber) {
+			for(ArrayList<String> vector : contextVectors) {
 				for(int i = 0 ; i < vector.size(); i ++) {
 					for(int j = 0 ; j < pattern.getKey().size(); j ++) {
 						int tempVectorIdx = i;
@@ -89,7 +104,7 @@ public class PatternFinder {
 						while(vector.size() > pattern.getKey().size() &&
 								tempVectorIdx < vector.size() &&
 								tempPatternIdx < pattern.getKey().size() &&
-								vector.get(tempVectorIdx) == pattern.getKey().get(tempPatternIdx)) {
+								vector.get(tempVectorIdx).equals(pattern.getKey().get(tempPatternIdx))) {
 							correct ++;
 							tempPatternIdx ++;
 							tempVectorIdx ++;
@@ -106,18 +121,17 @@ public class PatternFinder {
 		return frequency;
 	}
 
-	public HashMap<ArrayList<Integer>, Integer> 
-	sortByCounting(HashMap<ArrayList<Integer>, Integer> patternFrequency) {
+	public HashMap<ArrayList<String>, Integer> 
+	sortByCounting(HashMap<ArrayList<String>, Integer> patternFrequency) {
 		Map<String, Integer> frequency = new HashMap<>();
 		
-		for(ArrayList<Integer> tempKey : patternFrequency.keySet()) {
+		for(ArrayList<String> tempKey : patternFrequency.keySet()) {
 			Integer tempValue = patternFrequency.get(tempKey);
 			String keys = tempKey.toString();
 			frequency.put(keys, tempValue);
 		}
 		
 		List<String> frequencyList = new ArrayList<>(frequency.keySet());
-		
 		Collections.sort(frequencyList, new Comparator<String>() {
 			public int compare(String o1, String o2) {
 				return frequency.get(o2).compareTo(frequency.get(o1));
@@ -130,7 +144,7 @@ public class PatternFinder {
 			if(count == ranking) {
 				break;
 			}
-			System.out.println(String.format("Key : %s, Value : %d", key, frequency.get(key)));
+			System.out.println(String.format("%s (%d)", key, frequency.get(key)));
 			count ++;
 		}
 		
