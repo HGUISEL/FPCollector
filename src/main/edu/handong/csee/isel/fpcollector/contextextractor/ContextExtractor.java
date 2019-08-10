@@ -1,5 +1,6 @@
 package edu.handong.csee.isel.fpcollector.contextextractor;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -32,10 +33,11 @@ public class ContextExtractor {
 		//part 1 : get AST Vector
 		//find violated variable and its path
 		ArrayList<String> varPath = new ArrayList<>();
-		ArrayList<ArrayList<ASTNode>> contextNodeInformation = new ArrayList<>();
-		ArrayList<ArrayList<VectorNode>> contextVectorInformation = new ArrayList<>();
-		HashMap<ArrayList<String>, Integer> allSequentialPatterns = new HashMap<>();
+		ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> contextNodeInformation = new ArrayList<>();
+		ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation = new ArrayList<>();
+//		HashMap<ArrayList<String>, Integer> allSequentialPatterns = new HashMap<>();
 		HashMap<ArrayList<String>, Integer> patternFrequency = new HashMap<>();
+		HashMap<ArrayList<String>, Integer> linePatterns = new HashMap<>();
 		
 		System.out.println("Collecting violation occurred Variable and its Path...");
 		varPath = getViolationVarPath(resultInfo);
@@ -50,10 +52,16 @@ public class ContextExtractor {
 		//part 2 : get Frequent pattern
 		//get all pattern(SP, OP, AP)
 		//1) get SP
-		allSequentialPatterns = getAllPatterns(contextVectorInformation);
-		patternFrequency = getSequentialPatternFrequency(contextVectorInformation, allSequentialPatterns);
-		patternFrequency = sortByFrequency(patternFrequency);
+//		allSequentialPatterns = getAllPatterns(contextVectorInformation);
+//		patternFrequency = getSequentialPatternFrequency(contextVectorInformation, allSequentialPatterns);
+//		patternFrequency = sortByFrequency(patternFrequency);
 		
+		//2) get line Patterns
+		//to-do
+		linePatterns = getLinePatterns(contextVectorInformation);
+		//to-do
+		//patternFrequency = getLinePatternFrequency(contextVectorInformation, linePatterns);
+		patternFrequency = sortByFrequency(patternFrequency);
 		
 		//write a file
 			System.out.println("\n----- Start to Rearrange Data -----\n");
@@ -61,7 +69,7 @@ public class ContextExtractor {
 			writeContext(context, OutputPath);
 			System.out.println("@@@@@ Context Extracting Process is Completed");
 	}
-
+	
 	public ArrayList<String> readResultFile(String path){
 		Reader reader = new Reader();
 		ArrayList<String> resultInfo = new ArrayList<>();
@@ -102,8 +110,8 @@ public class ContextExtractor {
 		return varPath;
 	}
 	
-	public ArrayList<ArrayList<ASTNode>> getContextNode(ArrayList<String> varPath){
-		ArrayList<ArrayList<ASTNode>> contextVector = 
+	public ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> getContextNode(ArrayList<String> varPath){
+		ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> contextVector = 
 				new ArrayList<>();
 		ContextVectorGetter ctxGetter = new ContextVectorGetter();
 		contextVector = ctxGetter.getContextNode(varPath);
@@ -111,9 +119,9 @@ public class ContextExtractor {
 		return contextVector;
 	}
 	
-	public ArrayList<ArrayList<VectorNode>> 
-	getContextVectorInformation(ArrayList<ArrayList<ASTNode>> nodeInfo){
-		ArrayList<ArrayList<VectorNode>> contextVector = new ArrayList<>();
+	public ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> 
+	getContextVectorInformation(ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> nodeInfo){
+		ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVector = new ArrayList<>();
 		ContextVectorGetter vectorGetter = new ContextVectorGetter();
 		
 		contextVector = vectorGetter.getContextVector(nodeInfo);
@@ -131,9 +139,18 @@ public class ContextExtractor {
 		return frequencyPattern;
 	}
 	
+	private HashMap<ArrayList<String>, Integer> getLinePatterns(
+			ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation) {
+		HashMap<ArrayList<String>, Integer> linePatterns = new HashMap<>();
+		PatternFinder finder = new PatternFinder();
+		
+		linePatterns = finder.mineLinePatterns(contextVectorInformation);
+	
+		return linePatterns;
+	}
 
 	public HashMap<ArrayList<String>, Integer> getAllPatterns
-	(ArrayList<ArrayList<VectorNode>> contextVectorInformation) {
+	(ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation) {
 		HashMap<ArrayList<String>, Integer> sequentialPatterns = new HashMap<>();
 		HashMap<ArrayList<String>, Integer> orderedPatterns = new HashMap<>();
 		HashMap<ArrayList<String>, Integer> allPatterns = new HashMap<>();
@@ -146,7 +163,7 @@ public class ContextExtractor {
 	}
 	
 	public HashMap<ArrayList<String>, Integer> getSequentialPatternFrequency
-	(ArrayList<ArrayList<VectorNode>> contextVectorInformation, 
+	(ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation, 
 	HashMap<ArrayList<String>, Integer> allSequentialPatterns) {
 		PatternFinder finder = new PatternFinder();
 		HashMap<ArrayList<String>, Integer> frequency = new HashMap<>();

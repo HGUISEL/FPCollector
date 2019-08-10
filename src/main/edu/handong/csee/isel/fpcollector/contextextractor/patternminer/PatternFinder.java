@@ -6,20 +6,42 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
+
+import org.eclipse.jdt.core.dom.ASTNode;
 
 import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 
 public class PatternFinder {
+	public HashMap<ArrayList<String>, Integer> mineLinePatterns
+	(ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation){
+		HashMap<ArrayList<String>, Integer> linePatterns = new HashMap<>();
+		
+		//Among contextVecotInformation, get line which include violated variable and its Pattern
+		//1) get All Sequential Nodes until node's start line is same with SimpleName's start line
+		//2) don't care about number of nodes just get All.
+		
+		//START HERE
+		//START HERE
+		//START HERE
+		//START HERE
+		//START HERE
+		//START HERE
+		
+		return linePatterns;
+	}
+	
+	
 	//Key : Pattern, Value : Size of Pattern (e.g. if pattern is [ 1, 2 ] than size of pattern is 2)
 	public HashMap<ArrayList<String>, Integer> mineAllSequentialPatterns
-	(ArrayList<ArrayList<VectorNode>> contextVectorInformation){
+	(ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation){
 		HashMap<ArrayList<String>, Integer> patterns = new HashMap<>();
 		int minSize = 99999;
 		int maxPatternSize = -1;
 		//get Maximum size of pattern which is the minimum of contextVector size
-		for(ArrayList<VectorNode> tempNodes : contextVectorInformation) {
-			if(minSize > tempNodes.size()) {
-				minSize = tempNodes.size();
+		for(SimpleEntry<ASTNode, ArrayList<VectorNode>> tempNodes : contextVectorInformation) {
+			if(minSize > tempNodes.getValue().size()) {
+				minSize = tempNodes.getValue().size();
 			}
 		}
 		maxPatternSize = minSize;
@@ -28,7 +50,7 @@ public class PatternFinder {
 		//get Pattern size from two to max Pattern size(i means minimum pattern size)
 		for(int i = 2; i<= maxPatternSize; i ++) {
 			//get context vector one by one
-			for(ArrayList<VectorNode> tempPattern : contextVectorInformation) {
+			for(SimpleEntry<ASTNode, ArrayList<VectorNode>> tempPattern : contextVectorInformation) {
 				//print Nodes Vector
 //				System.out.print("Nodes : [" );
 //				for(VectorNode tempNode : tempPattern) {
@@ -36,23 +58,23 @@ public class PatternFinder {
 //				}
 //				System.out.println("] ");
 				//get pattern according to pattern size and its rule(in this case, sequential)
-				for(int j = 0 ; j < tempPattern.size() - i + 1 ; j ++) {
+				for(int j = 0 ; j < tempPattern.getValue().size() - i + 1 ; j ++) {
 					ArrayList<String> tempPatternContext = new ArrayList<>();
 					int tempIdx = j;
 					int tempNumOfNode = i;
 					int flag = 0;
-					while(tempNumOfNode > 0 && tempIdx<tempPattern.size()) {
-						if(tempPattern.get(tempIdx).getVectorNodeInfo().equals("Useless")) {
+					while(tempNumOfNode > 0 && tempIdx<tempPattern.getValue().size()) {
+						if(tempPattern.getValue().get(tempIdx).getVectorNodeInfo().equals("Useless")) {
 							tempIdx++;
 							continue;
 						}
-						if(tempPattern.get(tempIdx).getVectorNodeInfo().equals("SimpleName")) {
+						if(tempPattern.getValue().get(tempIdx).getVectorNodeInfo().equals("SimpleName")) {
 							flag++;
 						}
 						if(flag == 2) {
 							break;
 						}
-						tempPatternContext.add(tempPattern.get(tempIdx).getVectorNodeInfo());
+						tempPatternContext.add(tempPattern.getValue().get(tempIdx).getVectorNodeInfo());
 						tempIdx++;
 						tempNumOfNode--;
 					}
@@ -79,15 +101,15 @@ public class PatternFinder {
 	}
 	
 	public HashMap<ArrayList<String>, Integer> getSPFrequency
-	(ArrayList<ArrayList<VectorNode>> contextVectorInformation,
+	(ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation,
 	HashMap<ArrayList<String>, Integer> allSequentialPatterns){
 		HashMap<ArrayList<String>, Integer> frequency = new HashMap<>();
 		
 		ArrayList<ArrayList<String>> contextVectors= new ArrayList<>();
 		
-		for(ArrayList<VectorNode> contextVector : contextVectorInformation) {
+		for(SimpleEntry<ASTNode, ArrayList<VectorNode>> contextVector : contextVectorInformation) {
 			ArrayList<String> tempVector = new ArrayList<>();
-			for(VectorNode node : contextVector) {
+			for(VectorNode node : contextVector.getValue()) {
 				tempVector.add(node.getVectorNodeInfo());
 			}
 			contextVectors.add(tempVector);

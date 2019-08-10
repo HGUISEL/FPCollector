@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
 import org.eclipse.jdt.core.dom.*;
@@ -12,8 +13,8 @@ import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 import edu.handong.csee.isel.fpcollector.utils.JavaASTParser;
 
 public class ContextVectorGetter {
-	public ArrayList<ArrayList<ASTNode>> getContextNode(ArrayList<String> pathLineErrVar){
-		ArrayList<ArrayList<ASTNode>> contextInfo = new ArrayList<>();
+	public ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> getContextNode(ArrayList<String> pathLineErrVar){
+		ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> contextInfo = new ArrayList<>();
 		
 		try {
 			for(String pathVariable : pathLineErrVar) {
@@ -37,6 +38,7 @@ public class ContextVectorGetter {
 				
 				names = codeAST.getViolatedNames(var);
 				ArrayList<ASTNode> contexts = new ArrayList<>();
+				SimpleEntry<ASTNode, ArrayList<ASTNode>> contextsWithVar = null;
 				
 				for(SimpleName name : names) {
 					for(ASTNode parent = name ; !(parent instanceof TypeDeclaration) ; parent = parent.getParent()) {
@@ -65,13 +67,13 @@ public class ContextVectorGetter {
 //								//System.out.print("\nParent : " + ((MethodInvocation) parent).getParent());
 //								System.out.println("(" + ((PostfixExpression) parent).getClass() + ")");								
 //							}
-
 							contexts.add(parent);
 						}	
 					}
+					contextsWithVar = new SimpleEntry<ASTNode, ArrayList<ASTNode>>(name, contexts);
 				}
 				
-			contextInfo.add(contexts);
+			contextInfo.add(contextsWithVar);
 			}			
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -79,16 +81,19 @@ public class ContextVectorGetter {
 		return contextInfo;
 	}
 	
-	public ArrayList<ArrayList<VectorNode>> getContextVector(ArrayList<ArrayList<ASTNode>> contextNodes){
-		ArrayList<ArrayList<VectorNode>> contextVector = new ArrayList<>();
+	public ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> 
+	getContextVector(ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> contextNodes){
+		ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVector = new ArrayList<>();
 		
-		for(ArrayList<ASTNode> nodes : contextNodes) {
+		for(SimpleEntry<ASTNode, ArrayList<ASTNode>> nodes : contextNodes) {
 			ArrayList<VectorNode> vectorizedNodes = new ArrayList<>();
-			for(ASTNode node : nodes) {
+			ArrayList<ASTNode> nodesValue = new ArrayList<>();
+			nodesValue = nodes.getValue();
+			for(ASTNode node : nodesValue) {
 				VectorNode tempVectorNode = new VectorNode(node);
 				vectorizedNodes.add(tempVectorNode);
 			}
-			contextVector.add(vectorizedNodes);
+			contextVector.add(new SimpleEntry<ASTNode, ArrayList<VectorNode>>(nodes.getKey(), vectorizedNodes));
 		}
 		
 		return contextVector;

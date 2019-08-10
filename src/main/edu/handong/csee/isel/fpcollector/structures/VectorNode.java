@@ -5,46 +5,39 @@ import org.eclipse.jdt.core.dom.*;
 public class VectorNode {
 	private ASTNode node;
 	private String info = "";
+	private String spec = "";
 	
 	public VectorNode(ASTNode node){
 		this.node = node;
+		this.info = node.getClass().toString().split("jdt.core.dom.")[1];
+		
 		if(node instanceof VariableDeclarationFragment){
 			if(((VariableDeclarationFragment) node).getInitializer() != null) {
-				this.info = "DecInitializer(" +
-						((VariableDeclarationFragment) node).getInitializer().getClass().toString().split("dom.")[1] +
-						")";
+				this.spec =	((VariableDeclarationFragment) node).getInitializer().getClass().toString().split("dom.")[1];
 			} else {
-				this.info = "DecInitializer(Not Initialized)";
+				this.spec = "Not Initialized";
 			}
 		} 
 		else if(node instanceof Assignment) {
-			//StartHere
-			//StartHere
-			//StartHere
-			//StartHere
-			//StartHere
-			//StartHere
 			if(((Assignment) node).getRightHandSide().toString().matches
-					(((Assignment) node).getLeftHandSide().toString())) {
-			this.info = "AssigmentWithSame";
+					(".+\\b" + ((Assignment) node).getLeftHandSide().toString() + "\\b.+")) {
+			this.spec = "AssigmentWithSame";
 			} else {
-				System.out.println(((Assignment) node).getLeftHandSide().toString());
-				System.out.println(((Assignment) node).getRightHandSide().toString());
-				this.info = "AssigmentWithDiff";
+				this.spec = "AssigmentWithDiff";
 			}
 		}
 		else if(node instanceof SingleVariableDeclaration) {
-			this.info = "SingleDecType(" + ((SingleVariableDeclaration) node).getType() + ")";
+			this.spec = "" + ((SingleVariableDeclaration) node).getType();
 		}
 		else if(node instanceof QualifiedName) {
-			this.info = "QNWith(" + ((QualifiedName) node).toString().split("\\.")[1] + ")";
+			this.spec =((QualifiedName) node).toString().split("\\.")[1] + ")";
 		}
 		else if(node instanceof InfixExpression || node instanceof MethodInvocation ||
 				node instanceof ExpressionStatement || node instanceof ClassInstanceCreation) {
-			this.info = "Useless";
+			this.spec = "Useless";
 		} 
 		else {
-		this.info = node.getClass().toString().split("jdt.core.dom.")[1];
+		this.spec = "";
 		}
 	}
 	
@@ -54,5 +47,9 @@ public class VectorNode {
 	
 	public String getVectorNodeInfo() {
 		return info;
+	}
+	
+	public String getVectorNodeSpec() {
+		return spec;
 	}
 }
