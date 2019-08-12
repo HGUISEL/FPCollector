@@ -57,9 +57,7 @@ public class ContextExtractor {
 //		patternFrequency = sortByFrequency(patternFrequency);
 		
 		//2) get line Patterns
-		//to-do
 		linePatterns = getLinePatterns(contextVectorInformation);
-		//to-do
 		//patternFrequency = getLinePatternFrequency(contextVectorInformation, linePatterns);
 		patternFrequency = sortByFrequency(patternFrequency);
 		

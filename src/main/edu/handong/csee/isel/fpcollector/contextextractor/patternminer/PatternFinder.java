@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.AbstractMap.SimpleEntry;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 
@@ -21,12 +22,31 @@ public class PatternFinder {
 		//1) get All Sequential Nodes until node's start line is same with SimpleName's start line
 		//2) don't care about number of nodes just get All.
 		
-		//START HERE
-		//START HERE
-		//START HERE
-		//START HERE
-		//START HERE
-		//START HERE
+		for(SimpleEntry<ASTNode, ArrayList<VectorNode>> tempPattern: contextVectorInformation) {
+			ASTNode violationOccurrence = tempPattern.getKey();
+			ArrayList<String> context = new ArrayList<>();
+			ASTNode root = violationOccurrence.getRoot();
+			CompilationUnit cUnit = (CompilationUnit) root;
+			
+			for(VectorNode temp : tempPattern.getValue()) {
+				if(temp.getNode().getClass() == violationOccurrence.getClass() &&
+						temp.getNode().toString().equals(violationOccurrence.toString())) {
+					if(context.size() != 0) {
+						linePatterns.put(context, context.size());
+						context = new ArrayList<>();
+					}
+					violationOccurrence = temp.getNode();
+				}
+				
+				if(cUnit.getLineNumber(violationOccurrence.getStartPosition()) == 
+						cUnit.getLineNumber(temp.getNode().getStartPosition())) {
+					context.add(temp.getVectorNodeInfo());
+				}	
+			}
+			if(context.size() != 0 ) {
+				linePatterns.put(context, context.size());
+			}
+		}
 		
 		return linePatterns;
 	}
