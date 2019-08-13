@@ -57,9 +57,22 @@ public class ContextExtractor {
 //		patternFrequency = sortByFrequency(patternFrequency);
 		
 		//2) get line Patterns
-		linePatterns = getLinePatterns(contextVectorInformation);
+		linePatterns = getPatterns(contextVectorInformation);
+		
+		//Start make get Pattern Frequency
+		//Start make get Pattern Frequency
+		//Start make get Pattern Frequency
+		//Start make get Pattern Frequency
+		//Start make get Pattern Frequency
+		
 		//patternFrequency = getLinePatternFrequency(contextVectorInformation, linePatterns);
 		patternFrequency = sortByFrequency(patternFrequency);
+		
+		//Start make pattern dining
+		//Start make pattern dining
+		//Start make pattern dining
+		//Start make pattern dining
+		//Start make pattern dining
 		
 		//write a file
 			System.out.println("\n----- Start to Rearrange Data -----\n");
@@ -137,12 +150,12 @@ public class ContextExtractor {
 		return frequencyPattern;
 	}
 	
-	private HashMap<ArrayList<String>, Integer> getLinePatterns(
+	private HashMap<ArrayList<String>, Integer> getPatterns(
 			ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation) {
 		HashMap<ArrayList<String>, Integer> linePatterns = new HashMap<>();
 		PatternFinder finder = new PatternFinder();
 		
-		linePatterns = finder.mineLinePatterns(contextVectorInformation);
+		linePatterns = finder.minePatterns(contextVectorInformation);
 	
 		return linePatterns;
 	}
@@ -150,8 +163,6 @@ public class ContextExtractor {
 	public HashMap<ArrayList<String>, Integer> getAllPatterns
 	(ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation) {
 		HashMap<ArrayList<String>, Integer> sequentialPatterns = new HashMap<>();
-		HashMap<ArrayList<String>, Integer> orderedPatterns = new HashMap<>();
-		HashMap<ArrayList<String>, Integer> allPatterns = new HashMap<>();
 		
 		PatternFinder finder = new PatternFinder();	
 		

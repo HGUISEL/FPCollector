@@ -6,17 +6,22 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import com.google.common.collect.Sets;
+
 import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 
 public class PatternFinder {
-	public HashMap<ArrayList<String>, Integer> mineLinePatterns
+	public HashMap<ArrayList<String>, Integer> minePatterns
 	(ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation){
-		HashMap<ArrayList<String>, Integer> linePatterns = new HashMap<>();
+		HashMap<ArrayList<String>, Integer> patterns = new HashMap<>();
+		ArrayList<ArrayList<String>> linePatterns = new ArrayList<>();
+		ArrayList<ArrayList<String>> blockPatterns = new ArrayList<>();
 		
 		//Among contextVecotInformation, get line which include violated variable and its Pattern
 		//1) get All Sequential Nodes until node's start line is same with SimpleName's start line
@@ -24,33 +29,100 @@ public class PatternFinder {
 		
 		for(SimpleEntry<ASTNode, ArrayList<VectorNode>> tempPattern: contextVectorInformation) {
 			ASTNode violationOccurrence = tempPattern.getKey();
-			ArrayList<String> context = new ArrayList<>();
+			ArrayList<String> lineContext = new ArrayList<>();
+			ArrayList<String> blockContext = new ArrayList<>();
 			ASTNode root = violationOccurrence.getRoot();
 			CompilationUnit cUnit = (CompilationUnit) root;
 			
 			for(VectorNode temp : tempPattern.getValue()) {
 				if(temp.getNode().getClass() == violationOccurrence.getClass() &&
 						temp.getNode().toString().equals(violationOccurrence.toString())) {
-					if(context.size() != 0) {
-						linePatterns.put(context, context.size());
-						context = new ArrayList<>();
+					if(lineContext.size() != 0) {
+						linePatterns.add(lineContext);
+						blockPatterns.add(blockContext);
+						lineContext = new ArrayList<>();
+						blockContext = new ArrayList<>();
 					}
 					violationOccurrence = temp.getNode();
 				}
 				
 				if(cUnit.getLineNumber(violationOccurrence.getStartPosition()) == 
 						cUnit.getLineNumber(temp.getNode().getStartPosition())) {
-					context.add(temp.getVectorNodeInfo());
-				}	
+					lineContext.add(temp.getVectorNodeInfo());
+				}
+				blockContext.add(temp.getVectorNodeInfo());
 			}
-			if(context.size() != 0 ) {
-				linePatterns.put(context, context.size());
+			
+			if(lineContext.size() != 0 ) {
+				linePatterns.add(lineContext);
 			}
 		}
 		
-		return linePatterns;
+		for(ArrayList<String> pattern : linePatterns) {
+			patterns.put(pattern, pattern.size());
+		}
+		
+		for(ArrayList<String> blockPattern : blockPatterns) {
+			for(ArrayList<String> linePattern : linePatterns) {
+				if(blockPattern.containsAll(linePattern)) {
+					ArrayList<ArrayList<String>> combinationContext = new ArrayList<>();
+					ArrayList<String> tempPattern = new ArrayList<>();
+					tempPattern = linePattern;
+					blockPattern.removeAll(linePattern);
+					
+					combinationContext = combination(blockPattern);
+					
+					for(ArrayList<String>  tempCombination: combinationContext) {
+						tempPattern.addAll(tempCombination);
+						if(!patterns.containsKey(tempCombination)) {
+							patterns.put(tempPattern, tempPattern.size());
+						}
+						tempPattern = linePattern;
+					}
+					break;
+				}
+			}
+		}
+		
+		System.out.println(patterns.size());
+		return patterns;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ArrayList<ArrayList<String>> combination (ArrayList<String> blockPattern){
+		ArrayList<ArrayList<String>> combinationResult = new ArrayList<>();
+		ArrayList<SimpleEntry<Integer, String>> order = new ArrayList<>();
+		int idx = 0;
+		
+		for(String temp : blockPattern) {
+			SimpleEntry<Integer, String> ordering = new SimpleEntry<>(idx, temp);
+			order.add(ordering);
+			idx++;
+		}
+		for(Set<SimpleEntry<Integer, String>> sets : Sets.powerSet(Sets.newHashSet(order))) {
+			ArrayList<SimpleEntry<Integer, String>> combinations = new ArrayList<>();
+			ArrayList<String> combinationPatterns = new ArrayList<>();
+			for(Object temp : sets.toArray()) {
+				combinations.add((SimpleEntry<Integer, String>) temp);
+			}
+			
+			Collections.sort(combinations, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					return ((SimpleEntry<Integer, String>) o1).getKey() - ((SimpleEntry<Integer, String>) o2).getKey();
+				}
+			});
+			
+			for(SimpleEntry<Integer, String> tempNode : combinations) {
+				combinationPatterns.add(tempNode.getValue());
+			}
+			
+			if(combinations.size() > 0) {
+				combinationResult.add(combinationPatterns);
+			}
+		}
+		
+		return combinationResult;
+	}
 	
 	//Key : Pattern, Value : Size of Pattern (e.g. if pattern is [ 1, 2 ] than size of pattern is 2)
 	public HashMap<ArrayList<String>, Integer> mineAllSequentialPatterns
