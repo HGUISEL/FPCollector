@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
@@ -13,29 +14,45 @@ import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 import edu.handong.csee.isel.fpcollector.utils.JavaASTParser;
 
 public class ContextVectorGetter {
-	public ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> getContextNode(ArrayList<String> pathLineErrVar){
+	final static int TRUE_POSITIVE = 0;
+	final static int FALSE_POSITIVE = 1;
+	
+	public ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> 
+	getContextNode(ArrayList<String> pathLineErrVar, int flag){
 		ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> contextInfo = new ArrayList<>();
-		
+		String path = "";
+		String var = "";
+		String projectName = pathLineErrVar.get(0).split("git/")[1].split("/")[0];
 		try {
 			for(String pathVariable : pathLineErrVar) {
-				String path = pathVariable.split(",")[0];
-				String var = pathVariable.split(",")[3].trim();
-			
-				File f = new File(path);
-				FileReader fReader = new FileReader(f);
-				BufferedReader bufReader = new BufferedReader(fReader);
-				
-				String source = "";
-				String line = "";
-				
-				while((line = bufReader.readLine()) != null) {
-					source = source.concat(line + "\n");
+				if(flag == FALSE_POSITIVE) {
+					path = pathVariable.split(",")[0];
+					var = pathVariable.split(",")[3].trim();
+				} else {
+					path = pathVariable.split(",")[0].replace(projectName, projectName.split("_Past")[0]);
+					var = pathVariable.split(",")[3].trim();
 				}
+				
+				/* 1. File Existing Check
+				 * 2. File Context Extracting
+				 */
+				
+				//file existing checking
+				File f = new File(path);
+				String source = "";
+				if(f.exists()) {
+					FileReader fReader = new FileReader(f);
+					BufferedReader bufReader = new BufferedReader(fReader);
+					String line = "";
+					while((line = bufReader.readLine()) != null) {
+						source = source.concat(line + "\n");
+					}
 				bufReader.close();
+				}else continue;
 				
 				JavaASTParser codeAST = new JavaASTParser(source);
 				ArrayList<SimpleName> names = new ArrayList<>();
-				
+				//---------------------------------Start HERE : check exception in getViolatedNames
 				names = codeAST.getViolatedNames(var);
 				ArrayList<ASTNode> contexts = new ArrayList<>();
 				SimpleEntry<ASTNode, ArrayList<ASTNode>> contextsWithVar = null;

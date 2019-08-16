@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.checkout.*;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.clone.*;
-import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.reportanalysis.*;
 import edu.handong.csee.isel.fpcollector.utils.*;
 
 public class FPCollector{
@@ -75,9 +74,9 @@ public class FPCollector{
 		pastReportInfo = getInfo(pastReportPath);
 	
 		//get git blame/annotate and line info
-		currentBlameInfo = getViolationLine(currentReportInfo, clonedPath);
+		currentBlameInfo = getViolationLine(currentReportInfo);
 				
-		pastBlameInfo = getViolationLine(pastReportInfo, checkoutPath);
+		pastBlameInfo = getViolationLine(pastReportInfo);
 		
 		//get suspects
 		
@@ -142,12 +141,12 @@ public class FPCollector{
 	}
 	
 	public HashMap<String, String>
-	getViolationLine(ArrayList<String> reportInfo, String path){
+	getViolationLine(ArrayList<String> reportInfo){
 		HashMap<String, String> blameInfo =
 				new HashMap<>();
 		ReportAnalyzer analyzer = new ReportAnalyzer();
 		
-		blameInfo = analyzer.getViolation(reportInfo, path);
+		blameInfo = analyzer.getViolation(reportInfo);
 		
 		return blameInfo;
 	}
@@ -166,6 +165,6 @@ public class FPCollector{
 	
 	public void writeOutput(HashMap<String, String> suspects, String path) {
 		Writer writer = new Writer();
-		writer.writeSuspects(suspects, path);
+		writer.writeComparisonResult(suspects, path);
 	}
 }

@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import com.google.common.collect.Sets;
 
+import edu.handong.csee.isel.fpcollector.structures.ContextPattern;
 import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 
 public class PatternFinder {
@@ -22,6 +23,7 @@ public class PatternFinder {
 		HashMap<ArrayList<String>, Integer> patterns = new HashMap<>();
 		ArrayList<ArrayList<String>> linePatterns = new ArrayList<>();
 		ArrayList<ArrayList<String>> blockPatterns = new ArrayList<>();
+
 		
 		//Among contextVecotInformation, get line which include violated variable and its Pattern
 		//1) get All Sequential Nodes until node's start line is same with SimpleName's start line
@@ -59,7 +61,14 @@ public class PatternFinder {
 		}
 		
 		for(ArrayList<String> pattern : linePatterns) {
-			patterns.put(pattern, pattern.size());
+			if(pattern.size() > 1) {
+				if(patterns.containsKey(pattern)) {
+					patterns.put(pattern, Integer.sum(patterns.get(pattern), 1)); 
+				}
+				else {
+					patterns.put(pattern, 1);
+				}
+			}
 		}
 		
 		for(ArrayList<String> blockPattern : blockPatterns) {
@@ -67,22 +76,41 @@ public class PatternFinder {
 				if(blockPattern.containsAll(linePattern)) {
 					ArrayList<ArrayList<String>> combinationContext = new ArrayList<>();
 					ArrayList<String> tempPattern = new ArrayList<>();
-					tempPattern = linePattern;
+					tempPattern.clear(); 
+					tempPattern.addAll(linePattern);
 					blockPattern.removeAll(linePattern);
 					
 					combinationContext = combination(blockPattern);
 					
 					for(ArrayList<String>  tempCombination: combinationContext) {
 						tempPattern.addAll(tempCombination);
-						if(!patterns.containsKey(tempCombination)) {
-							patterns.put(tempPattern, tempPattern.size());
+						if(tempPattern.size() > 1) {
+							if(!patterns.containsKey(tempPattern)) {
+								patterns.put(tempPattern, 1);
+							}
+							else {
+								patterns.put(tempPattern, Integer.sum(patterns.get(tempPattern), 1));
+							}
 						}
-						tempPattern = linePattern;
+						tempPattern.clear();
+						tempPattern.addAll(linePattern);
 					}
 					break;
 				}
 			}
 		}
+		/*
+		HashMap<ArrayList<String>, Integer> tempPatterns = new HashMap<>();
+		tempPatterns.putAll(patterns);
+		Iterator<ArrayList<String>> patternChecker = tempPatterns.keySet().iterator();
+		
+		//Minimum Support Count is size of Patterns' 1%
+		while(patternChecker.hasNext()) {
+			ArrayList<String> key = patternChecker.next();
+			if(tempPatterns.get(key) < patterns.size() / 100) {
+				System.out.println("Pattern : " + key + " Frequency : " + patterns.get(key));
+			}
+		}*/
 		
 		System.out.println(patterns.size());
 		return patterns;
@@ -235,9 +263,10 @@ public class PatternFinder {
 		return frequency;
 	}
 
-	public HashMap<ArrayList<String>, Integer> 
+	public ArrayList<ContextPattern> 
 	sortByCounting(HashMap<ArrayList<String>, Integer> patternFrequency) {
 		Map<String, Integer> frequency = new HashMap<>();
+		ArrayList<ContextPattern> frequentPattern = new ArrayList<>();
 		
 		for(ArrayList<String> tempKey : patternFrequency.keySet()) {
 			Integer tempValue = patternFrequency.get(tempKey);
@@ -258,10 +287,11 @@ public class PatternFinder {
 			if(count == ranking) {
 				break;
 			}
-			System.out.println(String.format("%s (%d)", key, frequency.get(key)));
+			ContextPattern tempPattern = new ContextPattern(key, frequency.get(key));
+			frequentPattern.add(tempPattern);
 			count ++;
 		}
 		
-		return null;
+		return frequentPattern;
 	}
 }

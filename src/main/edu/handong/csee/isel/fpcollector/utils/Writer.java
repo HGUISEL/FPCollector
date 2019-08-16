@@ -16,7 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Writer {
-	public void writeSuspects(HashMap<String, String> suspects, String path) {
+	public void writeComparisonResult(HashMap<String, String> suspects, String path) {
 		File file = new File(path);
 		BufferedWriter writer = null;
 		try {
