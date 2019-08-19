@@ -1,4 +1,4 @@
-package edu.handong.csee.isel.tpcollector;
+package edu.handong.csee.isel.fpcollector.tpcollector;
 
 import java.util.ArrayList;
 import java.util.HashMap;

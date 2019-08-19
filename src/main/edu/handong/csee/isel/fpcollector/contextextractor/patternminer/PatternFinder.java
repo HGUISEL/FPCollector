@@ -277,11 +277,15 @@ public class PatternFinder {
 		List<String> frequencyList = new ArrayList<>(frequency.keySet());
 		Collections.sort(frequencyList, new Comparator<String>() {
 			public int compare(String o1, String o2) {
+				if(frequency.get(o1) == null && frequency.get(o2) != null) return 1;
+				else if(frequency.get(o2) == null && frequency.get(o1) != null) return -1;
+				else if(frequency.get(o1) == null && frequency.get(o2) == null) return 0;
 				return frequency.get(o2).compareTo(frequency.get(o1));
+				
 			}
 		});
 		
-		int ranking = 31;
+		int ranking = 20;
 		int count = 0;
 		for(String key : frequencyList) {
 			if(count == ranking) {

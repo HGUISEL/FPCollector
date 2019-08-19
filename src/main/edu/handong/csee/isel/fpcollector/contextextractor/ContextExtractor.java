@@ -26,10 +26,10 @@ public class ContextExtractor {
 	final static int TRUE_POSITIVE = 0;
 	final static int FALSE_POSITIVE = 1;
 	
-	public void run(String[] info, int flag) {
+	public ArrayList<ContextPattern> run(String[] info, int flag) {
 		//read result file
 		ArrayList<String> resultInfo = new ArrayList<>();
-		ArrayList<ArrayList<String>> lineContext = new ArrayList<>();
+		//ArrayList<ArrayList<String>> lineContext = new ArrayList<>();
 		String OutputPath = "";
 		if(flag == FALSE_POSITIVE) {
 			OutputPath = info[2];
@@ -38,7 +38,7 @@ public class ContextExtractor {
 			OutputPath = info[2].split("\\.csv")[0] + "_TP.csv";
 		}
 		
-		DirLineErrmsgContext context;
+		//DirLineErrmsgContext context;
 		resultInfo = readResultFile(OutputPath);
 			
 		//part 1 : get AST Vector
@@ -49,7 +49,7 @@ public class ContextExtractor {
 //		HashMap<ArrayList<String>, Integer> allSequentialPatterns = new HashMap<>();
 //		HashMap<ArrayList<String>, Integer> patternFrequency = new HashMap<>();
 		HashMap<ArrayList<String>, Integer> contextPatterns = new HashMap<>();
-		ArrayList<ContextPattern> falsePositivePatterns = new ArrayList<>();
+		ArrayList<ContextPattern> sortedPatterns = new ArrayList<>();
 		
 		System.out.println("Collecting violation occurred Variable and its Path...");
 		varPath = getViolationVarPath(resultInfo);
@@ -73,19 +73,19 @@ public class ContextExtractor {
 		
 		//patternFrequency = getLinePatternFrequency(contextVectorInformation, linePatterns);
 		//patternFrequency = sortByFrequency(patternFrequency);
-		falsePositivePatterns = sortByFrequency(contextPatterns);
+		sortedPatterns = sortByFrequency(contextPatterns);
 		
-		//Start make pattern dining
-		//Start make pattern dining
-		//Start make pattern dining
-		//Start make pattern dining
-		//Start make pattern dining
+		System.out.println("\n\n");
+		for(ContextPattern temp : sortedPatterns) {	
+			System.out.println(temp.getPattern().getKey().toString() + " (" + temp.getPattern().getValue() + ")");
+		}
 		
+		return sortedPatterns;
 		//write a file
-			System.out.println("\n----- Start to Rearrange Data -----\n");
-			context = new DirLineErrmsgContext(lineContext, resultInfo);
-			writeContext(context, OutputPath);
-			System.out.println("@@@@@ Context Extracting Process is Completed");
+//			System.out.println("\n----- Start to Rearrange Data -----\n");
+//			context = new DirLineErrmsgContext(lineContext, resultInfo);
+//			writeContext(context, OutputPath);
+//			System.out.println("@@@@@ Context Extracting Process is Completed");
 	}
 	
 	public ArrayList<String> readResultFile(String path){

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
@@ -52,7 +51,6 @@ public class ContextVectorGetter {
 				
 				JavaASTParser codeAST = new JavaASTParser(source);
 				ArrayList<SimpleName> names = new ArrayList<>();
-				//---------------------------------Start HERE : check exception in getViolatedNames
 				names = codeAST.getViolatedNames(var);
 				ArrayList<ASTNode> contexts = new ArrayList<>();
 				SimpleEntry<ASTNode, ArrayList<ASTNode>> contextsWithVar = null;
@@ -101,8 +99,10 @@ public class ContextVectorGetter {
 	public ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> 
 	getContextVector(ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> contextNodes){
 		ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVector = new ArrayList<>();
-		
 		for(SimpleEntry<ASTNode, ArrayList<ASTNode>> nodes : contextNodes) {
+			if(nodes == null) {
+				continue;
+			}
 			ArrayList<VectorNode> vectorizedNodes = new ArrayList<>();
 			ArrayList<ASTNode> nodesValue = new ArrayList<>();
 			nodesValue = nodes.getValue();

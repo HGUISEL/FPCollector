@@ -1,10 +1,13 @@
 package edu.handong.csee.isel.fpcollector;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import edu.handong.csee.isel.fpcollector.contextextractor.ContextExtractor;
+import edu.handong.csee.isel.fpcollector.evaluator.Evaluator;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.FPCollector;
-import edu.handong.csee.isel.tpcollector.TPCollector;
+import edu.handong.csee.isel.fpcollector.structures.ContextPattern;
+import edu.handong.csee.isel.fpcollector.tpcollector.TPCollector;
 
 public class Main {
 	/*
@@ -22,18 +25,24 @@ public class Main {
 			TPCollector getTP = new TPCollector();
 			ContextExtractor getFalsePositiveContext = new ContextExtractor();
 			ContextExtractor getTruePositiveContext = new ContextExtractor();
+			Evaluator getScore = new Evaluator();
+			ArrayList<ContextPattern> truePositivePattern = new ArrayList<>();
+			ArrayList<ContextPattern> falsePositivePattern = new ArrayList<>();
+			
 			
 			String[] information  = getFPSuspects.initiate(args);
 			
 			if(!new File(information[2]).exists()) {
 			getFPSuspects.run(information);
-			}
-			else {
+			} else {
 				System.out.println("!!!!! ResultFile is Already exists");
 			}
-			getTP.run(information);
-			getTruePositiveContext.run(information, TRUE_POSITIVE);
-			getFalsePositiveContext.run(information, FALSE_POSITIVE);
 			
+			getTP.run(information);
+			
+			truePositivePattern = getTruePositiveContext.run(information, TRUE_POSITIVE);
+			falsePositivePattern = getFalsePositiveContext.run(information, FALSE_POSITIVE);
+			
+			getScore.run(truePositivePattern, falsePositivePattern);
 		}
 }
