@@ -21,9 +21,9 @@ public class VectorNode {
 		else if(node instanceof Assignment) {
 			if(((Assignment) node).getRightHandSide().toString().matches
 					(".+\\b" + ((Assignment) node).getLeftHandSide().toString() + "\\b.+")) {
-			this.spec = "AssigmentWithSame";
+			this.info = "AssigmentWithSame";
 			} else {
-				this.spec = "AssigmentWithDiff";
+				this.info = "AssigmentWithDiff";
 			}
 		}
 		else if(node instanceof SingleVariableDeclaration) {

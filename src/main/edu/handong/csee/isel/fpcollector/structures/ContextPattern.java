@@ -5,7 +5,9 @@ import java.util.AbstractMap.SimpleEntry;
 public class ContextPattern {
 	
 	private SimpleEntry<String, Integer> patternList;
-	private Double nodeScore = 0.0;
+	private Double patternScore = 0.0;
+	private Double tpPatternScore = 0.0;
+	private Double fpPatternScore = 0.0;
 	
 	public ContextPattern(String pattern, Integer frequency) {
 		patternList = new SimpleEntry<String, Integer>(pattern, frequency);
@@ -23,12 +25,28 @@ public class ContextPattern {
 		return patternList.getKey();
 	}
 	
-	public Double getNodeScore() {
-		return nodeScore;
+	public Double getPatternScore() {
+		return patternScore;
 	}
 	
-	public void setNodeScore(Double score) {
-		nodeScore = score;
+	public void setPatternScore(Double score) {
+		patternScore = score;
+	}
+	
+	public Double getTpPatternScore() {
+		return tpPatternScore;
+	}
+	
+	public void setTpPatternScore(Double score) {
+		tpPatternScore = score;
+	}
+	
+	public Double getFpPatternScore() {
+		return fpPatternScore;
+	}
+	
+	public void setFpPatternScore(Double score) {
+		fpPatternScore = score;
 	}
 	
 }

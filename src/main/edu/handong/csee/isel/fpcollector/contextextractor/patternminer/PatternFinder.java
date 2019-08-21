@@ -55,13 +55,13 @@ public class PatternFinder {
 				blockContext.add(temp.getVectorNodeInfo());
 			}
 			
-			if(lineContext.size() != 0 ) {
+			if(lineContext.size() > 2 ) {
 				linePatterns.add(lineContext);
 			}
 		}
 		
 		for(ArrayList<String> pattern : linePatterns) {
-			if(pattern.size() > 1) {
+			if(pattern.size() > 2) {
 				if(patterns.containsKey(pattern)) {
 					patterns.put(pattern, Integer.sum(patterns.get(pattern), 1)); 
 				}
@@ -84,7 +84,7 @@ public class PatternFinder {
 					
 					for(ArrayList<String>  tempCombination: combinationContext) {
 						tempPattern.addAll(tempCombination);
-						if(tempPattern.size() > 1) {
+						if(tempPattern.size() > 2) {
 							if(!patterns.containsKey(tempPattern)) {
 								patterns.put(tempPattern, 1);
 							}
