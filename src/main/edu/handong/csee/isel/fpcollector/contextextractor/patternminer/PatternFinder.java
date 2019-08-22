@@ -29,7 +29,27 @@ public class PatternFinder {
 		//1) get All Sequential Nodes until node's start line is same with SimpleName's start line
 		//2) don't care about number of nodes just get All.
 		
+		//lineContext
+		int total = contextVectorInformation.size();
+		int progress = 0;
+		System.out.println("Collecting Line Patterns...");
 		for(SimpleEntry<ASTNode, ArrayList<VectorNode>> tempPattern: contextVectorInformation) {
+			progress ++;
+			if(progress == 1) {
+				System.out.print("0%...");
+			}
+			if(progress == total / 4 ) {
+				System.out.print("25%...");
+			}
+			if(progress == total / 2) {
+				System.out.print("50%...");
+			}
+			if(progress == (total *3) / 4) {
+				System.out.print("75%...");
+			}
+			if(progress == total) {
+				System.out.print("done...");
+			}
 			ASTNode violationOccurrence = tempPattern.getKey();
 			ArrayList<String> lineContext = new ArrayList<>();
 			ArrayList<String> blockContext = new ArrayList<>();
@@ -53,6 +73,14 @@ public class PatternFinder {
 					lineContext.add(temp.getVectorNodeInfo());
 				}
 				blockContext.add(temp.getVectorNodeInfo());
+//				ArrayList<String> test = new ArrayList<>();
+//				test.add("SimpleName");
+//				test.add("ClassInstanceCreation");
+//				test.add("ReturnStatement");
+//				if(blockContext.containsAll(test)) {
+//					System.out.println("Pause");
+//					System.out.println(root);
+//				}
 			}
 			
 			if(lineContext.size() > 2 ) {
@@ -71,7 +99,27 @@ public class PatternFinder {
 			}
 		}
 		
+		//block Pattern
+		System.out.println("\nCollecting Block Patterns...");
+		progress = 0;
+		total = blockPatterns.size();
 		for(ArrayList<String> blockPattern : blockPatterns) {
+			progress ++;
+			if(progress == 1) {
+				System.out.print("0%...");
+			}
+			if(progress == total / 4 ) {
+				System.out.print("25%...");
+			}
+			if(progress == total / 2) {
+				System.out.print("50%...");
+			}
+			if(progress == (total *3) / 4) {
+				System.out.print("75%...");
+			}
+			if(progress == total) {
+				System.out.print("done...");
+			}
 			for(ArrayList<String> linePattern : linePatterns) {
 				if(blockPattern.containsAll(linePattern)) {
 					ArrayList<ArrayList<String>> combinationContext = new ArrayList<>();
@@ -94,7 +142,7 @@ public class PatternFinder {
 						}
 						tempPattern.clear();
 						tempPattern.addAll(linePattern);
-					}
+					}			
 					break;
 				}
 			}
@@ -112,7 +160,8 @@ public class PatternFinder {
 			}
 		}*/
 		
-		System.out.println(patterns.size());
+		System.out.println("\n" + patterns.size());
+		
 		return patterns;
 	}
 	
@@ -267,7 +316,7 @@ public class PatternFinder {
 	sortByCounting(HashMap<ArrayList<String>, Integer> patternFrequency) {
 		Map<String, Integer> frequency = new HashMap<>();
 		ArrayList<ContextPattern> frequentPattern = new ArrayList<>();
-		
+		System.out.println("Sorting Patterns...");
 		for(ArrayList<String> tempKey : patternFrequency.keySet()) {
 			Integer tempValue = patternFrequency.get(tempKey);
 			String keys = tempKey.toString();
@@ -295,7 +344,7 @@ public class PatternFinder {
 			frequentPattern.add(tempPattern);
 			count ++;
 		}
-		
+		System.out.println("@@@@@ Sorting Complete");
 		return frequentPattern;
 	}
 }

@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-
 import org.eclipse.jdt.core.dom.*;
 
 import edu.handong.csee.isel.fpcollector.structures.VectorNode;
@@ -21,9 +20,30 @@ public class ContextVectorGetter {
 		ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> contextInfo = new ArrayList<>();
 		String path = "";
 		String var = "";
+		int progressCount = 0;
+		int total = pathLineErrVar.size();
 		String projectName = pathLineErrVar.get(0).split("git/")[1].split("/")[0];
 		try {
 			for(String pathVariable : pathLineErrVar) {
+				progressCount++;
+//				printProgress(total, progressCount);
+				if(progressCount == 1) {
+					System.out.print("0%...");
+				}
+				if(progressCount == total / 4 ) {
+					System.out.print("25%...");
+				}
+				if(progressCount == total / 2) {
+					System.out.print("50%...");
+				}
+				if(progressCount == (total *3) / 4) {
+					System.out.print("75%...");
+				}
+				if(progressCount == total) {
+					System.out.print("done...");
+				}
+				
+				
 				if(flag == FALSE_POSITIVE) {
 					path = pathVariable.split(",")[0];
 					var = pathVariable.split(",")[3].trim();
@@ -54,7 +74,10 @@ public class ContextVectorGetter {
 				names = codeAST.getViolatedNames(var);
 				ArrayList<ASTNode> contexts = new ArrayList<>();
 				SimpleEntry<ASTNode, ArrayList<ASTNode>> contextsWithVar = null;
-				
+				if(names.size() == 0) {
+					continue;
+				}
+				point :
 				for(SimpleName name : names) {
 					for(ASTNode parent = name ; !(parent instanceof TypeDeclaration) ; parent = parent.getParent()) {
 						if(!((parent instanceof Annotation) ||
@@ -67,6 +90,7 @@ public class ContextVectorGetter {
 							 (parent instanceof ImportDeclaration) ||
 							 (parent instanceof LineComment)||
 							 (parent instanceof MarkerAnnotation) ||
+							 (parent instanceof MethodDeclaration) ||
 							 (parent instanceof MemberRef)||
 							 (parent instanceof MethodRef) ||
 							 (parent instanceof MethodReference) ||
@@ -82,6 +106,9 @@ public class ContextVectorGetter {
 //								//System.out.print("\nParent : " + ((MethodInvocation) parent).getParent());
 //								System.out.println("(" + ((PostfixExpression) parent).getClass() + ")");								
 //							}
+							if(parent.getParent() == null) {
+								continue point;
+							}
 							contexts.add(parent);
 						}	
 					}
@@ -115,4 +142,22 @@ public class ContextVectorGetter {
 		
 		return contextVector;
 	}
+	
+//	private static void printProgress(int total, int current) {
+//
+//	    StringBuilder string = new StringBuilder(140);   
+//	    int percent = (int) (current * 100 / total);
+//	    string
+//	        .append('\r')
+//	        .append(String.join("", Collections.nCopies(percent == 0 ? 2 : 2 - (int) (Math.log10(percent)), " ")))
+//	        .append(String.format(" %d%% [", percent))
+//	        .append(String.join("", Collections.nCopies(percent, "=")))
+//	        .append('>')
+//	        .append(String.join("", Collections.nCopies(100 - percent, " ")))
+//	        .append(']')
+//	        .append(String.join("", Collections.nCopies(current == 0 ? (int) (Math.log10(total)) : (int) (Math.log10(total)) - (int) (Math.log10(current)), " ")))
+//	        .append(String.format(" %d/%d", current, total));
+//	    System.out.print(string);
+//	}
+	
 }

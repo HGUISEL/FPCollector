@@ -15,8 +15,7 @@ public class Evaluator {
 		HashMap<String, Double> fpNodeNormalization = new HashMap<>();
 		HashMap<String, Double> fpFrequencyNormalization = new HashMap<>();
 		ArrayList<ContextPattern> scoredPattern = new ArrayList<>();
-		ArrayList<ContextPattern> scoredFalsePositive = new ArrayList<>();
-		
+	
 		tpNodeNormalization = nodeNormalization(tp);
 		fpNodeNormalization = nodeNormalization(fp);
 		
@@ -25,10 +24,6 @@ public class Evaluator {
 		
 		scoredPattern = 
 				getNodeScore(fp, tpNodeNormalization, fpNodeNormalization, tpFrequencyNormalization, fpFrequencyNormalization);
-//		scoredFalsePositive = getNodeScore(fp, fpNodeNormalization, fpFrequencyNormalization);
-		
-		
-		//tpFrequencyNormalization = frequencyNormalization();
 	}
 	
 	public HashMap<String,Double> nodeNormalization(ArrayList<ContextPattern> nodes) {
@@ -115,39 +110,26 @@ public class Evaluator {
 			//node
 			for(String tempNode :temp.getPatternString().split(",")) {
 				if(tempNode.contains("[")){
-					tempNode = tempNode.split("\\[")[1];
+					tempNode = tempNode.split("\\[")[1].trim();
 				} else if(tempNode.contains("]")) {
-					tempNode = tempNode.split("\\]")[0];
+					tempNode = tempNode.split("\\]")[0].trim();
 				}
-//				if(fpNodeNormalization.containsKey(tempNode) && tpNodeNormalization.containsKey(tempNode)) {
-//					temp.setPatternScore(temp.getPatternScore() + 
-//						fpNodeNormalization.get(tempNode) - tpNodeNormalization.get(tempNode));
-//				} else if(fpNodeNormalization.containsKey(tempNode) && !tpNodeNormalization.containsKey(tempNode)) {
-//					temp.setPatternScore(temp.getPatternScore() + fpNodeNormalization.get(tempNode));
-//				}
-				if(tpNodeNormalization.containsKey(tempNode) && 
-						tpNodeNormalization.get(tempNode) > 0.1) {
-					temp.setTpPatternScore(temp.getTpPatternScore() + tpNodeNormalization.get(tempNode) * 0.8);
+				if(tpNodeNormalization.containsKey(tempNode) /*&& 
+						tpNodeNormalization.get(tempNode) > 0.1*/) {
+					temp.setTpPatternScore(temp.getTpPatternScore() + tpNodeNormalization.get(tempNode) * (-1.0));
+				}else if(fpNodeNormalization.containsKey(tempNode)){
+				temp.setFpPatternScore(temp.getFpPatternScore() + fpNodeNormalization.get(tempNode) * (0.0));
 				}
-				temp.setFpPatternScore(temp.getFpPatternScore() + fpNodeNormalization.get(tempNode) * 0.5);
 			}
-			//frequency
-//			if(fpFrequencyNormalization.containsKey(temp.getPatternString()) && 
-//					tpFrequencyNormalization.containsKey(temp.getPatternString())) {
-//				temp.setPatternScore(temp.getPatternScore() + (fpFrequencyNormalization.get(temp.getPatternString())
-//					- tpFrequencyNormalization.get(temp.getPatternString())));
-//			} else if(fpFrequencyNormalization.containsKey(temp.getPatternString()) &&
-//						!tpFrequencyNormalization.containsKey(temp.getPatternString())) {
-//				temp.setPatternScore(temp.getPatternScore() + (fpFrequencyNormalization.get(temp.getPatternString())));
-//			}
-			if(tpFrequencyNormalization.containsKey(temp.getPatternString()) && 
-					tpFrequencyNormalization.get(temp.getPatternString()) > 0.5) {
+			//pattern frequency
+			if(tpFrequencyNormalization.containsKey(temp.getPatternString()) /*&& 
+					tpFrequencyNormalization.get(temp.getPatternString()) > 0.1*/) {
 				temp.setTpPatternScore(temp.getTpPatternScore() 
-						+ tpFrequencyNormalization.get(temp.getPatternString()) * 0.5);
+						+ tpFrequencyNormalization.get(temp.getPatternString()) * (-1.0));
+			}else if(fpFrequencyNormalization.containsKey(temp.getPatternString())){
+				temp.setFpPatternScore(temp.getFpPatternScore() + (fpFrequencyNormalization.get(temp.getPatternString())* 0.2));
 			}
-			temp.setFpPatternScore(temp.getFpPatternScore() + (fpFrequencyNormalization.get(temp.getPatternString())* 0.5));
-			
-			temp.setPatternScore(temp.getFpPatternScore() - temp.getTpPatternScore());
+			temp.setPatternScore(temp.getFpPatternScore() + temp.getTpPatternScore());
 			scoredPattern.add(temp);
 		}
 		
@@ -159,9 +141,12 @@ public class Evaluator {
 			}
 		});
 		
+		int count = 0 ; 
 		for(ContextPattern temp : scoredPattern) {
 			System.out.println(temp.getPatternString() + "(" +temp.getFrequency() + ")" 
 									+ "=>" + temp.getPatternScore());
+			count ++;
+			if(count == 5) break;
 		}
 		
 		return scoredPattern;

@@ -53,13 +53,13 @@ public class ContextExtractor {
 		
 		System.out.println("Collecting violation occurred Variable and its Path...");
 		varPath = getViolationVarPath(resultInfo);
-		System.out.println("@@@@@ Collected Successfully\n");
+		System.out.println("\n@@@@@ Collected Successfully\n");
 		System.out.println("Collecting violation occurred Method Context...");
 		contextNodeInformation = getContextNode(varPath, flag);
-		System.out.println("@@@@@ Collected Successfully\n");
+		System.out.println("\n@@@@@ Collected Successfully\n");
 		System.out.println("Vectorizing Collected Context...");
 		contextVectorInformation = getContextVectorInformation(contextNodeInformation);
-		System.out.println("@@@@@ Collected Successfully\n");
+		System.out.println("\n@@@@@ Collected Successfully\n");
 		
 		//part 2 : get Frequent pattern
 		//get all pattern(SP, OP, AP)
