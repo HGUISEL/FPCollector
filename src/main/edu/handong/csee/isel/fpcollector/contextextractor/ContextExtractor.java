@@ -16,13 +16,41 @@ import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 import edu.handong.csee.isel.fpcollector.utils.Reader;
 import edu.handong.csee.isel.fpcollector.utils.ReportAnalyzer;
 import edu.handong.csee.isel.fpcollector.utils.Writer;
-
+/**
+ * 
+ * Extract False Positive Suspects' Common Context.
+ * 
+ * <p> 	Process<br>
+ * <pre>
+ * 1. Read Result File to get Information about FP.
+ * 2. Get Violated Variable Name by using 1.'s information .
+ * 3. Get Context by using AST, which mean get violated name's parent until next name came.
+ * 4. Make contexts as vectors.
+ * 5. Make Patterns by using 4.'s vectors and Get its Frequency.
+ * 6. Sort by Frequency and get top 20.
+ * </pre>
+ * <p>Input	<br>
+ * <pre>
+ * 1-1) FP result File Path(When flag is False Positive).
+ * 1-2) TP result File Path(When flag is True Positive).
+ * </pre>
+ * <p>Output<br>
+ * <pre>
+ * 1) ArrayList(elements are ContextPattern) : List which contains Context Patterns with its Frequency. 
+ * 2) [Opt.] Result_w_Ctx.csv : csv file which include result file's information and, in addition, context codes. 
+ * </pre>
+ * 
+ * @author yoonhochoi
+ * @version 1.0
+ * @since 1.0
+ * @see edu.handong.csee.isel.fpcollector.utils.Reader
+ * @see edu.handong.csee.isel.fpcollector.utils.Writer
+ * @see edu.handong.csee.isel.fpcollector.utils.ReportAnalyzer
+ * @see edu.handong.csee.isel.fpcollector.contextextractor.astvector.ViolationVariableGetter
+ * @see edu.handong.csee.isel.fpcollector.contextextractor.astvector.ContextVectorGetter
+ * @see edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternFinder
+ */
 public class ContextExtractor {
-	/*
-	 * Input : A csv file, result of fpsuspectsgetter
-	 * Output : A csv file, directory and line number and context information
-	 */
-	
 	final static int TRUE_POSITIVE = 0;
 	final static int FALSE_POSITIVE = 1;
 	
@@ -96,15 +124,6 @@ public class ContextExtractor {
 		return resultInfo;	
 	}
 	
-	public ArrayList<ArrayList<String>> getContextUsingBlame(ArrayList<String> result, String name){
-		ArrayList<ArrayList<String>> lineInfo = new ArrayList<>();
-		ReportAnalyzer analyzer = new ReportAnalyzer();
-		
-		lineInfo = analyzer.getCtxUsingBlame(result, name);
-		
-		return lineInfo;
-	}
-	
 	public ArrayList<ArrayList<String>> getContextUsingFile(ArrayList<String> result, String name){
 		ArrayList<ArrayList<String>> lineInfo = new ArrayList<>();
 		ReportAnalyzer analyzer = new ReportAnalyzer();
@@ -166,7 +185,7 @@ public class ContextExtractor {
 	
 		return linePatterns;
 	}
-
+	@Deprecated
 	public HashMap<ArrayList<String>, Integer> getAllPatterns
 	(ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation) {
 		HashMap<ArrayList<String>, Integer> sequentialPatterns = new HashMap<>();
@@ -177,7 +196,7 @@ public class ContextExtractor {
 		
 		return sequentialPatterns;
 	}
-	
+	@Deprecated
 	public HashMap<ArrayList<String>, Integer> getSequentialPatternFrequency
 	(ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation, 
 	HashMap<ArrayList<String>, Integer> allSequentialPatterns) {
@@ -197,5 +216,15 @@ public class ContextExtractor {
 		patterns = finder.sortByCounting(patternFrequency);
 		
 		return patterns;
+	}
+	
+	@Deprecated
+	public ArrayList<ArrayList<String>> getContextUsingBlame(ArrayList<String> result, String name){
+		ArrayList<ArrayList<String>> lineInfo = new ArrayList<>();
+		ReportAnalyzer analyzer = new ReportAnalyzer();
+		
+		lineInfo = analyzer.getCtxUsingBlame(result, name);
+		
+		return lineInfo;
 	}
 }

@@ -54,24 +54,26 @@ public class ReportAnalyzer {
 				fBufReader.close();
 				blameInfo.put(lineInfo, temp);
 				progress ++;
+				if(progress == 1) {
+					System.out.print("0%...");
+				}
 				if(progress == quater) {
-					System.out.println("@@@@@ 25% Complete");
+					System.out.print("25%...");
 				}
 				else if(progress == half) {
-					System.out.println("@@@@@ 50% Complete");
+					System.out.print("50%...");
 				}
 				else if (progress == halfNQuater) {
-					System.out.println("@@@@@ 75% Complete");
+					System.out.print("75%...");
+				} 
+				else if (progress == size) {
+					System.out.println("done");
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		
-		System.out.println("@@@@@ Collected All Information About Violation Lines Successfully");
-		
 		return blameInfo;
 	}
 	
@@ -89,7 +91,7 @@ public class ReportAnalyzer {
 		int half = size /2 ;
 		int halfNQuater = size * 3 / 4;
 		try {
-			System.out.println("\n----- Start to Collect Line Context Information -----\n");
+			System.out.println("\n----- Start to Collect Line Context Information -----");
 			for(String temp : resultInfo) {
 				ArrayList<String> lineContextInfo = new ArrayList<>();
 				String tempDir = temp.split(",")[0];
@@ -116,23 +118,26 @@ public class ReportAnalyzer {
 				fBufReader.close();
 				contextInfo.add(lineContextInfo);
 				progress ++;
+				if(progress == 1) {
+					System.out.print("0%...");
+				}
 				if(progress == quater) {
-					System.out.println("@@@@@ 25% Complete");
+					System.out.print("25%...");
 				}
 				else if(progress == half) {
-					System.out.println("@@@@@ 50% Complete");
+					System.out.print("50%...");
 				}
 				else if (progress == halfNQuater) {
-					System.out.println("@@@@@ 75% Complete");
+					System.out.print("75%...");
+				} 
+				else if (progress == size) {
+					System.out.println("done");
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		
-		System.out.println("@@@@@ Collected All Information About Violation Lines Successfully");
 		
 		return contextInfo;
 	}
@@ -175,7 +180,7 @@ public class ReportAnalyzer {
 		}		
 		return truePositive;
 	}
-
+	@Deprecated
 	public ArrayList<ArrayList<String>> getCtxUsingBlame(ArrayList<String> resultInfo, String name){
 		ArrayList<ArrayList<String>> contextInfo = new ArrayList<>();
 	
@@ -230,14 +235,20 @@ public class ReportAnalyzer {
 				outputStream.close();
 				contextInfo.add(lineContextInfo);
 				progress ++;
+				if(progress == 1) {
+					System.out.print("0%...");
+				}
 				if(progress == quater) {
-					System.out.println("@@@@@ 25% Complete");
+					System.out.print("25%...");
 				}
 				else if(progress == half) {
-					System.out.println("@@@@@ 50% Complete");
+					System.out.print("50%...");
 				}
 				else if (progress == halfNQuater) {
-					System.out.println("@@@@@ 75% Complete");
+					System.out.print("75%...");
+				} 
+				else if (progress == size) {
+					System.out.println("done");
 				}
 			}
 		} 	catch (Exception e) {

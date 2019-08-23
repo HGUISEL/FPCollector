@@ -7,7 +7,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.handong.csee.isel.fpcollector.structures.ContextPattern;
-
+/**
+ * 
+ * Eliminate Common Contexts which aren't indicate False Positives' Context.
+ * 
+ * <p> 	Process<br>
+ * <pre>
+ * 1. Normalize nodes which are in TP and FP.
+ * 2. Normalize Frequency of Each TP and FP.
+ * 3. Get Pattern Score.
+ * 4. Print top 5.
+ * </pre>
+ * <p>Input	<br>
+ * <pre>
+ * 1) Top 20 Common Contexts of False Positive (not accurate).
+ * 2) Top 20 Common Contexts of True Positive (not accurate).
+ * </pre>
+ * <p>Output<br>
+ * <pre>
+ * 1) Print FalsePositives' Common Context(Until accuracy 100% for 2 Projects, dubbo and spring-boot)
+ * </pre>
+ * 
+ * @author yoonhochoi
+ * @version 1.0
+ * @since 1.0
+ */
 public class Evaluator {
 	public void run(ArrayList<ContextPattern> tp, ArrayList<ContextPattern> fp) {
 		HashMap<String, Double> tpNodeNormalization = new HashMap<>();
@@ -23,7 +47,7 @@ public class Evaluator {
 		fpFrequencyNormalization = frequencyNormalization(fp);
 		
 		scoredPattern = 
-				getNodeScore(fp, tpNodeNormalization, fpNodeNormalization, tpFrequencyNormalization, fpFrequencyNormalization);
+				getPatternScore(fp, tpNodeNormalization, fpNodeNormalization, tpFrequencyNormalization, fpFrequencyNormalization);
 	}
 	
 	public HashMap<String,Double> nodeNormalization(ArrayList<ContextPattern> nodes) {
@@ -59,11 +83,11 @@ public class Evaluator {
 		}
 		
 		nodeWeight = normalization(nodeWeight, max, min);
-		
-		for(Map.Entry<String, Double> temp : nodeWeight.entrySet()) {
-			System.out.println("Node : " + temp.getKey() + " Weight : " + temp.getValue());			
-		}
-		System.out.println("\n\n");
+		//Print node Frequency
+//		for(Map.Entry<String, Double> temp : nodeWeight.entrySet()) {
+//			System.out.println("Node : " + temp.getKey() + " Weight : " + temp.getValue());			
+//		}
+//		System.out.println("\n\n");
 		return nodeWeight;
 	}
 	
@@ -84,11 +108,11 @@ public class Evaluator {
 		}
 		
 		frequencyWeight = normalization(frequencyWeight, max, min);
-		
-		for(Map.Entry<String, Double> temp : frequencyWeight.entrySet()) {
-			System.out.println("Pattern : " + temp.getKey() + "\tNormalized Frequency : " + temp.getValue());
-		}
-		System.out.println("\n\n");
+		//print pattern frequency
+//		for(Map.Entry<String, Double> temp : frequencyWeight.entrySet()) {
+//			System.out.println("Pattern : " + temp.getKey() + "\tNormalized Frequency : " + temp.getValue());
+//		}
+//		System.out.println("\n\n");
 		
 		return frequencyWeight;
 	}
@@ -101,7 +125,7 @@ public class Evaluator {
 	}
 	
 	public ArrayList<ContextPattern> 
-	getNodeScore(ArrayList<ContextPattern> nodes, HashMap<String, Double> tpNodeNormalization,
+	getPatternScore(ArrayList<ContextPattern> nodes, HashMap<String, Double> tpNodeNormalization,
 			HashMap<String, Double> fpNodeNormalization, HashMap<String, Double> tpFrequencyNormalization,
 			HashMap<String, Double> fpFrequencyNormalization){
 		ArrayList<ContextPattern> scoredPattern = new ArrayList<>();
@@ -144,7 +168,7 @@ public class Evaluator {
 		int count = 0 ; 
 		for(ContextPattern temp : scoredPattern) {
 			System.out.println(temp.getPatternString() + "(" +temp.getFrequency() + ")" 
-									+ "=>" + temp.getPatternScore());
+									+ " => " + temp.getPatternScore());
 			count ++;
 			if(count == 5) break;
 		}

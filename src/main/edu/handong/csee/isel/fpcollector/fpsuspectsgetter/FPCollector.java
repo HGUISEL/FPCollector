@@ -6,6 +6,45 @@ import java.util.HashMap;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.checkout.*;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.clone.*;
 import edu.handong.csee.isel.fpcollector.utils.*;
+/**
+ * 
+ * Collect False Positive Suspects.
+ * 
+ * <p> 	Process<br>
+ * <pre>
+ * 1. Clone the Target Project, and run static analysis tool.
+ * 2. Read the analysis report to get analyzed information.
+ * 3. Checkout the Target Project to a year ago of the input time.
+ * 4. Run same tool to checkout project and get report informations.
+ * 5. By using the report informations, get violated lines in each current and past project.
+ * 6. Compare the current project's violated lines and the past project's violated lines
+ * 7. Get suspect lines which are same line in the current project and past project
+ * 8. Write Result file on output path which contains violate path, line number, error message
+ * </pre>
+ * <p>Input	<br>
+ * <pre>
+ * 1)Info[0] : project address
+ * 2)Info[1] : rule context
+ * 3)Info[2] : output path
+ * 4)Info[3] : tool command
+ * 5)Info[4] : Time
+ * </pre>
+ * <p>Output<br>
+ * <pre>
+ * 1) Result.csv : This documentation include False Positive suspects' path, line number, and error message.
+ * </pre>
+ * 
+ * @author yoonhochoi
+ * @version 1.0
+ * @since 1.0
+ * @see edu.handong.csee.isel.fpcollector.utils.Reader
+ * @see edu.handong.csee.isel.fpcollector.utils.ToolExecutor
+ * @see edu.handong.csee.isel.fpcollector.utils.Writer
+ * @see edu.handong.csee.isel.fpcollector.utils.ReportAnalyzer
+ * @see edu.handong.csee.isel.fpcollector.fpsuspectsgetter.clone.CloneMaker
+ * @see edu.handong.csee.isel.fpcollector.fpsuspectsgetter.checkout.CheckOutMaker
+ *
+ */
 
 public class FPCollector{
 	/*
@@ -35,12 +74,11 @@ public class FPCollector{
 	}
 	
 	public void run(String[] info) {
-		//Should I use SimpleEntry?? It could be changed to just String
 		ArrayList<String> currentReportInfo = new ArrayList<>();
 		ArrayList<String> pastReportInfo = new ArrayList<>();
 
-		HashMap<String, String> currentBlameInfo = 	new HashMap<>();
-		HashMap<String, String> pastBlameInfo = new HashMap<>();
+		HashMap<String, String> currentViolatedLine = 	new HashMap<>();
+		HashMap<String, String> pastViolatedLine = new HashMap<>();
 		HashMap<String, String> suspects = new HashMap<>();
 		
 		String project = "";
@@ -74,13 +112,13 @@ public class FPCollector{
 		pastReportInfo = getInfo(pastReportPath);
 	
 		//get git blame/annotate and line info
-		currentBlameInfo = getViolationLine(currentReportInfo);
+		currentViolatedLine = getViolationLine(currentReportInfo);
 				
-		pastBlameInfo = getViolationLine(pastReportInfo);
+		pastViolatedLine = getViolationLine(pastReportInfo);
 		
 		//get suspects
 		
-		suspects = getSuspects(currentBlameInfo, pastBlameInfo);
+		suspects = getSuspects(currentViolatedLine, pastViolatedLine);
 		System.out.println("\nStart to write Result...\n");
 		writeOutput(suspects, outputResultPath);
 		System.out.println("-------------------------------------");

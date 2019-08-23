@@ -6,15 +6,49 @@ import java.util.HashMap;
 import edu.handong.csee.isel.fpcollector.utils.Reader;
 import edu.handong.csee.isel.fpcollector.utils.ReportAnalyzer;
 import edu.handong.csee.isel.fpcollector.utils.Writer;
-
+/**
+ * 
+ * Collect True Positive for reducing common pattern of result.
+ * 
+ * <p> Process <br>
+ * <pre>
+ * 1. Get Project Name by using Input number [1]
+ * 2. Read the analysis report to get analyzed information.
+ * 3. By using the report informations, get violated lines in each current and past project.
+ * 4. Compare the current project's violated lines and the past project's violated lines.
+ * 5. Get True Positive lines which are in the past project but not in past project.
+ * 6. Write Result file on output path which contains violate path, line number, error message.
+ * </pre>
+ * <p> Input File<br>
+ * 1) Path of a text file which include a Target Project's git address(for getting project name)<br>
+ * 2) Path of a text file which include Output file path<br>
+ * <br>
+ * For example,<br>
+ * <pre> 1) https://github.com/spring-projects/dubbo.git
+ * 2) ./Result.csv
+ * </pre>
+ * 
+ * <p>Output<br>
+ * <pre>
+ * 1) Result_TP.csv : This documentation include TP's path, line number, and error message.
+ * </pre>
+ * 
+ * @author yoonhochoi
+ * @version 1.0
+ * @since 1.0
+ * @see edu.handong.csee.isel.fpcollector.utils.Reader
+ * @see edu.handong.csee.isel.fpcollector.utils.Writer
+ * @see edu.handong.csee.isel.fpcollector.utils.ReportAnalyzer
+ *
+ */
 public class TPCollector {
 	public void run(String[] info) {
 		ArrayList<String> currentReportInfo = new ArrayList<>();
 		ArrayList<String> pastReportInfo = new ArrayList<>();
 
-		HashMap<String, String> currentBlameInfo = 	new HashMap<>();
-		HashMap<String, String> pastBlameInfo = new HashMap<>();
-		HashMap<String, String> suspects = new HashMap<>();
+		HashMap<String, String> currentLineInfo = 	new HashMap<>();
+		HashMap<String, String> pastLineInfo = new HashMap<>();
+		HashMap<String, String> truePositives = new HashMap<>();
 		
 		String projectName = "";
 		String outputResultPath = "";
@@ -32,18 +66,17 @@ public class TPCollector {
 		//get violation informations(Directory, line number, error message)
 		pastReportInfo = getInfo(pastReportPath);
 	
-		//get git blame/annotate and line info
-		currentBlameInfo = getViolationLine(currentReportInfo);
+		//get line info by read file
+		currentLineInfo = getViolationLine(currentReportInfo);
 				
-		pastBlameInfo = getViolationLine(pastReportInfo);
+		pastLineInfo = getViolationLine(pastReportInfo);
 		
-		//get suspects
+		//get True Positive
 		
-		suspects = getTruePositive(currentBlameInfo, pastBlameInfo);
+		truePositives = getTruePositive(currentLineInfo, pastLineInfo);
 		System.out.println("\nStart to write Result...\n");
-		writeOutput(suspects, outputResultPath);
-		System.out.println("-------------------------------------");
-		System.out.println("@@@@@ Result File is created@@@@@");
+		writeOutput(truePositives, outputResultPath);
+		System.out.println("done");
 	}
 	
 	public ArrayList<String> getInfo(String path){
