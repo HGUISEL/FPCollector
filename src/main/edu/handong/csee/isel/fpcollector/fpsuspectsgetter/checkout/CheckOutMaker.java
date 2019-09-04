@@ -55,7 +55,7 @@ public class CheckOutMaker {
 			yearAgo = Integer.parseInt(currentDate[0]) - 1;
 			
 			String command = "git rev-list -1 --before=\"" + yearAgo + "-"
-					+ currentDate[1] + "-" + currentDate[2] + "\" master";
+					+ currentDate[1] + "-" + currentDate[2] + "\" HEAD";
 		
 			try {
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

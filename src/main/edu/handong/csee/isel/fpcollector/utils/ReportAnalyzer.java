@@ -15,12 +15,14 @@ public class ReportAnalyzer {
 	
 	public ArrayList<String> getDirLineErrmsg(ArrayList<String[]> report) {
 		ArrayList<String> info = new ArrayList<>();
-		for(String[] temp : report) {			
+		for(String[] temp : report) {
+			if(temp[0].contains(":")) {
 			String[] separate = temp[0].split(":");
 			String directoryPath = separate[0];
 			String atLine = separate[1];
 			String errorMessage = temp[1].trim();
 			info.add(directoryPath + "," + atLine + "," + errorMessage);
+			} else continue;
 		}
 		return info;
 	}

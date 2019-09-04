@@ -84,10 +84,10 @@ public class Evaluator {
 		
 		nodeWeight = normalization(nodeWeight, max, min);
 		//Print node Frequency
-//		for(Map.Entry<String, Double> temp : nodeWeight.entrySet()) {
-//			System.out.println("Node : " + temp.getKey() + " Weight : " + temp.getValue());			
-//		}
-//		System.out.println("\n\n");
+		for(Map.Entry<String, Double> temp : nodeWeight.entrySet()) {
+			System.out.println("Node : " + temp.getKey() + " Weight : " + temp.getValue());			
+		}
+		System.out.println("\n\n");
 		return nodeWeight;
 	}
 	
@@ -109,10 +109,10 @@ public class Evaluator {
 		
 		frequencyWeight = normalization(frequencyWeight, max, min);
 		//print pattern frequency
-//		for(Map.Entry<String, Double> temp : frequencyWeight.entrySet()) {
-//			System.out.println("Pattern : " + temp.getKey() + "\tNormalized Frequency : " + temp.getValue());
-//		}
-//		System.out.println("\n\n");
+		for(Map.Entry<String, Double> temp : frequencyWeight.entrySet()) {
+			System.out.println("Pattern : " + temp.getKey() + "\tNormalized Frequency : " + temp.getValue());
+		}
+		System.out.println("\n\n");
 		
 		return frequencyWeight;
 	}
@@ -166,9 +166,10 @@ public class Evaluator {
 		});
 		
 		int count = 0 ; 
+		System.out.println("\n Top 5. FP Common Cotext");
 		for(ContextPattern temp : scoredPattern) {
 			System.out.println(temp.getPatternString() + "(" +temp.getFrequency() + ")" 
-									+ " => " + temp.getPatternScore());
+									+ " Score : " + temp.getPatternScore());
 			count ++;
 			if(count == 5) break;
 		}
