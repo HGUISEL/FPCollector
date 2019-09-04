@@ -169,7 +169,7 @@ public class ReportAnalyzer {
 		
 		for(String pastLine : past.keySet()) {
 			for(String currentLine : current.keySet()) {
-				if(currentLine.equals(pastLine)) {
+				if(currentLine.trim().equals(pastLine.trim())) {
 					flag = 1;
 					break;
 				}

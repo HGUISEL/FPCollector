@@ -54,6 +54,9 @@ public class Evaluator {
 		HashMap<String, Double> nodeWeight = new HashMap<>();
 		Double max = -999.0;
 		Double min = 999.0;
+		Double total = 0.0;
+		Double avrg = 0.0;
+		Double standardDeviation = 0.0;
 		for(ContextPattern tempPattern : nodes) {
 			//System.out.println(tempPattern.getPatternString() + "||" + tempPattern.getFrequency());
 			for(String tempNode : tempPattern.getPatternString().split(",")) {
@@ -72,17 +75,32 @@ public class Evaluator {
 			}
 		}
 		
+//		//for normalization
+//		for(Map.Entry<String, Double> temp : nodeWeight.entrySet()) {
+//			//System.out.println("Node : " + temp.getKey() + " Weight : " + temp.getValue());
+//			if(max < temp.getValue()) {
+//				max = Double.valueOf(temp.getValue().toString());
+//			}
+//			if(min > temp.getValue()) {
+//				min = Double.valueOf(temp.getValue().toString());
+//			}
+//		}
+//		nodeWeight = normalization(nodeWeight, max, min);
+		
+		//for standardization
+		ArrayList<Double> values = new ArrayList<>();
 		for(Map.Entry<String, Double> temp : nodeWeight.entrySet()) {
 			//System.out.println("Node : " + temp.getKey() + " Weight : " + temp.getValue());
-			if(max < temp.getValue()) {
-				max = Double.valueOf(temp.getValue().toString());
-			}
-			if(min > temp.getValue()) {
-				min = Double.valueOf(temp.getValue().toString());
-			}
+			values.add(temp.getValue());
 		}
 		
-		nodeWeight = normalization(nodeWeight, max, min);
+		for(Double tempVal : values) {
+			total += tempVal;
+		}
+		avrg = total / values.size();
+		standardDeviation = getStandardDeviation(values, avrg, 0);
+		nodeWeight = standardization(nodeWeight, avrg, standardDeviation);
+		
 		//Print node Frequency
 		for(Map.Entry<String, Double> temp : nodeWeight.entrySet()) {
 			System.out.println("Node : " + temp.getKey() + " Weight : " + temp.getValue());			
@@ -97,17 +115,40 @@ public class Evaluator {
 		Double min = 999.0;
 		Double max = -999.0;
 		
-		for(ContextPattern temp : frequency) {
-			if(min > temp.getFrequency()) {
-				min = Double.valueOf(temp.getFrequency().toString());
-			}
-			if(max < temp.getFrequency()) {
-				max = Double.valueOf(temp.getFrequency().toString());
-			}
-			frequencyWeight.put(temp.getPatternString(), Double.valueOf(temp.getFrequency().toString()));
-		}
+	for(ContextPattern temp : frequency) {
+		frequencyWeight.put(temp.getPatternString(), Double.valueOf(temp.getFrequency().toString()));
+	}
 		
-		frequencyWeight = normalization(frequencyWeight, max, min);
+		//for normalization
+//		for(ContextPattern temp : frequency) {
+//			if(min > temp.getFrequency()) {
+//				min = Double.valueOf(temp.getFrequency().toString());
+//			}
+//			if(max < temp.getFrequency()) {
+//				max = Double.valueOf(temp.getFrequency().toString());
+//			}
+//			frequencyWeight.put(temp.getPatternString(), Double.valueOf(temp.getFrequency().toString()));
+//		}
+//		
+//		frequencyWeight = normalization(frequencyWeight, max, min);
+		
+		//for standardization
+		Double total = 0.0;
+		Double avrg = 0.0;
+		Double standardDeviation = 0.0;
+		ArrayList<Double> values = new ArrayList<>();
+			for(ContextPattern temp : frequency) {
+				//System.out.println("Node : " + temp.getKey() + " Weight : " + temp.getValue());
+				values.add(Double.valueOf(temp.getFrequency().toString()) );
+			}
+			
+			for(Double tempVal : values) {
+				total += tempVal;
+			}
+			avrg = total / values.size();
+			standardDeviation = getStandardDeviation(values, avrg, 0);
+			frequencyWeight = standardization(frequencyWeight, avrg, standardDeviation);
+				
 		//print pattern frequency
 		for(Map.Entry<String, Double> temp : frequencyWeight.entrySet()) {
 			System.out.println("Pattern : " + temp.getKey() + "\tNormalized Frequency : " + temp.getValue());
@@ -120,6 +161,25 @@ public class Evaluator {
 	public HashMap<String, Double> normalization(HashMap<String, Double> nodeWeight, Double max, Double min) {
 		for(Map.Entry<String, Double> temp : nodeWeight.entrySet()) {
 			nodeWeight.put(temp.getKey(), (temp.getValue()-min)/(max-min));
+		}
+		return nodeWeight;
+	}
+	
+	public Double getStandardDeviation(ArrayList<Double> values, Double avrg, int opt){
+		Double sum = 0.0;
+		Double sd = 0.0;
+		Double diff;
+		for(Double value : values) {
+			diff = value - avrg;
+			sum += diff * diff;
+		}
+		sd = Math.sqrt(sum / (values.size() - opt));
+		return sd;
+	}
+	
+	public HashMap<String, Double> standardization(HashMap<String, Double> nodeWeight, Double avrg, Double stdDevi) {
+		for(Map.Entry<String, Double> temp : nodeWeight.entrySet()) {
+			nodeWeight.put(temp.getKey(), (temp.getValue()-avrg)/stdDevi);
 		}
 		return nodeWeight;
 	}
@@ -140,9 +200,13 @@ public class Evaluator {
 				}
 				if(tpNodeNormalization.containsKey(tempNode) /*&& 
 						tpNodeNormalization.get(tempNode) > 0.1*/) {
+					//System.out.println(temp.getTpPatternScore());
 					temp.setTpPatternScore(temp.getTpPatternScore() + tpNodeNormalization.get(tempNode) * (-1.0));
+					//System.out.println(temp.getTpPatternScore());
 				}else if(fpNodeNormalization.containsKey(tempNode)){
-				temp.setFpPatternScore(temp.getFpPatternScore() + fpNodeNormalization.get(tempNode) * (0.0));
+					//System.out.println(temp.getFpPatternScore());
+					temp.setFpPatternScore(temp.getFpPatternScore() + fpNodeNormalization.get(tempNode) * (0.0));
+					//System.out.println(temp.getFpPatternScore());
 				}
 			}
 			//pattern frequency
@@ -151,7 +215,10 @@ public class Evaluator {
 				temp.setTpPatternScore(temp.getTpPatternScore() 
 						+ tpFrequencyNormalization.get(temp.getPatternString()) * (-1.0));
 			}else if(fpFrequencyNormalization.containsKey(temp.getPatternString())){
+				//System.out.println(temp.getFpPatternScore());
+				//System.out.println(fpFrequencyNormalization.get(temp.getPatternString()));
 				temp.setFpPatternScore(temp.getFpPatternScore() + (fpFrequencyNormalization.get(temp.getPatternString())* 0.2));
+				//System.out.println(temp.getFpPatternScore());
 			}
 			temp.setPatternScore(temp.getFpPatternScore() + temp.getTpPatternScore());
 			scoredPattern.add(temp);
