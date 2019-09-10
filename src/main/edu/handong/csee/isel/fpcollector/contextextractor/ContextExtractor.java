@@ -53,6 +53,7 @@ import edu.handong.csee.isel.fpcollector.utils.Writer;
 public class ContextExtractor {
 	final static int TRUE_POSITIVE = 0;
 	final static int FALSE_POSITIVE = 1;
+	final static int BUGGY = 2;
 	
 	public ArrayList<ContextPattern> run(String[] info, int flag) {
 		//read result file

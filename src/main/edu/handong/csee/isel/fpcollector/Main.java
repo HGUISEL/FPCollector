@@ -1,9 +1,16 @@
 package edu.handong.csee.isel.fpcollector;
 
+/*
+ * To-do
+ * 2. Use True Positive pattern(before being changed)
+ * 3. Use not only standardization, but also Normalization
+ */
+
 import java.io.File;
 import java.util.ArrayList;
 
 import edu.handong.csee.isel.fpcollector.contextextractor.ContextExtractor;
+import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternAdjustment;
 import edu.handong.csee.isel.fpcollector.evaluator.Evaluator;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.FPCollector;
 import edu.handong.csee.isel.fpcollector.structures.ContextPattern;
@@ -47,33 +54,41 @@ import edu.handong.csee.isel.fpcollector.tpcollector.TPCollector;
 public class Main {
 	final static int TRUE_POSITIVE = 0;
 	final static int FALSE_POSITIVE = 1;
+	final static int BUGGY = 2;
 		public static void main(String[] args) {
 			FPCollector getFPSuspects = new FPCollector();
 			TPCollector getTP = new TPCollector();
+			
 			ContextExtractor getFalsePositiveContext = new ContextExtractor();
 			ContextExtractor getTruePositiveContext = new ContextExtractor();
+			ContextExtractor getBuggyContext = new ContextExtractor();
 			Evaluator getScore = new Evaluator();
+			PatternAdjustment adjust = new PatternAdjustment();
 			ArrayList<ContextPattern> truePositivePattern = new ArrayList<>();
 			ArrayList<ContextPattern> falsePositivePattern = new ArrayList<>();
-			
+			ArrayList<ContextPattern> buggyPattern = new ArrayList<>();
 			
 			String[] information  = getFPSuspects.initiate(args);
 			
 			if(!new File(information[2]).exists()) {
-			getFPSuspects.run(information);
+				getFPSuspects.run(information);
 			} else {
 				System.out.println("!!!!! FP Result File is Already Exists");
 			}
 			
 			if(!new File(information[2].split("\\.csv")[0] + "_TP.csv").exists()) {
-			getTP.run(information);
+				getTP.run(information);
 			} else {
 				System.out.println("!!!!! TP Result File is Already Exists");
 			}
 			
 			truePositivePattern = getTruePositiveContext.run(information, TRUE_POSITIVE);
 			falsePositivePattern = getFalsePositiveContext.run(information, FALSE_POSITIVE);
+			buggyPattern = getBuggyContext.run(information, BUGGY);
+			truePositivePattern = adjust.adjustTP(truePositivePattern, falsePositivePattern, buggyPattern);
+			falsePositivePattern = adjust.adjustTP(truePositivePattern, falsePositivePattern, buggyPattern);
+			buggyPattern = adjust.adjustTP(truePositivePattern, falsePositivePattern, buggyPattern);
 			
-			getScore.run(truePositivePattern, falsePositivePattern);
+			getScore.run(truePositivePattern, falsePositivePattern, buggyPattern);
 		}
 }
