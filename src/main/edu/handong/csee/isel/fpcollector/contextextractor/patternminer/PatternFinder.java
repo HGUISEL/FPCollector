@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 
@@ -70,9 +71,9 @@ public class PatternFinder {
 				
 				if(cUnit.getLineNumber(violationOccurrence.getStartPosition()) == 
 						cUnit.getLineNumber(temp.getNode().getStartPosition())) {
-					lineContext.add(temp.getVectorNodeInfo());
+					lineContext.add(temp.getVectorNodeInfo().trim());
 				}
-				blockContext.add(temp.getVectorNodeInfo());
+				blockContext.add(temp.getVectorNodeInfo().trim());
 //				ArrayList<String> test = new ArrayList<>();
 //				test.add("SimpleName");
 //				test.add("ClassInstanceCreation");
@@ -90,11 +91,13 @@ public class PatternFinder {
 		
 		for(ArrayList<String> pattern : linePatterns) {
 			if(pattern.size() > 2) {
-				if(patterns.containsKey(pattern)) {
-					patterns.put(pattern, Integer.sum(patterns.get(pattern), 1)); 
+				if(!patterns.containsKey(pattern)) {
+					patterns.put(pattern, 1); 
 				}
 				else {
-					patterns.put(pattern, 1);
+					Integer tempCount = patterns.get(pattern);
+					tempCount +=1;
+					patterns.put(pattern, tempCount);
 				}
 			}
 		}
@@ -137,7 +140,9 @@ public class PatternFinder {
 								patterns.put(tempPattern, 1);
 							}
 							else {
-								patterns.put(tempPattern, Integer.sum(patterns.get(tempPattern), 1));
+								Integer tempCount = patterns.get(tempPattern);
+								tempCount +=1;
+								patterns.put(tempPattern, tempCount);
 							}
 						}
 						tempPattern.clear();
@@ -161,6 +166,34 @@ public class PatternFinder {
 		}*/
 		
 		System.out.println("\n" + patterns.size());
+		HashMap<ArrayList<String>, Integer> adjustedPattern = new HashMap<>();
+		HashMap<ArrayList<String>, Integer> patternClone = new HashMap<>();
+		ArrayList<ArrayList<String>> duplicatedPattern = new ArrayList<>();
+		
+		Integer adjustedCount = 0;
+		patternClone.putAll(patterns);
+		
+		for(Entry<ArrayList<String>, Integer> pattern : patterns.entrySet()) {
+			ArrayList<String> tempPattern = new ArrayList<>();
+			tempPattern.addAll(pattern.getKey());
+			Integer tempValue = pattern.getValue();
+			adjustedCount = tempValue;
+			if(duplicatedPattern.contains(tempPattern)) {
+				continue;
+			}
+			duplicatedPattern.add(tempPattern);
+			for(Entry<ArrayList<String>, Integer> clonedPattern : patternClone.entrySet()) {
+				ArrayList<String> tempClonedPattern = new ArrayList<>();
+				tempClonedPattern.addAll(clonedPattern.getKey());
+				Integer tempClonedValue = clonedPattern.getValue();
+				adjustedCount += tempClonedValue;
+				if(tempClonedPattern.equals(tempPattern)) {
+					adjustedPattern.put(tempPattern, adjustedCount);
+				}
+				
+			}
+			
+		}
 		
 		return patterns;
 	}

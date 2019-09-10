@@ -8,7 +8,7 @@ package edu.handong.csee.isel.fpcollector;
 
 import java.io.File;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 import edu.handong.csee.isel.fpcollector.contextextractor.ContextExtractor;
 import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternAdjustment;
 import edu.handong.csee.isel.fpcollector.evaluator.Evaluator;
@@ -64,6 +64,10 @@ public class Main {
 			ContextExtractor getBuggyContext = new ContextExtractor();
 			Evaluator getScore = new Evaluator();
 			PatternAdjustment adjust = new PatternAdjustment();
+			HashMap<ArrayList<String>, Integer> tpCodeContextNodes =new HashMap<>();
+			HashMap<ArrayList<String>, Integer> fpCodeContextNodes =new HashMap<>();
+			HashMap<ArrayList<String>, Integer> buggyCodeContextNodes =new HashMap<>();
+		
 			ArrayList<ContextPattern> truePositivePattern = new ArrayList<>();
 			ArrayList<ContextPattern> falsePositivePattern = new ArrayList<>();
 			ArrayList<ContextPattern> buggyPattern = new ArrayList<>();
@@ -82,12 +86,16 @@ public class Main {
 				System.out.println("!!!!! TP Result File is Already Exists");
 			}
 			
-			truePositivePattern = getTruePositiveContext.run(information, TRUE_POSITIVE);
-			falsePositivePattern = getFalsePositiveContext.run(information, FALSE_POSITIVE);
-			buggyPattern = getBuggyContext.run(information, BUGGY);
-			truePositivePattern = adjust.adjustTP(truePositivePattern, falsePositivePattern, buggyPattern);
-			falsePositivePattern = adjust.adjustTP(truePositivePattern, falsePositivePattern, buggyPattern);
-			buggyPattern = adjust.adjustTP(truePositivePattern, falsePositivePattern, buggyPattern);
+			tpCodeContextNodes = getTruePositiveContext.getPattern(information, TRUE_POSITIVE);
+			buggyCodeContextNodes = getBuggyContext.getPattern(information, BUGGY);
+			fpCodeContextNodes = getFalsePositiveContext.getPattern(information, FALSE_POSITIVE);
+			
+			tpCodeContextNodes = adjust.adjustTP(tpCodeContextNodes, buggyCodeContextNodes);
+			tpCodeContextNodes = adjust.adjustBP(tpCodeContextNodes, buggyCodeContextNodes);
+			
+			truePositivePattern = getTruePositiveContext.sortPattern(tpCodeContextNodes, TRUE_POSITIVE);
+			buggyPattern = getBuggyContext.sortPattern(buggyCodeContextNodes, BUGGY);
+			falsePositivePattern = getFalsePositiveContext.sortPattern(fpCodeContextNodes, FALSE_POSITIVE);
 			
 			getScore.run(truePositivePattern, falsePositivePattern, buggyPattern);
 		}
