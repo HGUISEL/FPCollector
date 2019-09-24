@@ -55,7 +55,7 @@ public class ContextExtractor {
 	final static int FALSE_POSITIVE = 1;
 	final static int BUGGY = 2;
 	
-	public HashMap<ArrayList<String>, Integer> getPattern(String[] info, int flag) {
+	public HashMap<String, Integer> getPattern(String[] info, int flag) {
 		//read result file
 		ArrayList<String> resultInfo = new ArrayList<>();
 		//ArrayList<ArrayList<String>> lineContext = new ArrayList<>();
@@ -75,7 +75,7 @@ public class ContextExtractor {
 		ArrayList<String> varPath = new ArrayList<>();
 		ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> contextNodeInformation = new ArrayList<>();
 		ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation = new ArrayList<>();
-		HashMap<ArrayList<String>, Integer> contextPatterns = new HashMap<>();
+		HashMap<String, Integer> contextPatterns = new HashMap<>();
 		
 //		HashMap<ArrayList<String>, Integer> allSequentialPatterns = new HashMap<>();
 //		HashMap<ArrayList<String>, Integer> patternFrequency = new HashMap<>();
@@ -102,12 +102,10 @@ public class ContextExtractor {
 	}
 	
 	public ArrayList<ContextPattern> sortPattern
-	(HashMap<ArrayList<String>, Integer> contextPatterns, int flag){
+	(HashMap<String, Integer> contextPatterns, int flag){
 		
 		
 		ArrayList<ContextPattern> sortedPatterns = new ArrayList<>();
-		
-		
 		
 		//patternFrequency = getLinePatternFrequency(contextVectorInformation, linePatterns);
 		//patternFrequency = sortByFrequency(patternFrequency);
@@ -186,9 +184,9 @@ public class ContextExtractor {
 		return frequencyPattern;
 	}
 	
-	private HashMap<ArrayList<String>, Integer> getPatterns(
+	private HashMap<String, Integer> getPatterns(
 			ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation) {
-		HashMap<ArrayList<String>, Integer> linePatterns = new HashMap<>();
+		HashMap<String, Integer> linePatterns = new HashMap<>();
 		PatternFinder finder = new PatternFinder();
 		
 		linePatterns = finder.minePatterns(contextVectorInformation);
@@ -219,7 +217,7 @@ public class ContextExtractor {
 	}
 	
 	public ArrayList<ContextPattern> sortByFrequency(
-			HashMap<ArrayList<String>, Integer> patternFrequency) {
+			HashMap<String, Integer> patternFrequency) {
 		ArrayList<ContextPattern> patterns = new ArrayList<>();
 		PatternFinder finder = new PatternFinder();
 		

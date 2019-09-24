@@ -120,6 +120,7 @@ public class ContextVectorGetter {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+		
 		return contextInfo;
 	}
 	
@@ -139,7 +140,6 @@ public class ContextVectorGetter {
 			}
 			contextVector.add(new SimpleEntry<ASTNode, ArrayList<VectorNode>>(nodes.getKey(), vectorizedNodes));
 		}
-		
 		return contextVector;
 	}
 	

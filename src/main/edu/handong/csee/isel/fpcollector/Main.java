@@ -9,6 +9,8 @@ package edu.handong.csee.isel.fpcollector;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+
 import edu.handong.csee.isel.fpcollector.contextextractor.ContextExtractor;
 import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternAdjustment;
 import edu.handong.csee.isel.fpcollector.evaluator.Evaluator;
@@ -64,9 +66,9 @@ public class Main {
 			ContextExtractor getBuggyContext = new ContextExtractor();
 			Evaluator getScore = new Evaluator();
 			PatternAdjustment adjust = new PatternAdjustment();
-			HashMap<ArrayList<String>, Integer> tpCodeContextNodes =new HashMap<>();
-			HashMap<ArrayList<String>, Integer> fpCodeContextNodes =new HashMap<>();
-			HashMap<ArrayList<String>, Integer> buggyCodeContextNodes =new HashMap<>();
+			HashMap<String, Integer> tpCodeContextNodes =new HashMap<>();
+			HashMap<String, Integer> fpCodeContextNodes =new HashMap<>();
+			HashMap<String, Integer> buggyCodeContextNodes =new HashMap<>();
 		
 			ArrayList<ContextPattern> truePositivePattern = new ArrayList<>();
 			ArrayList<ContextPattern> falsePositivePattern = new ArrayList<>();
@@ -90,8 +92,12 @@ public class Main {
 			buggyCodeContextNodes = getBuggyContext.getPattern(information, BUGGY);
 			fpCodeContextNodes = getFalsePositiveContext.getPattern(information, FALSE_POSITIVE);
 			
-			tpCodeContextNodes = adjust.adjustTP(tpCodeContextNodes, buggyCodeContextNodes);
-			tpCodeContextNodes = adjust.adjustBP(tpCodeContextNodes, buggyCodeContextNodes);
+			for(Map.Entry<String, Integer> temp : fpCodeContextNodes.entrySet()) {
+				System.out.println(temp.getKey());
+			}
+			
+//			tpCodeContextNodes = adjust.adjustTP(tpCodeContextNodes, buggyCodeContextNodes);
+//			buggyCodeContextNodes = adjust.adjustBP(tpCodeContextNodes, buggyCodeContextNodes);
 			
 			truePositivePattern = getTruePositiveContext.sortPattern(tpCodeContextNodes, TRUE_POSITIVE);
 			buggyPattern = getBuggyContext.sortPattern(buggyCodeContextNodes, BUGGY);

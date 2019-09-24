@@ -33,6 +33,7 @@ import edu.handong.csee.isel.fpcollector.structures.ContextPattern;
  * @since 1.0
  */
 public class Evaluator {
+	
 	public void run
 	(ArrayList<ContextPattern> tp, ArrayList<ContextPattern> fp, ArrayList<ContextPattern> buggy) {
 		HashMap<String, Double> tpNodeNormalization = new HashMap<>();
@@ -209,15 +210,15 @@ public class Evaluator {
 				if(tpNodeNormalization.containsKey(tempNode) /*&& 
 						tpNodeNormalization.get(tempNode) > 0.1*/) {
 					//System.out.println(temp.getTpPatternScore());
-					temp.setTpPatternScore(temp.getTpPatternScore() + tpNodeNormalization.get(tempNode) * (-1.0));
+					temp.setTpPatternScore(temp.getTpPatternScore() + (tpNodeNormalization.get(tempNode) + 1) * (-1.0));
 					//System.out.println(temp.getTpPatternScore());
 				} if(buggyNodeNormalization.containsKey(tempNode)){
 					//System.out.println(temp.getFpPatternScore());
-					temp.setBuggyPatternScore(temp.getBuggyPatternScore() + buggyNodeNormalization.get(tempNode) * (1.0));
+					temp.setBuggyPatternScore(temp.getBuggyPatternScore() + (buggyNodeNormalization.get(tempNode)+1) * (1.0));
 					//System.out.println(temp.getFpPatternScore());
 				} if(fpNodeNormalization.containsKey(tempNode)){
 					//System.out.println(temp.getFpPatternScore());
-					temp.setFpPatternScore(temp.getFpPatternScore() + fpNodeNormalization.get(tempNode) * (0.0));
+					temp.setFpPatternScore(temp.getFpPatternScore() + fpNodeNormalization.get(tempNode) * (1.0));
 					//System.out.println(temp.getFpPatternScore());
 				}
 			}
@@ -225,11 +226,12 @@ public class Evaluator {
 			if(tpFrequencyNormalization.containsKey(temp.getPatternString()) /*&& 
 					tpFrequencyNormalization.get(temp.getPatternString()) > 0.1*/) {
 				temp.setTpPatternScore(temp.getTpPatternScore() 
-						+ tpFrequencyNormalization.get(temp.getPatternString()) * (-1.0));
+						+ (tpFrequencyNormalization.get(temp.getPatternString()) + 1) * (-1.0));
 			} if(buggyFrequencyNormalization.containsKey(temp.getPatternString())){
 				//System.out.println(temp.getFpPatternScore());
 				//System.out.println(fpFrequencyNormalization.get(temp.getPatternString()));
-				temp.setBuggyPatternScore(temp.getBuggyPatternScore() + (buggyFrequencyNormalization.get(temp.getPatternString())* 1.0));
+				temp.setBuggyPatternScore(temp.getBuggyPatternScore() 
+						+ ((buggyFrequencyNormalization.get(temp.getPatternString())+1)* 1.0));
 				//System.out.println(temp.getFpPatternScore());
 			} if(fpFrequencyNormalization.containsKey(temp.getPatternString())){
 				//System.out.println(temp.getFpPatternScore());
