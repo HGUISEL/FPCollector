@@ -1,23 +1,18 @@
 package edu.handong.csee.isel.fpcollector;
 
-/*
- * To-do
- * 2. Use True Positive pattern(before being changed)
- * 3. Use not only standardization, but also Normalization
- */
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import edu.handong.csee.isel.fpcollector.contextextractor.ContextExtractor;
 import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternAdjustment;
 import edu.handong.csee.isel.fpcollector.evaluator.Evaluator;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.FPCollector;
+import edu.handong.csee.isel.fpcollector.refactoring.FPCWriter;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
 import edu.handong.csee.isel.fpcollector.refactoring.Input;
+import edu.handong.csee.isel.fpcollector.refactoring.ReportComparator;
+import edu.handong.csee.isel.fpcollector.refactoring.ReportReader;
 import edu.handong.csee.isel.fpcollector.refactoring.RunTool;
 import edu.handong.csee.isel.fpcollector.structures.ContextPattern;
 import edu.handong.csee.isel.fpcollector.tpcollector.TPCollector;
@@ -80,27 +75,39 @@ public class Main {
 		gitClone.clone(input.gitAddress, input.projectName);
 			
 		//3. run pmd
-		RunTool runPMD = new RunTool();
-		runPMD.getReport(CLONE, input.toolCommand, gitClone.clonedPath, input.rule, input.projectName);
+		RunTool runPmdOnCurrent = new RunTool();
+		runPmdOnCurrent.getReport(CLONE, input.toolCommand, gitClone.clonedPath, input.rule, input.projectName);
 			
 		//4. clone the cloned project and checkout to a year a go
 		GitCheckout gitCheckout = new GitCheckout();
 		gitCheckout.checkout(gitClone.clonedPath, input.time, input.projectName);
 			
 		//5. run pmd to checkouted project
-		runPMD.getReport(CHECKOUT, input.toolCommand, gitCheckout.checkoutPath, input.rule, input.projectName);
+		RunTool runPmdOnPast = new RunTool();
+		runPmdOnPast.getReport(CHECKOUT, input.toolCommand, gitCheckout.checkoutPath, input.rule, input.projectName);
 			
 		System.out.println("Step 1 CLEAR");
 			
 //2. Collecting False Positive Candidates
 			
-			//1. read report of present project
-			//2. read report of past project
-			//3. compare is there anything same
-			//4. if same, get them as FPC
+		//1. read report of present project
+		//2. read report of past project
+		ReportReader currentReport = new ReportReader();
+		ReportReader pastReport = new ReportReader();
+			
+		currentReport.readReport(runPmdOnCurrent.reportPath);
+		pastReport.readReport(runPmdOnPast.reportPath);
+			
+		//3. compare is there anything same
+		ReportComparator compareCurrentAndPast = new ReportComparator();
+		compareCurrentAndPast.getFPC(currentReport, pastReport);
+		
+		//4. write file which contains FPC
+		FPCWriter fpcWriter = new FPCWriter();
+		fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC);
+		System.out.println("Step 2 CLEAR");
 			
 //3. Get Pattern of the FPC
-			
 			//1. 
 			
 			
@@ -123,17 +130,17 @@ public class Main {
 			
 			String[] information  = getFPSuspects.initiate(args);
 			
-			if(!new File(information[2]).exists()) {
-				getFPSuspects.run(information);
-			} else {
-				System.out.println("!!!!! FP Result File is Already Exists");
-			}
-			
-			if(!new File(information[2].split("\\.csv")[0] + "_TP.csv").exists()) {
-				getTP.run(information);
-			} else {
-				System.out.println("!!!!! TP Result File is Already Exists");
-			}
+//			if(!new File(information[2]).exists()) {
+//				getFPSuspects.run(information);
+//			} else {
+//				System.out.println("!!!!! FP Result File is Already Exists");
+//			}
+//			
+//			if(!new File(information[2].split("\\.csv")[0] + "_TP.csv").exists()) {
+//				getTP.run(information);
+//			} else {
+//				System.out.println("!!!!! TP Result File is Already Exists");
+//			}
 			
 //			tpCodeContextNodes = getTruePositiveContext.getPattern(information, TRUE_POSITIVE);
 //			buggyCodeContextNodes = getBuggyContext.getPattern(information, BUGGY);

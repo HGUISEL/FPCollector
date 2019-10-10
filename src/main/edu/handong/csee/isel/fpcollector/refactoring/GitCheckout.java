@@ -31,10 +31,14 @@ public class GitCheckout {
 		
 		File checkoutDir = new File(checkoutPath);
 		
-		try {
-			FileUtils.copyDirectory(clonedDir, checkoutDir);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(!checkoutDir.exists()) {
+			try {
+				FileUtils.copyDirectory(clonedDir, checkoutDir);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("Skip : Git Checkout is already Done.");
 		}
 	}
 	
