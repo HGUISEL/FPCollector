@@ -13,9 +13,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 public class FPCWriter {
+	public String fileName ="./FalsePositiveCandidate.csv";
 	
 	public void writeContexts (ArrayList<String> FPC) {
-		String fileName = "./FalsePositiveCandidate.csv";/* ./Result.csv */
+//		String fileName = ;/* ./Result.csv */
 		try(
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
