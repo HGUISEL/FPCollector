@@ -44,13 +44,13 @@ public class ContextVectorGetter {
 				}
 				
 				
-				if(flag == FALSE_POSITIVE) {
-					path = pathVariable.split(",")[0];
-					var = pathVariable.split(",")[3].trim();
-				} else {
+				if(flag == TRUE_POSITIVE) {
 					path = pathVariable.split(",")[0].replace(projectName, projectName.split("_Past")[0]);
 					var = pathVariable.split(",")[3].trim();
-				}
+				} else {
+					path = pathVariable.split(",")[0];
+					var = pathVariable.split(",")[3].trim();
+				} 
 				
 				/* 1. File Existing Check
 				 * 2. File Context Extracting
@@ -120,6 +120,7 @@ public class ContextVectorGetter {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+		
 		return contextInfo;
 	}
 	
@@ -139,7 +140,6 @@ public class ContextVectorGetter {
 			}
 			contextVector.add(new SimpleEntry<ASTNode, ArrayList<VectorNode>>(nodes.getKey(), vectorizedNodes));
 		}
-		
 		return contextVector;
 	}
 	

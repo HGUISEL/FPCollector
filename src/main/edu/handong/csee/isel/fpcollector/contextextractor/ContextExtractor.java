@@ -53,8 +53,9 @@ import edu.handong.csee.isel.fpcollector.utils.Writer;
 public class ContextExtractor {
 	final static int TRUE_POSITIVE = 0;
 	final static int FALSE_POSITIVE = 1;
+	final static int BUGGY = 2;
 	
-	public ArrayList<ContextPattern> run(String[] info, int flag) {
+	public HashMap<String, Integer> getPattern(String[] info, int flag) {
 		//read result file
 		ArrayList<String> resultInfo = new ArrayList<>();
 		//ArrayList<ArrayList<String>> lineContext = new ArrayList<>();
@@ -74,20 +75,19 @@ public class ContextExtractor {
 		ArrayList<String> varPath = new ArrayList<>();
 		ArrayList<SimpleEntry<ASTNode, ArrayList<ASTNode>>> contextNodeInformation = new ArrayList<>();
 		ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation = new ArrayList<>();
+		HashMap<String, Integer> contextPatterns = new HashMap<>();
+		
 //		HashMap<ArrayList<String>, Integer> allSequentialPatterns = new HashMap<>();
 //		HashMap<ArrayList<String>, Integer> patternFrequency = new HashMap<>();
-		HashMap<ArrayList<String>, Integer> contextPatterns = new HashMap<>();
-		ArrayList<ContextPattern> sortedPatterns = new ArrayList<>();
+		
 		
 		System.out.println("Collecting violation occurred Variable and its Path...");
 		varPath = getViolationVarPath(resultInfo);
-		System.out.println("\n@@@@@ Collected Successfully\n");
 		System.out.println("Collecting violation occurred Method Context...");
 		contextNodeInformation = getContextNode(varPath, flag);
-		System.out.println("\n@@@@@ Collected Successfully\n");
-		System.out.println("Vectorizing Collected Context...");
+		System.out.println("\nVectorizing Collected Context...");
 		contextVectorInformation = getContextVectorInformation(contextNodeInformation);
-		System.out.println("\n@@@@@ Collected Successfully\n");
+		System.out.println("done\n");
 		
 		//part 2 : get Frequent pattern
 		//get all pattern(SP, OP, AP)
@@ -98,6 +98,14 @@ public class ContextExtractor {
 		
 		//2) get line Patterns
 		contextPatterns = getPatterns(contextVectorInformation);
+		return contextPatterns;
+	}
+	
+	public ArrayList<ContextPattern> sortPattern
+	(HashMap<String, Integer> contextPatterns, int flag){
+		
+		
+		ArrayList<ContextPattern> sortedPatterns = new ArrayList<>();
 		
 		//patternFrequency = getLinePatternFrequency(contextVectorInformation, linePatterns);
 		//patternFrequency = sortByFrequency(patternFrequency);
@@ -176,9 +184,9 @@ public class ContextExtractor {
 		return frequencyPattern;
 	}
 	
-	private HashMap<ArrayList<String>, Integer> getPatterns(
+	private HashMap<String, Integer> getPatterns(
 			ArrayList<SimpleEntry<ASTNode, ArrayList<VectorNode>>> contextVectorInformation) {
-		HashMap<ArrayList<String>, Integer> linePatterns = new HashMap<>();
+		HashMap<String, Integer> linePatterns = new HashMap<>();
 		PatternFinder finder = new PatternFinder();
 		
 		linePatterns = finder.minePatterns(contextVectorInformation);
@@ -209,7 +217,7 @@ public class ContextExtractor {
 	}
 	
 	public ArrayList<ContextPattern> sortByFrequency(
-			HashMap<ArrayList<String>, Integer> patternFrequency) {
+			HashMap<String, Integer> patternFrequency) {
 		ArrayList<ContextPattern> patterns = new ArrayList<>();
 		PatternFinder finder = new PatternFinder();
 		

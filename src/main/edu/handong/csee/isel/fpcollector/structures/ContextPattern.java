@@ -8,6 +8,7 @@ public class ContextPattern {
 	private Double patternScore = 0.0;
 	private Double tpPatternScore = 0.0;
 	private Double fpPatternScore = 0.0;
+	private Double buggyPatternScore= 0.0;
 	
 	public ContextPattern(String pattern, Integer frequency) {
 		patternList = new SimpleEntry<String, Integer>(pattern, frequency);
@@ -39,6 +40,14 @@ public class ContextPattern {
 	
 	public void setTpPatternScore(Double score) {
 		tpPatternScore = score;
+	}
+	
+	public Double getBuggyPatternScore() {
+		return buggyPatternScore;
+	}
+	
+	public void setBuggyPatternScore(Double score) {
+		buggyPatternScore = score;
 	}
 	
 	public Double getFpPatternScore() {
