@@ -5,8 +5,4 @@ public class Info {
 	public String varName;
 	public String start;
 	public String end;
-	
-	public String getSource(String result_path) {
-		return source;
-	}
 }

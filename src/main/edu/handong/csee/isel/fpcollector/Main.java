@@ -1,5 +1,6 @@
 package edu.handong.csee.isel.fpcollector;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,7 +11,7 @@ import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.FPCollector;
 import edu.handong.csee.isel.fpcollector.refactoring.FPCWriter;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
-import edu.handong.csee.isel.fpcollector.refactoring.Info;
+import edu.handong.csee.isel.fpcollector.refactoring.InfoCollector;
 import edu.handong.csee.isel.fpcollector.refactoring.Input;
 import edu.handong.csee.isel.fpcollector.refactoring.ReportComparator;
 import edu.handong.csee.isel.fpcollector.refactoring.ReportReader;
@@ -111,8 +112,13 @@ public class Main {
 			
 //3. Get Pattern of the FPC
 			//1. read input
-			Info resultInfo = new Info();
-			resultInfo.getSource(fpcWriter.fileName);
+			InfoCollector inforCollector = new InfoCollector();
+			try {
+				inforCollector.run(fpcWriter.fileName);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			
 			
