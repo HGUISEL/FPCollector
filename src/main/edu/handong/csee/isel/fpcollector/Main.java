@@ -7,6 +7,7 @@ import edu.handong.csee.isel.fpcollector.contextextractor.ContextExtractor;
 import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternAdjustment;
 import edu.handong.csee.isel.fpcollector.evaluator.Evaluator;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.FPCollector;
+import edu.handong.csee.isel.fpcollector.refactoring.ASTBuilder;
 import edu.handong.csee.isel.fpcollector.refactoring.FPCWriter;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
@@ -113,6 +114,23 @@ public class Main {
 			//1. read input
 			Info resultInfo = new Info();
 			resultInfo.getSource(fpcWriter.fileName);
+			
+			//2. build AST
+			ArrayList<ASTBuilder>  astBuilder= new ArrayList<>();
+			for(Info info: Infos) {
+				astBuilder.add(new ASTBuilder(info));
+			}
+			
+			//3. Make BNF
+			for(ASTBuilder ast : astBuilder) {
+				ast.belongsToChecker();
+			}
+			
+			
+////////////////////////////////////////////////////////////////
+			
+			
+			
 			
 			
 			

@@ -11,7 +11,8 @@ import org.eclipse.jdt.core.dom.ChildListPropertyDescriptor;
 import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimplePropertyDescriptor;
-import edu.handong.csee.isel.fpcollector.utils.JavaASTParser;
+
+import edu.handong.csee.isel.fpcollector.refactoring.JavaASTParser;
 
 import java.util.ArrayList;
 import java.util.Iterator;

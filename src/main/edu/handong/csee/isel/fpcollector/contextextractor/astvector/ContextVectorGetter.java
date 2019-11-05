@@ -8,8 +8,8 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import org.eclipse.jdt.core.dom.*;
 
+import edu.handong.csee.isel.fpcollector.refactoring.JavaASTParser;
 import edu.handong.csee.isel.fpcollector.structures.VectorNode;
-import edu.handong.csee.isel.fpcollector.utils.JavaASTParser;
 
 public class ContextVectorGetter {
 	final static int TRUE_POSITIVE = 0;
