@@ -50,19 +50,27 @@ public class DataReader {
 			String[] token = line.split(",", -1) ;
 
 			if (token.length < 6) continue ;
+			if (isDup(diffList, token)) continue ;
 
-			diff.BI.id = token[0] ;
+			diff.bi.id = token[0] ;
 			diff.fix.id = token[3] ;
-			diff.BI.filePath = token[1] ;
+			diff.bi.filePath = token[1] ;
 			diff.fix.filePath = token[2] ;
-			diff.filePath = token[2] ;
-			diff.prefixLine = Integer.parseInt(token[5]) ;
 
 			diffList.add(diff) ;
 		}
 		br.close();
 
 		return diffList ;
+	}
+	
+	private boolean isDup(ArrayList<DiffInfo> diffList, String[] token) {
+		for (DiffInfo d : diffList) {
+			if (token[0].equals(d.bi.id) && token[1].equals(d.bi.filePath) &&
+					token[2].equals(d.fix.filePath) && token[3].equals(d.fix.id))
+				return true ;
+		}
+		return false ;
 	}
 	
 	static public DiffAlgorithm diffAlgorithm = DiffAlgorithm.getAlgorithm(DiffAlgorithm.SupportedAlgorithm.MYERS);
@@ -73,7 +81,8 @@ public class DataReader {
 		Repository repo = setRepo() ;
 		BlameCommand blamer = new BlameCommand(repo) ;
 
-		for (DiffInfo d: diffList) {
+//		int i = 0 ;
+		for (DiffInfo d : diffList) {
 			commitID = repo.resolve(d.fix.id + "~1");
 			blamer.setDiffAlgorithm(diffAlgorithm);
 			blamer.setTextComparator(diffComparator);
@@ -91,19 +100,26 @@ public class DataReader {
 				blamer.setTextComparator(diffComparator);
 				blamer.setFollowFileRenames(false);
 				blamer.setStartCommit(commitID);
-				blamer.setFilePath(d.BI.filePath);
+				blamer.setFilePath(d.bi.filePath);
 				blame = blamer.call();
 			}
 
 			d.fixCode = fetchBlob(repo, d.fix.id, d.fix.filePath) ;
-			d.prefixCode = (!renamed)? fetchBlob(repo, d.fix.id + "~1", d.fix.filePath)
-					: fetchBlob(repo, d.BI.id, d.BI.filePath) ;
+			if (!renamed) {
+				d.isBi = false ;
+				d.prefixCode = fetchBlob(repo, d.fix.id + "~1", d.fix.filePath) ;
+				d.prefix.id = d.fix.id + "~1" ;
+				d.prefix.filePath = d.fix.filePath ;
+				d.editList = getEditListFromDiff(d.fixCode,d.prefixCode);
+			} else {
+				d.isBi = true ;
+				d.biCode = fetchBlob(repo, d.bi.id, d.bi.filePath) ;
+				d.editList = getEditListFromDiff(d.fixCode,d.biCode);
+			} 
 			
 //			String[] fixLines = d.fixCode.split("\n") ;
 //			String[] prefixLines = d.prefixCode.split("\n") ;
-//			createFile(d) ;
-			
-			d.editList = getEditListFromDiff(d.fixCode,d.prefixCode);
+			createFile(d) ;
 			System.out.println("EditList Length: " + d.editList.size()) ;
 			
 			for (Edit edit : d.editList) {
@@ -114,10 +130,12 @@ public class DataReader {
 				else if (edit.getBeginA() < edit.getEndA() && edit.getBeginB() < edit.getEndB())
 					System.out.println("Replace Edit : [" + edit.getBeginA() + ", " + edit.getEndA() + ") | [" + edit.getBeginB() + ", " + edit.getEndB() + ")" ) ;
 			}
-			
+//			
 			//			System.out.println("Fix: " + d.fixCode) ;
 			//			System.out.println("Prefix: " + d.prefixCode) ;
-//			break ;
+//			i++ ;
+//			if (i == 20) break ;
+			break ;
 		}
 	}
 	
@@ -133,19 +151,20 @@ public class DataReader {
 	}
 	
 	private void createFile(DiffInfo d) throws IOException {
-		File fixFile = new File("/Users/yujin/ISEL/NewProject/Testcode/fix.java") ;
-		File prefixFile = new File("/Users/yujin/ISEL/NewProject/Testcode/prefix.java") ;
+		d.A = new File("/Users/yujin/ISEL/NewProject/Testcode/fix.java") ;
+		d.B = new File("/Users/yujin/ISEL/NewProject/Testcode/prefix.java") ;
 		
-		FileWriter fixFw = new FileWriter(fixFile) ;
-		FileWriter prefixFw = new FileWriter(prefixFile) ;
+		FileWriter fwA = new FileWriter(d.A) ;
+		FileWriter fwB = new FileWriter(d.B) ;
 		
-		fixFw.write(d.fixCode);
-		fixFw.flush();
-		prefixFw.write(d.prefixCode);
-		prefixFw.flush();
+		fwA.write(d.fixCode);
+		fwA.flush();
+		if (d.isBi) fwB.write(d.biCode) ;
+		else fwB.write(d.prefixCode) ;
+		fwB.flush();
 		
-		fixFw.close();
-		prefixFw.close();
+		fwA.close();
+		fwB.close();
 	}
 
 	static public String fetchBlob(Repository repo, String revSpec, String path) throws RevisionSyntaxException, AmbiguousObjectException, IncorrectObjectTypeException, IOException {
