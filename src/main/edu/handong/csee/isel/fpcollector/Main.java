@@ -104,6 +104,7 @@ public class Main {
 		
 		//4. write file which contains FPC
 		FPCWriter fpcWriter = new FPCWriter();
+		//fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC);
 		fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC);
 		System.out.println("Step 2 CLEAR");
 			

@@ -14,6 +14,31 @@ import org.apache.commons.csv.CSVPrinter;
 
 public class FPCWriter {
 	
+	public void writeContexts (ArrayList<String> FPC) {
+		String fileName = "./FalsePositiveCandidate.csv";/* ./Result.csv */
+		try(
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
+			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
+									.withHeader("File Path", "Line number", "Error Message","Code Context"));
+			) {			
+			for(String reportInfoAndCode : FPC) {
+				
+				String reportInfo = reportInfoAndCode.split("%%%%%")[0];
+				if(reportInfo.split(":").length > 2 ) {
+					String filePath = reportInfo.split(":")[0];
+					String lineNumber = reportInfo.split(":")[1];
+					String errmsg = reportInfo.split(":")[2];
+					String contexts = getLineContext(filePath, lineNumber);
+					csvPrinter.printRecord(filePath, lineNumber, errmsg, contexts);
+				}
+			}
+			writer.flush();
+			writer.close();
+		}catch(IOException e){
+			e.printStackTrace();
+		} 
+	}
+	
 	public void writeContextsForDFA (ArrayList<String> FPC) {
 		String fileName = "./FalsePositiveCandidate.csv";/* ./Result.csv */
 		try(
@@ -33,7 +58,7 @@ public class FPCWriter {
 				String startLine = getRangeLineNum(lineRange)[0];
 				String endLine = getRangeLineNum(lineRange)[1];
 				lineRange = startLine + "-" + endLine;
-				String contexts = getLineContext(filePath, startLine, endLine);
+				String contexts = getLineContextForDFA(filePath, startLine, endLine);
 				csvPrinter.printRecord(filePath, lineRange, anomaly, var, contexts);
 			}
 			writer.flush();
@@ -80,7 +105,7 @@ public class FPCWriter {
 		return lineNum;
 	}
 	
-	private String getLineContext(String filePath, String startLine, String endLine) {
+	private String getLineContextForDFA(String filePath, String startLine, String endLine) {
 		String code = "";
 		String context = "";
 		int startLineNum = Integer.parseInt(startLine);
@@ -95,6 +120,30 @@ public class FPCWriter {
 					context = context + "\n" + lineNumber + ":\t" +code;
 				}
 					lineNumber++;
+				}
+				fBufReader.close();	
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return context;
+	}
+	
+	private String getLineContext(String filePath, String lineNum) {
+		String code = "";
+		String context = "";
+		int lineNumber = Integer.parseInt(lineNum);
+		
+		try {
+			File f = new File(filePath);
+			FileReader fReader = new FileReader(f);
+			BufferedReader fBufReader = new BufferedReader(fReader);
+			int currentLineNumber = 1;
+			while((code = fBufReader.readLine()) != null) {
+				if(lineNumber == currentLineNumber) { 
+					context = context + "\n" + lineNumber + ":\t" +code;
+				}
+					currentLineNumber++;
 				}
 				fBufReader.close();	
 		} catch (Exception e) {
