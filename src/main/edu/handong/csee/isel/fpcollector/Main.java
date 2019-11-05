@@ -8,10 +8,11 @@ import edu.handong.csee.isel.fpcollector.contextextractor.ContextExtractor;
 import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternAdjustment;
 import edu.handong.csee.isel.fpcollector.evaluator.Evaluator;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.FPCollector;
-import edu.handong.csee.isel.fpcollector.refactoring.ASTBuilder;
+import edu.handong.csee.isel.fpcollector.refactoring.BNFChecker;
 import edu.handong.csee.isel.fpcollector.refactoring.FPCWriter;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
+import edu.handong.csee.isel.fpcollector.refactoring.Info;
 import edu.handong.csee.isel.fpcollector.refactoring.InfoCollector;
 import edu.handong.csee.isel.fpcollector.refactoring.Input;
 import edu.handong.csee.isel.fpcollector.refactoring.ReportComparator;
@@ -113,24 +114,19 @@ public class Main {
 			
 //3. Get Pattern of the FPC
 			//1. read input
+			ArrayList<Info> infos = new ArrayList<>();
 			InfoCollector inforCollector = new InfoCollector();
 			try {
-				inforCollector.run(fpcWriter.fileName);
+				infos = inforCollector.run(fpcWriter.fileName);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 			//2. build AST
-			ArrayList<ASTBuilder>  astBuilder= new ArrayList<>();
-			for(Info info: Infos) {
-				astBuilder.add(new ASTBuilder(info));
+			for(Info info: infos) {
+				BNFChecker tempBuilder = new BNFChecker(info);
 			}
 			
-			//3. Make BNF
-			for(ASTBuilder ast : astBuilder) {
-				ast.belongsToChecker();
-			}
 			
 			
 ////////////////////////////////////////////////////////////////
