@@ -124,7 +124,9 @@ public class Main {
 			
 			//2. build AST
 			for(Info info: infos) {
+				System.out.println(info.source);
 				BNFChecker tempBuilder = new BNFChecker(info);
+				
 			}
 			
 			
