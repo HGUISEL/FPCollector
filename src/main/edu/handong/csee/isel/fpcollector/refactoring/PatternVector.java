@@ -22,14 +22,14 @@ public class PatternVector {
 		tempPatternVector.putAll(patternVector);
 		
 		for(String p : tempPatternVector.keySet()) {
-			String temp = p+" " +tempNode.getClass().getName();
+			String temp = p+" " +tempNode.getClass().getSimpleName();
 			
 			if(patternVector.get(temp) != null) {
 				int tempCount = patternVector.get(temp);
 				patternVector.put(temp, ++tempCount);
 				
 			} else {
-				patternVector.put(p+" "+tempNode.getClass().getName(), 1);
+				patternVector.put(p+" "+tempNode.getClass().getSimpleName(), 1);
 				
 			}
 		}
@@ -37,13 +37,13 @@ public class PatternVector {
 	
 	public void addNodes(ASTNode tempNode, Pattern pattern) {
 		for(String p : pattern.getPattern()) {
-			String temp = p+" " +tempNode.getClass().getName();
+			String temp = p+" " +tempNode.getClass().getSimpleName();
 			
 			if(patternVector.get(temp) != null) {
 				int tempCount = patternVector.get(temp);
 				patternVector.put(temp, ++tempCount); 
 			} else {
-				patternVector.put(p+" "+tempNode.getClass().getName(), 1);
+				patternVector.put(p+" "+tempNode.getClass().getSimpleName(), 1);
 			}
 		}
 	}

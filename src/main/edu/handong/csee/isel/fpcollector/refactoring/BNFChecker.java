@@ -23,21 +23,20 @@ public class BNFChecker {
 	ArrayList<SimpleName> violatedNode = new ArrayList<>();
 	ArrayList<SimpleName> violatedNodeInRange = new ArrayList<>();
 	ArrayList<ASTNode> patterns = new ArrayList<>();
-	PatternVector patternVector = new PatternVector();
 	
-	public BNFChecker(Info info) {
+	public BNFChecker(Info info, PatternVector patternVector) {
 		this.info = info;
-		buildAST();
+		buildAST(patternVector);
 	}
 	
-	private void buildAST() {
+	private void buildAST(PatternVector patternVector) {
 		JavaASTParser javaParser = new JavaASTParser(info.source);
 		violatedNode = javaParser.getViolatedNames(info.varName);
 		
-		checkInRange();
+		checkInRange(patternVector);
 	}
 	
-	private void checkInRange() {
+	private void checkInRange(PatternVector patternVector) {
 		int flag = 1;
 		int start = 0;
 		int end = 0;
@@ -62,22 +61,22 @@ public class BNFChecker {
 			}
 		}
 		
-		getBNF();
+		getBNF(patternVector);
 		
 	}
 	
-	public void getBNF(){
+	public void getBNF(PatternVector patternVector){
 		
 		
 		for(SimpleName node : violatedNodeInRange) {
 			//pattern initiation
 			Pattern tempPattern = new Pattern();
-			tempPattern.addPattern(node.getClass().getName());
+			System.out.println(node.getClass().getSimpleName());
+			tempPattern.addPattern(node.getClass().getSimpleName());
 			//get Pattern which is member of <Block>
 			for(ASTNode tempNode = node.getParent(); !(tempNode instanceof TypeDeclaration); tempNode = tempNode.getParent()) {
 				//Hashmap check (if empty, true)
-				
-				
+
 				//pattern update
 				if(tempNode instanceof EnhancedForStatement ||
 					tempNode instanceof AnonymousClassDeclaration ||
@@ -93,12 +92,16 @@ public class BNFChecker {
 					tempNode instanceof MethodDeclaration) {
 					patternVector.addNodes(tempNode);
 					patternVector.addNodes(tempNode, tempPattern);
-					tempPattern.addPattern(tempNode.getClass().getName());
+					tempPattern.addPattern(tempNode.getClass().getSimpleName());
 				}
 			}
 			System.out.println("Break");
 			for( String elem : tempPattern.getPattern()) {
 				System.out.println(elem);
+			}
+			for (String elem : patternVector.getPatternVector().keySet()) {
+				;
+				System.out.println(elem +"Num: "+patternVector.getPatternVector().get(elem));
 			}
 		}
 	}

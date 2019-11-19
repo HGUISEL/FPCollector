@@ -15,6 +15,7 @@ import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
 import edu.handong.csee.isel.fpcollector.refactoring.Info;
 import edu.handong.csee.isel.fpcollector.refactoring.InfoCollector;
 import edu.handong.csee.isel.fpcollector.refactoring.Input;
+import edu.handong.csee.isel.fpcollector.refactoring.PatternVector;
 import edu.handong.csee.isel.fpcollector.refactoring.ReportComparator;
 import edu.handong.csee.isel.fpcollector.refactoring.ReportReader;
 import edu.handong.csee.isel.fpcollector.refactoring.RunTool;
@@ -122,11 +123,10 @@ public class Main {
 				e.printStackTrace();
 			}
 			
+			PatternVector patternVector = new PatternVector();
 			//2. build AST
 			for(Info info: infos) {
-				System.out.println(info.source);
-				BNFChecker tempBuilder = new BNFChecker(info);
-				
+				BNFChecker tempBuilder = new BNFChecker(info, patternVector);
 			}
 			
 			
