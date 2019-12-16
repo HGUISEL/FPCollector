@@ -125,10 +125,15 @@ public class Main {
 			
 			PatternVector patternVector = new PatternVector();
 			//2. build AST
+			BNFChecker tempBuilder = new BNFChecker();
+			int countB = 0;
 			for(Info info: infos) {
-				BNFChecker tempBuilder = new BNFChecker(info, patternVector);
+				tempBuilder.run(info, patternVector);
+				countB ++;
+				System.out.println(countB);
 			}
 			
+			tempBuilder.getBNF(tempBuilder.methodASTs);
 			
 			
 ////////////////////////////////////////////////////////////////

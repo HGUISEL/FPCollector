@@ -9,11 +9,10 @@ import org.eclipse.jdt.core.dom.SimpleName;
 public class BNFChecker {
 	Info info = new Info();
 	ArrayList<SimpleName> violatedNode = new ArrayList<>();
-	MethodAST methodAST = new MethodAST();
-	ArrayList<MethodAST> methodASTs = new ArrayList<>();
+	public ArrayList<MethodAST> methodASTs = new ArrayList<>();
 	ArrayList<PatternNode> patterns = new ArrayList<>();
 	
-	public BNFChecker(Info info, PatternVector patternVector) {
+	public void run(Info info, PatternVector patternVector) {
 		this.info = info;
 		buildAST(patternVector);
 	}
@@ -58,7 +57,7 @@ public class BNFChecker {
 		for(MethodDeclaration tempMethod : methods) {
 			int tempMethodPosition = tempMethod.getStartPosition();
 			if(tempMethodPosition <= end && tempMethodPosition >= start) {
-				System.out.println(tempMethod);
+//				System.out.println(tempMethod);
 				methodHit = 1;
 			}
 		}
@@ -77,14 +76,12 @@ public class BNFChecker {
 		for(ASTNode temp : parserInRange.getInRangeNode()) {
 			System.out.println(temp.getClass().getSimpleName());
 		}
-		
+		MethodAST methodAST = new MethodAST();
 		methodAST.asts.addAll(parserInRange.getInRangeNode());
 		
 		methodASTs.add(methodAST);
-		methodAST.asts.removeAll(parserInRange.getInRangeNode());
-		
-		getBNF(methodASTs);
-		
+		int size = methodASTs.size();
+		System.out.println("" + methodASTs.get(size-1) + ":::::" + size );
 	}
 	
 	public void getBNF(ArrayList<MethodAST> methodASTs){
@@ -113,6 +110,11 @@ public class BNFChecker {
 		}
 	}
 	
+	public void printPattern() {
+		for(PatternNode nod : patterns) {
+			System.out.println(nod.node.getClass().getSimpleName() + "(" + nod.count + ")");
+		}
+	}
 	
 	
 }
