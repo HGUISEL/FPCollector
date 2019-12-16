@@ -21,8 +21,8 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 public class BNFChecker {
 	Info info = new Info();
 	ArrayList<SimpleName> violatedNode = new ArrayList<>();
-	ArrayList<ASTNode> violatedNodeInRange = new ArrayList<>();
-	ArrayList<ASTNode> patterns = new ArrayList<>();
+	MethodAST methodAST = new MethodAST();
+	ArrayList<MethodAST> methodASTs = new ArrayList<>();
 	
 	public BNFChecker(Info info, PatternVector patternVector) {
 		this.info = info;
@@ -37,18 +37,30 @@ public class BNFChecker {
 	}
 	
 	private void checkInRange(PatternVector patternVector) {
-
+		int flag = 1;
 		int start = 0;
 		int methodStart = 0;
 		int end = 0;
-		String tempSource = "" + info.source;
-
-		String[] lines = tempSource.split("\n");
-		String tempLine = lines[Integer.parseInt(info.start) -1];
-		start = tempSource.indexOf(tempLine);
-		tempLine = lines[Integer.parseInt(info.end) - 1];
-		tempSource = tempSource.substring(start);
-		end = tempSource.indexOf(tempLine) + start;	
+//		String tempSource = "" + info.source;
+		
+//		String[] lines = tempSource.split("\n");
+//		String tempLine = lines[Integer.parseInt(info.start) -1];
+//		start = tempSource.indexOf(tempLine);
+//		tempLine = lines[Integer.parseInt(info.end) - 1];
+//		tempSource = tempSource.substring(start);
+//		end = tempSource.indexOf(tempLine) + start;
+		
+		if(flag == 1) {
+		for(int i =0 ; i < Integer.parseInt(info.start) -1; i ++) {
+			info.source = info.source.replaceFirst("\n", "/*NewLineOccurred*/");
+		}
+		start = info.source.lastIndexOf("/*NewLineOccurred*/") + 19;
+		for(int i = 0; i < Integer.parseInt(info.end) - Integer.parseInt(info.start) - 1; i ++) {
+			info.source = info.source.replaceFirst("\n", "/*NewLineOccurred*/");
+		}
+		end = info.source.lastIndexOf("/*NewLineOccurred*/") + 19;
+		flag--;
+		}
 		
 		JavaASTParser parserInRange = new JavaASTParser(info.source, start, end);
 		ArrayList<MethodDeclaration> methods = parserInRange.getMethodDeclarations();
@@ -73,18 +85,20 @@ public class BNFChecker {
 			parserInRange = new JavaASTParser(info.source, methodStart, end);
 		}
 		
-		violatedNodeInRange.addAll(parserInRange.getInRangeNode());
-		
-		for(ASTNode tempNode : violatedNodeInRange) {
-//			System.out.println(tempNode);
-			System.out.println(tempNode.getClass().getSimpleName());
+		for(ASTNode temp : parserInRange.getInRangeNode()) {
+			System.out.println(temp.getClass().getSimpleName());
 		}
 		
-		getBNF(patternVector);
+		methodAST.asts.addAll(parserInRange.getInRangeNode());
+		
+		methodASTs.add(methodAST);
+		methodAST.asts.removeAll(parserInRange.getInRangeNode());
+		
+		getBNF(methodASTs);
 		
 	}
 	
-	public void getBNF(PatternVector patternVector){
+	public void getBNF(ArrayList<MethodAST> temp){
 
 	}
 	
