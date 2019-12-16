@@ -134,7 +134,7 @@ public class Main {
 			}
 			
 			tempBuilder.getBNF(tempBuilder.methodASTs);
-			
+			tempBuilder.printPattern();
 			
 ////////////////////////////////////////////////////////////////
 			
