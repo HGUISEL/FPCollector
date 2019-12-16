@@ -27,6 +27,7 @@ public class JavaASTParser {
 	ArrayList<TypeDeclaration> lstTypeDeclaration = new ArrayList<TypeDeclaration>();
 	ArrayList<InfixExpression> lstInfixExpression = new ArrayList<InfixExpression>();
 	ArrayList<ConditionalExpression> lstConditionalExpression = new ArrayList<ConditionalExpression>();
+	ArrayList<ASTNode> lstInRangeNode = new ArrayList<ASTNode>();
 	
 	
 	PackageDeclaration pkgDeclaration;
@@ -34,6 +35,11 @@ public class JavaASTParser {
 	public JavaASTParser(String source){
 		this.source = source;
 		praseJavaFile(source);
+	}
+	
+	public JavaASTParser(String source, int start, int end) {
+		this.source = source;
+		praseJavaFile(source, start, end);
 	}
 	
 	public int getLineNum(int startPosition){
@@ -643,7 +649,653 @@ public class JavaASTParser {
 		}
 
 	}
+	
+	public void praseJavaFile(String source, int start, int end){
+		//String sourceCode = source;
+		ASTParser parser = ASTParser.newParser(AST.JLS11);
 
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		char[] content = source.toCharArray();
+		parser.setSource(content);
+		//parser.setUnitName("temp.java");
+		Map<String, String> options = JavaCore.getOptions();
+		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
+				JavaCore.VERSION_1_8);
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+		String[] sources = {};
+		String[] classPaths = {};
+		parser.setEnvironment(classPaths, sources, null, true);
+		parser.setResolveBindings(false);
+		parser.setCompilerOptions(options);
+		parser.setStatementsRecovery(true);
+		
+		try {
+			final CompilationUnit unit = (CompilationUnit) parser.createAST(null);
+			cUnit = unit;
+
+			// Process the main body
+			try {
+				unit.accept(new ASTVisitor() {
+
+					public boolean visit(MethodDeclaration node) {
+						lstMethodDeclaration.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(MethodInvocation node) {
+						lstMethodInvocation.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(TypeDeclaration node) {
+						lstTypeDeclaration.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final FieldDeclaration node) {
+						lstFieldDeclaration.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(final SingleVariableDeclaration node) {
+						lstSingleVariableDeclaration.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(final VariableDeclarationFragment node) {
+						lstVariableDeclarationFragment.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(final ClassInstanceCreation node) {
+						lstClassInstanceCreation.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(final FieldAccess node) {
+						lstFieldAccess.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(IfStatement node) {
+						lstIfStatement.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(ForStatement node) {
+						lstForStatement.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(WhileStatement node) {
+						lstWhileStatement.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(InfixExpression node) {
+						lstInfixExpression.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(SimpleName node) {
+						lstSimpleName.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(final ImportDeclaration node) {
+						lstImportDeclaration.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(final PackageDeclaration node) {
+						pkgDeclaration = node;
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					public boolean visit(final AnonymousClassDeclaration node) {
+						//Log.info("AnonymousClassDeclaration");
+						//Log.info(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
+					//Expression ? Expression : Expression
+					public boolean visit(final ConditionalExpression node) {
+						lstConditionalExpression.add(node);
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(CatchClause node) {						
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(DoStatement node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+
+						return super.visit(node);
+					}
+					public boolean visit(EnumConstantDeclaration node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					public boolean visit(EnumDeclaration node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					public boolean visit(EnhancedForStatement node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+
+						return super.visit(node);
+					}
+
+					public boolean visit(AssertStatement node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					} 
+					public boolean visit(ContinueStatement node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(SwitchCase node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					public boolean visit(SynchronizedStatement node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					public boolean visit(ThisExpression node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					public boolean visit(ThrowStatement node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+					public boolean visit(TryStatement node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final Block node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final Assignment node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final ExpressionStatement node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final AnnotationTypeDeclaration node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final AnnotationTypeMemberDeclaration node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final ArrayAccess node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final ArrayCreation node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final ArrayInitializer node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final ArrayType node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+
+					public boolean visit(final BlockComment node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final BooleanLiteral node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final CastExpression node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final CharacterLiteral node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+
+
+					public boolean visit(final CompilationUnit node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					
+
+					public boolean visit(final ConstructorInvocation node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final CreationReference node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final Dimension node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}
+
+					public boolean visit(final EmptyStatement node) {
+						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+							lstInRangeNode.add(node);
+						}
+						return super.visit(node);
+					}				
+
+				public boolean visit(final Initializer node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final InstanceofExpression node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final IntersectionType node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final Javadoc node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final LabeledStatement node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final LambdaExpression node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final LineComment node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final MarkerAnnotation node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final MemberRef node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final MemberValuePair node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				
+				public boolean visit(final MethodRef node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final MethodRefParameter node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final Modifier node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final NameQualifiedType node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final NormalAnnotation node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final NullLiteral node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final NumberLiteral node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final ParameterizedType node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final ParenthesizedExpression node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final PostfixExpression node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final PrefixExpression node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final PrimitiveType node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final QualifiedName node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final QualifiedType node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final SimpleType node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final SingleMemberAnnotation node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final StringLiteral node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final SuperConstructorInvocation node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final SuperFieldAccess node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final SuperMethodInvocation node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final SuperMethodReference node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final TagElement node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final TextElement node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+
+				public boolean visit(final TypeDeclarationStatement node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final TypeLiteral node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final TypeMethodReference node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final TypeParameter node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final UnionType node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final VariableDeclarationExpression node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}				
+				public boolean visit(final VariableDeclarationStatement node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				public boolean visit(final WildcardType node) {
+					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						lstInRangeNode.add(node);
+					}
+					return super.visit(node);
+				}
+				});
+			} catch (Exception e) {
+				System.out.println("Problem : " + e.toString());
+				e.printStackTrace();
+				System.exit(0);
+			}
+
+		} catch (Exception e) {
+			System.out.println("\nError while executing compilation unit : " + e.toString());
+		}
+
+	}
+	
 	public ArrayList<MethodDeclaration> getMethodDeclarations() {
 		return lstMethodDeclaration;
 	}
@@ -723,6 +1375,10 @@ public class JavaASTParser {
 	
 	public PackageDeclaration getPackageDeclaration(){
 		return pkgDeclaration;
+	}
+	
+	public ArrayList<ASTNode> getInRangeNode(){
+		return lstInRangeNode;
 	}
 	
 	public String getTypeOfSimpleName(ASTNode astNode,String name) {

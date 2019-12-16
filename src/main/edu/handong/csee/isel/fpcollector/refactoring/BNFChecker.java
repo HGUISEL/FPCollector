@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 public class BNFChecker {
 	Info info = new Info();
 	ArrayList<SimpleName> violatedNode = new ArrayList<>();
-	ArrayList<SimpleName> violatedNodeInRange = new ArrayList<>();
+	ArrayList<ASTNode> violatedNodeInRange = new ArrayList<>();
 	ArrayList<ASTNode> patterns = new ArrayList<>();
 	
 	public BNFChecker(Info info, PatternVector patternVector) {
@@ -37,28 +37,46 @@ public class BNFChecker {
 	}
 	
 	private void checkInRange(PatternVector patternVector) {
-		int flag = 1;
+
 		int start = 0;
+		int methodStart = 0;
 		int end = 0;
-		for(SimpleName violatedNode : violatedNode) {
-			if(flag == 1) {
-			for(int i =0 ; i < Integer.parseInt(info.start); i ++) {
-				info.source = info.source.replaceFirst("\n", "NewLineOccurred");
+		String tempSource = "" + info.source;
+
+		String[] lines = tempSource.split("\n");
+		String tempLine = lines[Integer.parseInt(info.start) -1];
+		start = tempSource.indexOf(tempLine);
+		tempLine = lines[Integer.parseInt(info.end) - 1];
+		end = tempSource.indexOf(tempLine);	
+		
+		JavaASTParser parserInRange = new JavaASTParser(info.source, start, end);
+		ArrayList<MethodDeclaration> methods = parserInRange.getMethodDeclarations();
+		
+		int methodHit = 0;
+		for(MethodDeclaration tempMethod : methods) {
+			int tempMethodPosition = tempMethod.getStartPosition();
+			if(tempMethodPosition <= end && tempMethodPosition >= start) {
+				System.out.println(tempMethod);
+				methodHit = 1;
 			}
-			start = info.source.lastIndexOf("NewLineOccurred");
-			for(int i = 0; i < Integer.parseInt(info.end) - Integer.parseInt(info.start); i ++) {
-				info.source = info.source.replaceFirst("\n", "NewLineOccurred");
-			}
-			end = info.source.lastIndexOf("NewLineOccurred");
-			flag--;
-			}
+		}
+		int min = 99999999;
+		if(methodHit == 0 ) {
 			
-			if(violatedNode.getStartPosition() >= start 
-					&&  violatedNode.getStartPosition() <= end) {
-				violatedNodeInRange.add(violatedNode);
-			} else {
-				continue;
+			for(MethodDeclaration tempMethod : methods) {
+				if(tempMethod.getStartPosition() <= start && start - tempMethod.getStartPosition() < min) {
+					min = start - tempMethod.getStartPosition();
+					methodStart = tempMethod.getStartPosition();
+				}
 			}
+			parserInRange = new JavaASTParser(info.source, methodStart, end);
+		}
+		
+		violatedNodeInRange.addAll(parserInRange.getInRangeNode());
+		
+		for(ASTNode tempNode : violatedNodeInRange) {
+//			System.out.println(tempNode);
+			System.out.println(tempNode.getClass().getSimpleName());
 		}
 		
 		getBNF(patternVector);
@@ -66,44 +84,7 @@ public class BNFChecker {
 	}
 	
 	public void getBNF(PatternVector patternVector){
-		
-		
-		for(SimpleName node : violatedNodeInRange) {
-			//pattern initiation
-			Pattern tempPattern = new Pattern();
-			System.out.println(node.getClass().getSimpleName());
-			tempPattern.addPattern(node.getClass().getSimpleName());
-			//get Pattern which is member of <Block>
-			for(ASTNode tempNode = node.getParent(); !(tempNode instanceof TypeDeclaration); tempNode = tempNode.getParent()) {
-				//Hashmap check (if empty, true)
 
-				//pattern update
-				if(tempNode instanceof EnhancedForStatement ||
-					tempNode instanceof AnonymousClassDeclaration ||
-					tempNode instanceof CatchClause ||
-					tempNode instanceof DoStatement || 
-					tempNode instanceof EnumConstantDeclaration || 
-					tempNode instanceof EnumDeclaration || 
-					tempNode instanceof ForStatement ||
-					tempNode instanceof IfStatement ||
-					tempNode instanceof WhileStatement||
-					tempNode instanceof TryStatement|| 
-					tempNode instanceof SwitchStatement|| 
-					tempNode instanceof MethodDeclaration) {
-					patternVector.addNodes(tempNode);
-					patternVector.addNodes(tempNode, tempPattern);
-					tempPattern.addPattern(tempNode.getClass().getSimpleName());
-				}
-			}
-			System.out.println("Break");
-			for( String elem : tempPattern.getPattern()) {
-				System.out.println(elem);
-			}
-			for (String elem : patternVector.getPatternVector().keySet()) {
-				;
-				System.out.println(elem +"Num: "+patternVector.getPatternVector().get(elem));
-			}
-		}
 	}
 	
 	
