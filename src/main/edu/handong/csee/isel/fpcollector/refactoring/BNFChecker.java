@@ -47,7 +47,8 @@ public class BNFChecker {
 		String tempLine = lines[Integer.parseInt(info.start) -1];
 		start = tempSource.indexOf(tempLine);
 		tempLine = lines[Integer.parseInt(info.end) - 1];
-		end = tempSource.indexOf(tempLine);	
+		tempSource = tempSource.substring(start);
+		end = tempSource.indexOf(tempLine) + start;	
 		
 		JavaASTParser parserInRange = new JavaASTParser(info.source, start, end);
 		ArrayList<MethodDeclaration> methods = parserInRange.getMethodDeclarations();
