@@ -22,7 +22,7 @@ public class BNFChecker {
 	Info info = new Info();
 	ArrayList<SimpleName> violatedNode = new ArrayList<>();
 	ArrayList<ASTNode> violatedNodeInRange = new ArrayList<>();
-	ArrayList<ASTNode> patterns = new ArrayList<>();
+	ArrayList<PatternNode> patterns = new ArrayList<>();
 	
 	public BNFChecker(Info info, PatternVector patternVector) {
 		this.info = info;
@@ -84,8 +84,30 @@ public class BNFChecker {
 		
 	}
 	
-	public void getBNF(PatternVector patternVector){
-
+	public void getBNF(ArrayList<MethodAST> methodASTs){
+		for (MethodAST mAST : methodASTs) {
+			int pIdx = 0;
+			if (patterns.isEmpty()) {
+				for (ASTNode ast : mAST.asts) {
+					patterns.add(new PatternNode(ast));
+				}
+			} else {
+				int mIdx = 0;
+				while(mIdx != mAST.asts.size() && pIdx != patterns.size()) {
+					if (patterns.get(pIdx).node.getClass().getSimpleName().equals(mAST.asts.get(mIdx).getClass().getSimpleName())) {
+						patterns.get(pIdx).count++;
+						pIdx ++;
+						mIdx ++;
+					} else pIdx ++;
+				}
+				if (pIdx == patterns.size()) {
+					while(mIdx != mAST.asts.size()) {
+						patterns.add(new PatternNode(mAST.asts.get(mIdx)));
+						mIdx ++;
+					}
+				}
+			}
+		}
 	}
 	
 	
