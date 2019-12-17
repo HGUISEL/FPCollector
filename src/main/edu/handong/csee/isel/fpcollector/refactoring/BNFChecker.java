@@ -11,12 +11,14 @@ import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.SimplePropertyDescriptor;
 
 public class BNFChecker {
 	Info info = new Info();
 	ArrayList<SimpleName> violatedNode = new ArrayList<>();
 	public ArrayList<MethodAST> methodASTs = new ArrayList<>();
+	public ArrayList<MethodAST> mASTs = new ArrayList<MethodAST>();
 	ArrayList<PatternNode> patterns = new ArrayList<>();
 	ArrayList<ASTNode> children = new ArrayList<>();
 	
@@ -30,29 +32,19 @@ public class BNFChecker {
 		int end = 0;
 		ArrayList<MethodDeclaration> methods = new ArrayList<>();
 		JavaASTParser javaParser = new JavaASTParser(info.source);
-		violatedNode = javaParser.getViolatedNames(info.varName);
-		start = Integer.parseInt(info.start);
-		end = Integer.parseInt(info.end);
-		methods.addAll(javaParser.getMethodDeclarations());
-		checkInRange(patternVector, start, end, methods);
+		MethodDeclaration m = javaParser.getViolatedMethod(Integer.parseInt(info.start));
+//		System.out.println(m);
+		
+		MethodAST mAST = new MethodAST();
+
+		for (ASTNode c : mAST.asts)
+			System.out.println(c.getClass().getSimpleName());
 	}
 	
-	private void checkInRange(PatternVector patternVector, int start, int end, ArrayList<MethodDeclaration> methods) {
-		int methodStart = 0;
-		int min = 99999999;
+	private void checkInRange(PatternVector patternVector, MethodDeclaration m) {
 		JavaASTParser parserInRange;
-		ASTNode methodInRange = null;
 		
-		for(MethodDeclaration tempMethod : methods) {
-			int lineNumber = ((CompilationUnit) tempMethod.getRoot()).getLineNumber(tempMethod.getStartPosition()) - 1;
-			if(lineNumber <= start && start - lineNumber < min) {
-				min = start - lineNumber;
-				methodStart = lineNumber;
-				methodInRange = tempMethod;
-			}
-		}
-		
-		printChild(methodInRange, children);
+		printChild(m, children);
 		
 		for(ASTNode tempnode : children) {
 			System.out.println(tempnode.getClass().getSimpleName());
