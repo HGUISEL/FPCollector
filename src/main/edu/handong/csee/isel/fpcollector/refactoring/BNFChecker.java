@@ -28,8 +28,6 @@ public class BNFChecker {
 	}
 	
 	private void buildAST(PatternVector patternVector) {
-		int start = 0;
-		int end = 0;
 		ArrayList<MethodDeclaration> methods = new ArrayList<>();
 		JavaASTParser javaParser = new JavaASTParser(info.source);
 		MethodDeclaration m = javaParser.getViolatedMethod(Integer.parseInt(info.start));
@@ -39,28 +37,7 @@ public class BNFChecker {
 
 		for (ASTNode c : mAST.asts)
 			System.out.println(c.getClass().getSimpleName());
-	}
-	
-	private void checkInRange(PatternVector patternVector, MethodDeclaration m) {
-		JavaASTParser parserInRange;
 		
-		printChild(m, children);
-		
-		for(ASTNode tempnode : children) {
-			System.out.println(tempnode.getClass().getSimpleName());
-		}
-		
-		parserInRange = new JavaASTParser(info.source, methodStart, end);
-		
-		for(ASTNode temp : parserInRange.getInRangeNode()) {
-			System.out.println(temp.getClass().getSimpleName());
-		}
-		MethodAST methodAST = new MethodAST();
-		methodAST.asts.addAll(parserInRange.getInRangeNode());
-		
-		methodASTs.add(methodAST);
-		int size = methodASTs.size();
-		System.out.println("" + methodASTs.get(size-1) + ":::::" + size );
 	}
 	
 	public void getBNF(ArrayList<MethodAST> methodASTs){
