@@ -5,22 +5,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ChildListPropertyDescriptor;
 import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.SimplePropertyDescriptor;
 
 public class BNFChecker {
 	Info info = new Info();
-	ArrayList<SimpleName> violatedNode = new ArrayList<>();
-	public ArrayList<MethodAST> methodASTs = new ArrayList<>();
+//	ArrayList<SimpleName> violatedNode = new ArrayList<>();
 	public ArrayList<MethodAST> mASTs = new ArrayList<MethodAST>();
 	ArrayList<PatternNode> patterns = new ArrayList<>();
-	ArrayList<ASTNode> children = new ArrayList<>();
 	
 	public void run(Info info, PatternVector patternVector) {
 		this.info = info;
@@ -28,39 +23,18 @@ public class BNFChecker {
 	}
 	
 	private void buildAST(PatternVector patternVector) {
-		int start = 0;
-		int end = 0;
 		ArrayList<MethodDeclaration> methods = new ArrayList<>();
+		
 		JavaASTParser javaParser = new JavaASTParser(info.source);
 		MethodDeclaration m = javaParser.getViolatedMethod(Integer.parseInt(info.start));
-//		System.out.println(m);
 		
 		MethodAST mAST = new MethodAST();
-
+		printChild(m, mAST.asts);
+		
 		for (ASTNode c : mAST.asts)
 			System.out.println(c.getClass().getSimpleName());
-	}
-	
-	private void checkInRange(PatternVector patternVector, MethodDeclaration m) {
-		JavaASTParser parserInRange;
 		
-		printChild(m, children);
-		
-		for(ASTNode tempnode : children) {
-			System.out.println(tempnode.getClass().getSimpleName());
-		}
-		
-		parserInRange = new JavaASTParser(info.source, methodStart, end);
-		
-		for(ASTNode temp : parserInRange.getInRangeNode()) {
-			System.out.println(temp.getClass().getSimpleName());
-		}
-		MethodAST methodAST = new MethodAST();
-		methodAST.asts.addAll(parserInRange.getInRangeNode());
-		
-		methodASTs.add(methodAST);
-		int size = methodASTs.size();
-		System.out.println("" + methodASTs.get(size-1) + ":::::" + size );
+		mASTs.add(mAST);
 	}
 	
 	public void getBNF(ArrayList<MethodAST> methodASTs){
