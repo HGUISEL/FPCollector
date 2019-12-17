@@ -1,15 +1,18 @@
 package edu.handong.csee.isel.fpcollector.refactoring;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 
 public class BNFChecker {
 	Info info = new Info();
 	ArrayList<SimpleName> violatedNode = new ArrayList<>();
 	public ArrayList<MethodAST> methodASTs = new ArrayList<>();
+	public ArrayList<MethodAST> mASTs = new ArrayList<MethodAST>();
 	ArrayList<PatternNode> patterns = new ArrayList<>();
 	
 	public void run(Info info, PatternVector patternVector) {
@@ -19,9 +22,15 @@ public class BNFChecker {
 	
 	private void buildAST(PatternVector patternVector) {
 		JavaASTParser javaParser = new JavaASTParser(info.source);
-		violatedNode = javaParser.getViolatedNames(info.varName);
+		MethodDeclaration m = javaParser.getViolatedMethod(Integer.parseInt(info.start));
+//		System.out.println(m);
 		
-		checkInRange(patternVector);
+		MethodAST mAST = new MethodAST();
+
+		for (ASTNode c : mAST.asts)
+			System.out.println(c.getClass().getSimpleName());
+		
+//		checkInRange(patternVector);
 	}
 	
 	private void checkInRange(PatternVector patternVector) {

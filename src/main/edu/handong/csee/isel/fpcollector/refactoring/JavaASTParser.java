@@ -1781,6 +1781,15 @@ public class JavaASTParser {
 		return violatedNames;
 	}
 	
+	public MethodDeclaration getViolatedMethod(int start) {
+		for (int i = lstMethodDeclaration.size() - 1; i >= 0; i--) {
+			MethodDeclaration m = lstMethodDeclaration.get(i);
+			if (cUnit.getLineNumber(m.getStartPosition()) - 1 <= start)
+				return m;
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	private static void printChild(ASTNode node) {
     	List properties = node.structuralPropertiesForType();
