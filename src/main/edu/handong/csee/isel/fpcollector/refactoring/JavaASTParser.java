@@ -28,6 +28,7 @@ public class JavaASTParser {
 	ArrayList<InfixExpression> lstInfixExpression = new ArrayList<InfixExpression>();
 	ArrayList<ConditionalExpression> lstConditionalExpression = new ArrayList<ConditionalExpression>();
 	ArrayList<ASTNode> lstInRangeNode = new ArrayList<ASTNode>();
+	ArrayList<ASTNode> lstMethodLevel = new ArrayList<ASTNode>();
 	
 	
 	PackageDeclaration pkgDeclaration;
@@ -89,250 +90,209 @@ public class JavaASTParser {
 					
 					public boolean visit(MethodInvocation node) {
 						lstMethodInvocation.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(TypeDeclaration node) {
 						lstTypeDeclaration.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final FieldDeclaration node) {
 						lstFieldDeclaration.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final SingleVariableDeclaration node) {
 						lstSingleVariableDeclaration.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final VariableDeclarationFragment node) {
 						lstVariableDeclarationFragment.add(node);
-						return super.visit(node);
-					}
-					
-					public boolean visit(final ClassInstanceCreation node) {
-						lstClassInstanceCreation.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final FieldAccess node) {
 						lstFieldAccess.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(IfStatement node) {
 						lstIfStatement.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(ForStatement node) {
 						lstForStatement.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(WhileStatement node) {
 						lstWhileStatement.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(InfixExpression node) {
 						lstInfixExpression.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(SimpleName node) {
 						lstSimpleName.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final ImportDeclaration node) {
 						lstImportDeclaration.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final PackageDeclaration node) {
 						pkgDeclaration = node;
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final AnonymousClassDeclaration node) {
 						//Log.info("AnonymousClassDeclaration");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					
 					//Expression ? Expression : Expression
 					public boolean visit(final ConditionalExpression node) {
 						lstConditionalExpression.add(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
-					/*public boolean visit(CatchClause node) {
-						list.add("CatchClause");
+					public boolean visit(CatchClause node) {
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					public boolean visit(ClassInstanceCreation node) {
-						list.add("ClassInstanceCreation");
-						list.add(node.getName().toString());
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(DoStatement node) {
-						list.add("DoStatement");
+						lstMethodLevel.add(node);
 
 						return super.visit(node);
 					}
 					public boolean visit(EnumConstantDeclaration node) {
-						list.add(node.getName().toString());
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					public boolean visit(EnumDeclaration node) {
-						list.add("EnumDeclaration");
-						list.add(node.getName().toString());
-						return super.visit(node);
-					}
-					public boolean visit(ForStatement node) {
-						list.add("ForStatement");
+						lstMethodLevel.add(node);
 
 						return super.visit(node);
 					}
+
 					public boolean visit(EnhancedForStatement node) {
-						list.add("ForStatement");
+						lstMethodLevel.add(node);
 
-						return super.visit(node);
-					}
-
-					public boolean visit(SingleVariableDeclaration node) {
-						list.add("SingleVariableDeclaration");
-
-						return super.visit(node);
-					}
-
-					public boolean visit(SimpleName node) {
-						list.add("SimpleName");
-
-						return super.visit(node);
-					}
-
-
-					public boolean visit(IfStatement node) {
-						list.add("IfStatement");
-						lstIfStatement.add(node);
-						return super.visit(node);
-					}
-
-					public boolean visit(MethodDeclaration node) {
-						lstMethodDeclaration.add(node);
-						list.add("METHOD:" + node.getName().toString() + node.parameters().toString() + ":" + node.getStartPosition() + ":" + node.getLength());
 						return super.visit(node);
 					}
 
 					public boolean visit(AssertStatement node) {
-						list.add("AssertStatement");
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					} 
 					public boolean visit(ContinueStatement node) {
-						list.add("ContinueStatement");
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(SwitchCase node) {
-						list.add("SwitchCase");
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					public boolean visit(SynchronizedStatement node) {
-						list.add("SynchronizedStatement");
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					public boolean visit(ThisExpression node) {
-						list.add("ThisExpression");
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					public boolean visit(ThrowStatement node) {
-						list.add("ThrowStatement");
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 					public boolean visit(TryStatement node) {
-						list.add("TryStatement");
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
-					public boolean visit(TypeDeclaration node) {
-						list.add(node.getName().toString());
-						return super.visit(node);
-					}
-					public boolean visit(WhileStatement node) {
-
-						list.add("WhileStatement");
-						return super.visit(node);
-					}
-					public boolean visit(final FieldAccess node) {
-
-						lstFieldAccess.add(node);
-
-						return super.visit(node);
-					}
-
-					public boolean visit(final FieldDeclaration node) {
-						lstFieldDeclaration.add(node);
-						return super.visit(node);
-					}
-
 					public boolean visit(final Block node) {
-
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final Assignment node) {
-
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final ExpressionStatement node) {
-
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final AnnotationTypeDeclaration node) {
 						//Log.info("AnnotationTypeDeclaration");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final AnnotationTypeMemberDeclaration node) {
 						//Log.info("AnnotationTypeMemberDeclaration");
 						//Log.info(node);
-						return super.visit(node);
-					}
-
-					public boolean visit(final AnonymousClassDeclaration node) {
-						//Log.info("AnonymousClassDeclaration");
-						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final ArrayAccess node) {
 						//Log.info("ArrayAccess");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final ArrayCreation node) {
 						//Log.info("ArrayCreation");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final ArrayInitializer node) {
 						//Log.info("ArrayInitializer");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final ArrayType node) {
 						//Log.info("ArrayType");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
@@ -340,24 +300,28 @@ public class JavaASTParser {
 					public boolean visit(final BlockComment node) {
 						//Log.info("BlockComment");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final BooleanLiteral node) {
 						//Log.info("BooleanLiteral");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final CastExpression node) {
 						//Log.info("CastExpression");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final CharacterLiteral node) {
 						//Log.info("CharacterLiteral");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
@@ -366,6 +330,7 @@ public class JavaASTParser {
 					public boolean visit(final CompilationUnit node) {
 						//Log.info("CompilationUnit");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
@@ -374,269 +339,288 @@ public class JavaASTParser {
 					public boolean visit(final ConstructorInvocation node) {
 						//Log.info("ConstructorInvocation");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final CreationReference node) {
 						//Log.info("CreationReference");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final Dimension node) {
 						//Log.info("Dimension");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(final EmptyStatement node) {
 						//Log.info("EmptyStatement");
 						//Log.info(node);
+						lstMethodLevel.add(node);
 						return super.visit(node);
 					}
-
-				public boolean visit(final ImportDeclaration node) {
-					//Log.info("ImportDeclaration");
-					//Log.info(node);
-					return super.visit(node);
-				}
-				public boolean visit(final InfixExpression node) {
-					//Log.info("InfixExpression");
-					//Log.info(node);
-					return super.visit(node);
-				}
 
 				public boolean visit(final Initializer node) {
 					//Log.info("Initializer");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final InstanceofExpression node) {
 					//Log.info("InstanceofExpression");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final IntersectionType node) {
 					//Log.info("IntersectionType");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final Javadoc node) {
 					//Log.info("Javadoc");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final LabeledStatement node) {
 					//Log.info("LabeledStatement");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final LambdaExpression node) {
 					//Log.info("LambdaExpression");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final LineComment node) {
 					//Log.info("LineComment");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final MarkerAnnotation node) {
 					//Log.info("MarkerAnnotation");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final MemberRef node) {
 					//Log.info("MemberRef");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final MemberValuePair node) {
 					//Log.info("MemberValuePair");
 					//Log.info(node);
-					return super.visit(node);
-				}
-				public boolean visit(final MethodDeclaration node) {
-					//Log.info("MethodDeclaration");
-					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final MethodRef node) {
 					//Log.info("MethodRef");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final MethodRefParameter node) {
 					//Log.info("MethodRefParameter");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final Modifier node) {
 					//Log.info("Modifier");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final NameQualifiedType node) {
 					//Log.info("NameQualifiedType");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final NormalAnnotation node) {
 					//Log.info("NormalAnnotation");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final NullLiteral node) {
 					//Log.info("NullLiteral");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final NumberLiteral node) {
 					//Log.info("NumberLiteral");
 					//Log.info(node);
-					return super.visit(node);
-				}
-
-				public boolean visit(final PackageDeclaration node) {
-					//Log.info("PackageDeclaration");
-					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final ParameterizedType node) {
 					//Log.info("ParameterizedType");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final ParenthesizedExpression node) {
 					//Log.info("ParenthesizedExpression");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final PostfixExpression node) {
 					//Log.info("PostfixExpression");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final PrefixExpression node) {
 					//Log.info("PrefixExpression");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final PrimitiveType node) {
 					//Log.info("PrimitiveType");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final QualifiedName node) {
 					//Log.info("QualifiedName");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final QualifiedType node) {
 					//Log.info("QualifiedType");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final SimpleType node) {
 					//Log.info("SimpleType");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final SingleMemberAnnotation node) {
 					//Log.info("SingleMemberAnnotation");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final StringLiteral node) {
 					//Log.info("StringLiteral");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final SuperConstructorInvocation node) {
 					//Log.info("SuperConstructorInvocation");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final SuperFieldAccess node) {
 					//Log.info("SuperFieldAccess");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final SuperMethodInvocation node) {
 					//Log.info("SuperMethodInvocation");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final SuperMethodReference node) {
 					//Log.info("SuperMethodReference");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final TagElement node) {
 					//Log.info("TagElement");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final TextElement node) {
 					//Log.info("TextElement");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 
 				public boolean visit(final TypeDeclarationStatement node) {
 					//Log.info("TypeDeclarationStatement");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final TypeLiteral node) {
 					//Log.info("TypeLiteral");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final TypeMethodReference node) {
 					//Log.info("TypeMethodReference");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final TypeParameter node) {
 					//Log.info("UnionType");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final UnionType node) {
 					//Log.info("UnionType");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final VariableDeclarationExpression node) {
 					//Log.info("VariableDeclarationExpression");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
-				public boolean visit(final VariableDeclarationFragment node) {
-					//Log.info("VariableDeclarationFragment");
-					//Log.info(node);
-					return super.visit(node);
-				}
+
 				public boolean visit(final VariableDeclarationStatement node) {
 					//Log.info("VariableDeclarationStatement");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
 				}
 				public boolean visit(final WildcardType node) {
 					//Log.info("WildcardType");
 					//Log.info(node);
+					lstMethodLevel.add(node);
 					return super.visit(node);
-				}*/
+				}
 				});
 			} catch (Exception e) {
 				System.out.println("Problem : " + e.toString());
@@ -680,7 +664,8 @@ public class JavaASTParser {
 
 					public boolean visit(MethodDeclaration node) {
 						lstMethodDeclaration.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -688,7 +673,8 @@ public class JavaASTParser {
 					
 					public boolean visit(MethodInvocation node) {
 						lstMethodInvocation.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -696,7 +682,8 @@ public class JavaASTParser {
 					
 					public boolean visit(TypeDeclaration node) {
 						lstTypeDeclaration.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -704,7 +691,8 @@ public class JavaASTParser {
 
 					public boolean visit(final FieldDeclaration node) {
 						lstFieldDeclaration.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -712,7 +700,8 @@ public class JavaASTParser {
 					
 					public boolean visit(final SingleVariableDeclaration node) {
 						lstSingleVariableDeclaration.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -720,7 +709,8 @@ public class JavaASTParser {
 					
 					public boolean visit(final VariableDeclarationFragment node) {
 						lstVariableDeclarationFragment.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -728,7 +718,8 @@ public class JavaASTParser {
 					
 					public boolean visit(final ClassInstanceCreation node) {
 						lstClassInstanceCreation.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -736,7 +727,8 @@ public class JavaASTParser {
 					
 					public boolean visit(final FieldAccess node) {
 						lstFieldAccess.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -744,7 +736,8 @@ public class JavaASTParser {
 
 					public boolean visit(IfStatement node) {
 						lstIfStatement.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -752,7 +745,8 @@ public class JavaASTParser {
 					
 					public boolean visit(ForStatement node) {
 						lstForStatement.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -760,7 +754,8 @@ public class JavaASTParser {
 					
 					public boolean visit(WhileStatement node) {
 						lstWhileStatement.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -768,7 +763,8 @@ public class JavaASTParser {
 
 					public boolean visit(InfixExpression node) {
 						lstInfixExpression.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -776,7 +772,8 @@ public class JavaASTParser {
 					
 					public boolean visit(SimpleName node) {
 						lstSimpleName.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -784,7 +781,8 @@ public class JavaASTParser {
 					
 					public boolean visit(final ImportDeclaration node) {
 						lstImportDeclaration.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -792,7 +790,8 @@ public class JavaASTParser {
 					
 					public boolean visit(final PackageDeclaration node) {
 						pkgDeclaration = node;
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -801,7 +800,8 @@ public class JavaASTParser {
 					public boolean visit(final AnonymousClassDeclaration node) {
 						//Log.info("AnonymousClassDeclaration");
 						//Log.info(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -810,40 +810,46 @@ public class JavaASTParser {
 					//Expression ? Expression : Expression
 					public boolean visit(final ConditionalExpression node) {
 						lstConditionalExpression.add(node);
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(CatchClause node) {						
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(DoStatement node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 
 						return super.visit(node);
 					}
 					public boolean visit(EnumConstantDeclaration node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 					public boolean visit(EnumDeclaration node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 					public boolean visit(EnhancedForStatement node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 
@@ -851,107 +857,123 @@ public class JavaASTParser {
 					}
 
 					public boolean visit(AssertStatement node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					} 
 					public boolean visit(ContinueStatement node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(SwitchCase node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 					public boolean visit(SynchronizedStatement node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 					public boolean visit(ThisExpression node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 					public boolean visit(ThrowStatement node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 					public boolean visit(TryStatement node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final Block node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final Assignment node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final ExpressionStatement node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final AnnotationTypeDeclaration node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final AnnotationTypeMemberDeclaration node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final ArrayAccess node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final ArrayCreation node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final ArrayInitializer node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final ArrayType node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -959,28 +981,32 @@ public class JavaASTParser {
 
 
 					public boolean visit(final BlockComment node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final BooleanLiteral node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final CastExpression node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final CharacterLiteral node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -989,7 +1015,8 @@ public class JavaASTParser {
 
 
 					public boolean visit(final CompilationUnit node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
@@ -998,287 +1025,332 @@ public class JavaASTParser {
 					
 
 					public boolean visit(final ConstructorInvocation node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final CreationReference node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final Dimension node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}
 
 					public boolean visit(final EmptyStatement node) {
-						if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+						int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+						if(lineNumber <= end && lineNumber >= start) {
 							lstInRangeNode.add(node);
 						}
 						return super.visit(node);
 					}				
 
 				public boolean visit(final Initializer node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final InstanceofExpression node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final IntersectionType node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final Javadoc node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final LabeledStatement node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final LambdaExpression node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final LineComment node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final MarkerAnnotation node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final MemberRef node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final MemberValuePair node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				
 				public boolean visit(final MethodRef node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final MethodRefParameter node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final Modifier node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final NameQualifiedType node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final NormalAnnotation node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final NullLiteral node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final NumberLiteral node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final ParameterizedType node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final ParenthesizedExpression node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final PostfixExpression node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final PrefixExpression node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final PrimitiveType node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final QualifiedName node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final QualifiedType node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final SimpleType node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final SingleMemberAnnotation node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final StringLiteral node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final SuperConstructorInvocation node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final SuperFieldAccess node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final SuperMethodInvocation node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final SuperMethodReference node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final TagElement node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final TextElement node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 
 				public boolean visit(final TypeDeclarationStatement node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final TypeLiteral node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final TypeMethodReference node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final TypeParameter node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final UnionType node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final VariableDeclarationExpression node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}				
 				public boolean visit(final VariableDeclarationStatement node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
 				}
 				public boolean visit(final WildcardType node) {
-					if(node.getStartPosition() <= end && node.getStartPosition() >= start) {
+					int lineNumber = unit.getLineNumber(node.getStartPosition()) - 1;
+					if(lineNumber <= end && lineNumber >= start) {
 						lstInRangeNode.add(node);
 					}
 					return super.visit(node);
@@ -1379,6 +1451,10 @@ public class JavaASTParser {
 	
 	public ArrayList<ASTNode> getInRangeNode(){
 		return lstInRangeNode;
+	}
+	
+	public ArrayList<ASTNode> getMethodLevel(){
+		return lstMethodLevel;
 	}
 	
 	public String getTypeOfSimpleName(ASTNode astNode,String name) {
