@@ -112,21 +112,21 @@ public class BNFChecker {
     		if(desciptor instanceof SimplePropertyDescriptor) {
     			SimplePropertyDescriptor simple = (SimplePropertyDescriptor)desciptor;
     			Object value = node.getStructuralProperty(simple);
-    			System.out.println(simple.getId() + " SimpleProperty (" + value.toString() + ")");
+//    			System.out.println(simple.getId() + " SimpleProperty (" + value.toString() + ")");
     		} else if (desciptor instanceof ChildPropertyDescriptor) {
     			ChildPropertyDescriptor child = (ChildPropertyDescriptor) desciptor;
     			ASTNode childNode = (ASTNode) node.getStructuralProperty(child);    			
     			if(childNode != null) {
-    				System.out.println("Child ( " + child.getId() + ") {");
+//    				System.out.println("Child ( " + child.getId() + ") {");
     				children.add(childNode);
     				printChild(childNode, children);
-    				System.out.println("}\n");
+//    				System.out.println("}\n");
     			}
     		} else { 
     			ChildListPropertyDescriptor list = (ChildListPropertyDescriptor) desciptor;
-    			System.out.println("ChildList (" + list.getId()+ ") {");
+//    			System.out.println("ChildList (" + list.getId()+ ") {");
     			printChild((List)node.getStructuralProperty(list), children);
-    			System.out.println("}\n");
+//    			System.out.println("}\n");
     		}
     	}
     }
