@@ -133,7 +133,7 @@ public class Main {
 				System.out.println(countB);
 			}
 			
-			tempBuilder.getBNF(tempBuilder.methodASTs);
+			tempBuilder.getBNF(tempBuilder.mASTs);
 			tempBuilder.printPattern();
 			
 ////////////////////////////////////////////////////////////////

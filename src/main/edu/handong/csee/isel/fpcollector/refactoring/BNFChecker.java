@@ -1,26 +1,36 @@
 package edu.handong.csee.isel.fpcollector.refactoring;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BreakStatement;
 import org.eclipse.jdt.core.dom.ChildListPropertyDescriptor;
 import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.ContinueStatement;
+import org.eclipse.jdt.core.dom.DoStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.SimplePropertyDescriptor;
+import org.eclipse.jdt.core.dom.SwitchCase;
+import org.eclipse.jdt.core.dom.SwitchStatement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
+import org.eclipse.jdt.core.dom.TryStatement;
+import org.eclipse.jdt.core.dom.WhileStatement;
 
 public class BNFChecker {
 	Info info = new Info();
-	ArrayList<SimpleName> violatedNode = new ArrayList<>();
-	public ArrayList<MethodAST> methodASTs = new ArrayList<>();
+//	ArrayList<SimpleName> violatedNode = new ArrayList<>();
 	public ArrayList<MethodAST> mASTs = new ArrayList<MethodAST>();
 	ArrayList<PatternNode> patterns = new ArrayList<>();
-	ArrayList<ASTNode> children = new ArrayList<>();
 	
 	public void run(Info info, PatternVector patternVector) {
 		this.info = info;
@@ -28,16 +38,21 @@ public class BNFChecker {
 	}
 	
 	private void buildAST(PatternVector patternVector) {
-		ArrayList<MethodDeclaration> methods = new ArrayList<>();
+//		ArrayList<MethodDeclaration> methods = new ArrayList<>();
+		
 		JavaASTParser javaParser = new JavaASTParser(info.source);
 		MethodDeclaration m = javaParser.getViolatedMethod(Integer.parseInt(info.start));
-//		System.out.println(m);
 		
 		MethodAST mAST = new MethodAST();
-
-		for (ASTNode c : mAST.asts)
-			System.out.println(c.getClass().getSimpleName());
-		
+		mAST.asts.add(m);
+		printChild(m, mAST.asts);
+//		for(ASTNode temp : mAST.asts) {
+//			if(temp instanceof SimpleName) {
+//				System.out.println(temp.getClass().getSimpleName() + " (" + temp + ") ");
+//			}
+//			else System.out.println(temp.getClass().getSimpleName());
+//		}
+		mASTs.add(mAST);
 	}
 	
 	public void getBNF(ArrayList<MethodAST> methodASTs){
@@ -73,41 +88,145 @@ public class BNFChecker {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	private static void printChild(ASTNode node, ArrayList<ASTNode> children) {
+	private void printChild(ASTNode node, ArrayList<ASTNode> children) {
+		ArrayList<ASTNode> tempBranch = new ArrayList<>();
     	List properties = node.structuralPropertiesForType();
     	
     	for(Iterator itertor = properties.iterator(); itertor.hasNext();) {
     		Object desciptor = itertor.next();
     		if(desciptor instanceof SimplePropertyDescriptor) {
-    			SimplePropertyDescriptor simple = (SimplePropertyDescriptor)desciptor;
-    			Object value = node.getStructuralProperty(simple);
-//    			System.out.println(simple.getId() + " SimpleProperty (" + value.toString() + ")");
+
     		} else if (desciptor instanceof ChildPropertyDescriptor) {
     			ChildPropertyDescriptor child = (ChildPropertyDescriptor) desciptor;
     			ASTNode childNode = (ASTNode) node.getStructuralProperty(child);    			
     			if(childNode != null) {
-//    				System.out.println("Child ( " + child.getId() + ") {");
-    				children.add(childNode);
+    				if(isLeaf(childNode)) {
+    					if(childNode instanceof SimpleName 
+    							&& ((SimpleName) childNode).getIdentifier().equals(info.varName)) {
+    						for(ASTNode temp = childNode; !(temp instanceof MethodDeclaration);temp = temp.getParent()) {
+    							if(!(temp instanceof Block))
+    								tempBranch.add(temp);
+    						}
+    						Collections.reverse(tempBranch);
+    						for(ASTNode tempElem : tempBranch) {
+    							if(!children.contains(tempElem)) {
+    								children.add(tempElem);
+    							}
+    						}
+    						tempBranch.clear();
+    					} else {
+    						for(ASTNode temp = childNode; !(temp instanceof MethodDeclaration);temp = temp.getParent()) {
+    							if((temp instanceof IfStatement ||
+    									temp instanceof DoStatement ||
+    									temp instanceof SwitchStatement ||
+    									temp instanceof BreakStatement ||
+    									temp instanceof ContinueStatement ||
+    									temp instanceof ReturnStatement ||
+    									temp instanceof TryStatement ||
+    									temp instanceof ForStatement ||
+    									temp instanceof ThrowStatement ||
+    									temp instanceof EnhancedForStatement ||
+    									temp instanceof ConditionalExpression ||
+    									temp instanceof SwitchCase)
+//    									temp.getParent() instanceof MethodDeclaration
+    									&& !(temp instanceof Block)
+    		    						) {
+    								tempBranch.add(temp);
+    							}
+    						}
+    						Collections.reverse(tempBranch);
+    						for(ASTNode tempElem : tempBranch) {
+    							if(!children.contains(tempElem)) {
+    								children.add(tempElem);
+    							}
+    						}
+    						tempBranch.clear();
+    					}
+    				}
     				printChild(childNode, children);
-//    				System.out.println("}\n");
     			}
     		} else { 
     			ChildListPropertyDescriptor list = (ChildListPropertyDescriptor) desciptor;
-//    			System.out.println("ChildList (" + list.getId()+ ") {");
     			printChild((List)node.getStructuralProperty(list), children);
-//    			System.out.println("}\n");
     		}
     	}
     }
 	
 	 @SuppressWarnings("rawtypes")
-		private static void printChild(List nodes, ArrayList<ASTNode> children) {
-	    	for ( Iterator iterator = nodes.iterator(); iterator.hasNext();) {
-	    		ASTNode node = (ASTNode) iterator.next();
-	    		children.add(node);
-	    		printChild(node, children);
-	    	}
+		private void printChild(List nodes, ArrayList<ASTNode> children) {		 	
+		 ArrayList<ASTNode> tempBranch = new ArrayList<>();
+		    	for ( Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+		    		ASTNode node = (ASTNode) iterator.next();
+		    		if(isLeaf(node)) {
+		    			if(node instanceof SimpleName 
+    							&& ((SimpleName) node).getIdentifier().equals(info.varName)) {
+    						for(ASTNode temp = node; !(temp instanceof MethodDeclaration);temp = temp.getParent()) {
+    							if(!(temp instanceof Block))
+    								tempBranch.add(temp);
+    						}
+    						Collections.reverse(tempBranch);
+    						for(ASTNode tempElem : tempBranch) {
+    							if(!children.contains(tempElem)) {
+    								children.add(tempElem);
+    							}
+    						}
+    						tempBranch.clear();
+    					} else {
+    						for(ASTNode temp = node; !(temp instanceof MethodDeclaration);temp = temp.getParent()) {
+    							if((temp instanceof IfStatement ||
+    									temp instanceof DoStatement ||
+    									temp instanceof SwitchStatement ||
+    									temp instanceof BreakStatement ||
+    									temp instanceof ContinueStatement ||
+    									temp instanceof ReturnStatement ||
+    									temp instanceof TryStatement ||
+    									temp instanceof ForStatement ||
+    									temp instanceof ThrowStatement ||
+    									temp instanceof EnhancedForStatement ||
+    									temp instanceof ConditionalExpression ||
+    									temp instanceof SwitchCase)
+//    									temp.getParent() instanceof MethodDeclaration
+    									&& !(temp instanceof Block)
+    		    						) {
+    								tempBranch.add(temp);
+    							}
+    						}
+    						Collections.reverse(tempBranch);
+    						for(ASTNode tempElem : tempBranch) {
+    							if(!children.contains(tempElem)) {
+    								children.add(tempElem);
+    							}
+    						}
+    						tempBranch.clear();
+    					}
+    				}
+//		    		System.out.println(node);
+		    		printChild(node, children);	
+		    	}
 	    }
+	 
+	 @SuppressWarnings("rawtypes")
+	private boolean isLeaf(ASTNode node) {
+		 ASTNode tempNode = node;
+		 List properties = tempNode.structuralPropertiesForType();
+		 for(Iterator itertor = properties.iterator(); itertor.hasNext();) {
+	    		Object desciptor = itertor.next();
+	    		if(desciptor instanceof SimplePropertyDescriptor) {
+	    		} else if (desciptor instanceof ChildPropertyDescriptor) {
+	    			ChildPropertyDescriptor child = (ChildPropertyDescriptor) desciptor;
+	    			ASTNode childNode = (ASTNode) tempNode.getStructuralProperty(child);    			
+	    			if(childNode != null) {
+	    				return false;
+	    			}
+	    		} else { 
+	    			ChildListPropertyDescriptor list = (ChildListPropertyDescriptor) desciptor;
+	    			for ( Iterator iterator = ((List)tempNode.getStructuralProperty(list)).iterator(); iterator.hasNext();) {
+			    		return false;			    		
+			    	}
+	    		}
+	    	}
+		return true;
+	 }
 	
 	
 }
