@@ -8,6 +8,8 @@ import edu.handong.csee.isel.fpcollector.contextextractor.ContextExtractor;
 import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternAdjustment;
 import edu.handong.csee.isel.fpcollector.evaluator.Evaluator;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.FPCollector;
+import edu.handong.csee.isel.fpcollector.graph.GraphBuilder;
+import edu.handong.csee.isel.fpcollector.graph.GraphNode;
 import edu.handong.csee.isel.fpcollector.refactoring.BNFChecker;
 import edu.handong.csee.isel.fpcollector.refactoring.FPCWriter;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
@@ -132,8 +134,10 @@ public class Main {
 				countB ++;
 				System.out.println(countB);
 			}
-			
-			tempBuilder.getBNF(tempBuilder.mASTs);
+			GraphBuilder graph = new GraphBuilder();
+			ArrayList<GraphNode> graphs = new ArrayList<>();
+			graphs = graph.getGraph(tempBuilder.mASTs);
+//			tempBuilder.getBNF(tempBuilder.mASTs);
 			tempBuilder.printPattern();
 			
 ////////////////////////////////////////////////////////////////

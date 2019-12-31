@@ -46,12 +46,12 @@ public class BNFChecker {
 		MethodAST mAST = new MethodAST();
 		mAST.asts.add(m);
 		printChild(m, mAST.asts);
-//		for(ASTNode temp : mAST.asts) {
-//			if(temp instanceof SimpleName) {
-//				System.out.println(temp.getClass().getSimpleName() + " (" + temp + ") ");
-//			}
-//			else System.out.println(temp.getClass().getSimpleName());
-//		}
+		for(ASTNode temp : mAST.asts) {
+			if(temp instanceof SimpleName) {
+				System.out.println(temp.getClass().getSimpleName() + " (" + temp + ") " + "Parent : " + temp.getParent().getClass().getSimpleName());
+			}
+			else System.out.println(temp.getClass().getSimpleName() + " Parent : " + temp.getParent().getClass().getSimpleName());
+		}
 		mASTs.add(mAST);
 	}
 	
