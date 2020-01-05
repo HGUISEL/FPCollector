@@ -115,8 +115,8 @@ public class Main {
 		fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC);
 		System.out.println("Step 2 CLEAR");
 			
-//3. Get Pattern of the FPC
-			//1. read input
+		// 3. Get Pattern of the FPC
+			// 1. read input
 			ArrayList<Info> infos = new ArrayList<>();
 			InfoCollector inforCollector = new InfoCollector();
 			try {
@@ -125,20 +125,28 @@ public class Main {
 				e.printStackTrace();
 			}
 			
-			PatternVector patternVector = new PatternVector();
-			//2. build AST
-			BNFChecker tempBuilder = new BNFChecker();
-			int countB = 0;
-			for(Info info: infos) {
-				tempBuilder.run(info, patternVector);
-				countB ++;
-				System.out.println(countB);
+			// 2. build Graph
+			for(Info info : infos) {
+				GraphBuilder graph = new GraphBuilder();
+				
+				graph.run(info);
+				break;
 			}
-			GraphBuilder graph = new GraphBuilder();
-			ArrayList<GraphNode> graphs = new ArrayList<>();
-			graphs = graph.getGraph(tempBuilder.mASTs);
-//			tempBuilder.getBNF(tempBuilder.mASTs);
-			tempBuilder.printPattern();
+			
+//			PatternVector patternVector = new PatternVector();
+//			//2. build AST
+//			BNFChecker tempBuilder = new BNFChecker();
+//			int countB = 0;
+//			for(Info info: infos) {
+//				tempBuilder.run(info, patternVector);
+//				countB ++;
+//				System.out.println(countB);
+//			}
+//			GraphBuilder graph = new GraphBuilder();
+//			ArrayList<GraphNode> graphs = new ArrayList<>();
+//			graphs = graph.getGraph(tempBuilder.mASTs);
+////			tempBuilder.getBNF(tempBuilder.mASTs);
+//			tempBuilder.printPattern();
 			
 ////////////////////////////////////////////////////////////////
 			

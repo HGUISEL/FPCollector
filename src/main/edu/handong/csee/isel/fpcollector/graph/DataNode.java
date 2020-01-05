@@ -3,10 +3,11 @@ package edu.handong.csee.isel.fpcollector.graph;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 public class DataNode extends GraphNode{
-	State state;
-	String name;
+	VarState state;
 	
-	public DataNode(ASTNode node) {
+	public DataNode(ASTNode node, VarState state) {
 		super(node);
+		
+		this.state = state;
 	}
 }
