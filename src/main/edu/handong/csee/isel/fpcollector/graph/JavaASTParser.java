@@ -3,6 +3,7 @@ package edu.handong.csee.isel.fpcollector.graph;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -87,12 +88,20 @@ public class JavaASTParser {
 						if (!isDefine)
 							checkDefine(node);
 						else if (node.toString().equals(info.varName)){
-							DataNode n;
+							DataNode n = new DataNode(node);
+							if(node.isDeclaration()) {
+								n.setState(VarState.D);
+							} else {
+								n.setState(VarState.R);
+							}
+							if(isInCondition(node)) {
+								n.setInCondition(VarState.I);
+							} else {
+								n.setInCondition(VarState.O);
+							}													
 							
-							if (node.getParent().getNodeType() == 7)
-								n = new DataNode(node.getParent(), VarState.D);
-							else
-								n = new DataNode(node.getParent(), VarState.R);
+							n.setFrom(getFrom(node));
+							
 							root.nexts.add(n);
 							
 							lstUseVar.set(level, true);
@@ -681,6 +690,59 @@ public class JavaASTParser {
 
 	}
 
+	private ASTNode getFrom(SimpleName node) {
+		ASTNode tempParent = node.getParent();
+		if(tempParent instanceof EnhancedForStatement) {
+			List properties = tempParent.structuralPropertiesForType();
+			
+			for(Iterator iterator = properties.iterator(); iterator.hasNext();) {
+				Object descriptor = iterator.next();
+				if(descriptor instanceof ChildListPropertyDescriptor) {
+					ChildListPropertyDescriptor list = (ChildListPropertyDescriptor) descriptor;
+	    			System.out.println("ChildList (" + list.getId()+ ") {");
+	    			for(Iterator iterate = ((List)node.getStructuralProperty(list)).iterator(); iterate.hasNext();) {
+	    				ASTNode temp = (ASTNode) iterate.next();
+	    				if(!(temp instanceof Block) && (temp != node)) {
+	    					System.out.println(temp);
+	    					return temp;
+	    				}
+	    			}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+    @SuppressWarnings("rawtypes")
+	private static void printChild(List nodes) {
+    	for ( Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+    		ASTNode node = (ASTNode) iterator.next();
+    	}
+    }
+	
+	private boolean isD(SimpleName node) {
+		ASTNode tempParent = node.getParent();
+		if(tempParent instanceof SingleVariableDeclaration ||
+				tempParent instanceof VariableDeclarationFragment) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isInCondition(SimpleName node) {
+		ASTNode tempParent = node.getParent();
+		if(tempParent instanceof ForStatement ||
+				tempParent instanceof IfStatement||
+				tempParent instanceof EnhancedForStatement||
+				tempParent instanceof WhileStatement ||
+				tempParent instanceof SwitchCase ||
+				tempParent instanceof SwitchExpression) {
+			return true;
+		}
+		return false;
+	}
+	
 	private void checkScope(MethodDeclaration node) {
 		int sLine = getLineNum(node.getStartPosition());
 		int eLine = getLineNum(node.getStartPosition() + node.getLength());
