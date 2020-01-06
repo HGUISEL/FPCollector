@@ -132,6 +132,7 @@ public class Main {
 				graph.run(info);
 
 				if (info == infos.get(10)) break;
+			}
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST
