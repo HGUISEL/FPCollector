@@ -216,7 +216,6 @@ public class JavaASTParser {
 					
 					public boolean visit(CatchClause node) {
 						if (isDefine) {
-							System.out.println("-----------CatchClause---------");
 							level ++;
 							ControlNode n = new ControlNode(node, ControlState.M);
 							n.parent = root;
@@ -778,7 +777,7 @@ public class JavaASTParser {
 				public void endVisit(CatchClause node) {
 					if (isDefine) {
 						if (--level < 0) isDefine = false;
-						else if (lstUseVar.get(level + 1)) {
+						else if (root.parent.node instanceof TryStatement) {
 							ControlNode temp = root;
 							root = root.parent;
 							root.nexts.add(temp);
@@ -804,12 +803,10 @@ public class JavaASTParser {
 				public void endVisit(ReturnStatement node) {
 					if (isDefine) {
 						if (--level < 0) isDefine = false;
-						else if (lstUseVar.get(level + 1)) {
+						else {
 							ControlNode temp = root;
 							root = root.parent;
 							root.nexts.add(temp);
-						} else {
-							root = root.parent;
 						}
 					}
 				}
@@ -817,12 +814,10 @@ public class JavaASTParser {
 				public void endVisit(ThrowStatement node) {
 					if (isDefine) {
 						if (--level < 0) isDefine = false;
-						else if (lstUseVar.get(level + 1)) {
+						else {
 							ControlNode temp = root;
 							root = root.parent;
 							root.nexts.add(temp);
-						} else {
-							root = root.parent;
 						}
 					}
 				}
