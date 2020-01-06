@@ -917,7 +917,7 @@ public class JavaASTParser {
 	}
 	
 	private void checkDefine(SimpleName node) {
-		if (node.toString().equals(info.varName) && node.isDeclaration()) {
+		if (node.toString().equals(info.varName) && !(node.getParent() instanceof MethodDeclaration)) {
 			isDefine = true;
 			
 			DataNode n = new DataNode(node);
