@@ -216,6 +216,7 @@ public class JavaASTParser {
 					
 					public boolean visit(CatchClause node) {
 						if (isDefine) {
+							System.out.println("-----------CatchClause---------");
 							level ++;
 							ControlNode n = new ControlNode(node, ControlState.M);
 							n.parent = root;
