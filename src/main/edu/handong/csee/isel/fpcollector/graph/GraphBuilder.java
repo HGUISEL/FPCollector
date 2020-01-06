@@ -10,6 +10,20 @@ public class GraphBuilder {
 		
 		parser.run();
 		root = parser.root;
+		
+		System.out.println(root.node);
+		printInfo(root);
+		System.out.println("========================================================================================");
+	}
+	
+	void printInfo(ControlNode n) {
+		for (int i = 0; i < n.nexts.size(); i++) {
+			GraphNode n_ =  n.nexts.get(i);
+			System.out.println("n: " + n_.node);
+			if (n_ instanceof ControlNode) {
+				printInfo((ControlNode)n_);
+			}
+		}
 	}
 }
 

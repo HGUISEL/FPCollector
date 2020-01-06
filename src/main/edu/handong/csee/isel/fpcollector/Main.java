@@ -130,7 +130,7 @@ public class Main {
 				GraphBuilder graph = new GraphBuilder();
 				
 				graph.run(info);
-				break;
+				if (info == infos.get(2)) break;
 			}
 			
 //			PatternVector patternVector = new PatternVector();
