@@ -130,8 +130,8 @@ public class Main {
 				GraphBuilder graph = new GraphBuilder();
 				
 				graph.run(info);
-				if (info == infos.get(5)) break;
-			}
+
+				if (info == infos.get(10)) break;
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST
