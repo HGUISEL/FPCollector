@@ -871,11 +871,15 @@ public class JavaASTParser {
     }
 	
 	private int isD(SimpleName node) {
+		
 		ASTNode tempParent = node.getParent();
 		System.out.println(tempParent.getClass().getSimpleName());
 		if(tempParent instanceof SingleVariableDeclaration) {
 			return D;
 		} else if(tempParent instanceof VariableDeclarationFragment) {
+			if(((VariableDeclarationFragment) tempParent).getInitializer() == null) {
+				return D;
+			}
 			return DI;
 		}
 		return R;
