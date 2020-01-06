@@ -244,6 +244,36 @@ public class JavaASTParser {
 						return super.visit(node);
 					}
 					
+					public boolean visit(ReturnStatement node) {
+						if (isDefine) {
+							level ++;
+							ControlNode n = new ControlNode(node, ControlState.E);
+							n.parent = root;
+							root = n;
+							if (lstUseVar.size() <= level)
+								lstUseVar.add(false);
+							else
+								lstUseVar.set(level, false);
+						}
+						
+						return super.visit(node);
+					}
+					
+					public boolean visit(ThrowStatement node) {
+						if (isDefine) {
+							level ++;
+							ControlNode n = new ControlNode(node, ControlState.E);
+							n.parent = root;
+							root = n;
+							if (lstUseVar.size() <= level)
+								lstUseVar.add(false);
+							else
+								lstUseVar.set(level, false);
+						}
+						
+						return super.visit(node);
+					}
+					
 					public boolean visit(final VariableDeclarationFragment node) {
 						lstVariableDeclarationFragment.add(node);
 						return super.visit(node);
@@ -335,10 +365,6 @@ public class JavaASTParser {
 					}
 					public boolean visit(ThisExpression node) {
 //						list.add("ThisExpression");
-						return super.visit(node);
-					}
-					public boolean visit(ThrowStatement node) {
-//						list.add("ThrowStatement");
 						return super.visit(node);
 					}
 
@@ -762,6 +788,32 @@ public class JavaASTParser {
 				}
 				
 				public void endVisit(SwitchStatement node) {
+					if (isDefine) {
+						if (--level < 0) isDefine = false;
+						else if (lstUseVar.get(level + 1)) {
+							ControlNode temp = root;
+							root = root.parent;
+							root.nexts.add(temp);
+						} else {
+							root = root.parent;
+						}
+					}
+				}
+				
+				public void endVisit(ReturnStatement node) {
+					if (isDefine) {
+						if (--level < 0) isDefine = false;
+						else if (lstUseVar.get(level + 1)) {
+							ControlNode temp = root;
+							root = root.parent;
+							root.nexts.add(temp);
+						} else {
+							root = root.parent;
+						}
+					}
+				}
+				
+				public void endVisit(ThrowStatement node) {
 					if (isDefine) {
 						if (--level < 0) isDefine = false;
 						else if (lstUseVar.get(level + 1)) {
