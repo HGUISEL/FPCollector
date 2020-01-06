@@ -824,13 +824,19 @@ public class JavaASTParser {
 	
 	private boolean isInCondition(SimpleName node) {
 		ASTNode tempParent = node.getParent();
-		if(tempParent instanceof ForStatement ||
-				tempParent instanceof IfStatement||
-				tempParent instanceof EnhancedForStatement||
-				tempParent instanceof WhileStatement ||
-				tempParent instanceof SwitchCase ||
-				tempParent instanceof SwitchExpression) {
-			return true;
+		while(true) {
+			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
+				break;
+			}
+			else if(tempParent instanceof ForStatement ||
+					tempParent instanceof IfStatement||
+					tempParent instanceof EnhancedForStatement||
+					tempParent instanceof WhileStatement ||
+					tempParent instanceof SwitchCase ||
+					tempParent instanceof SwitchExpression) {
+				return true;
+			} 
+			tempParent = tempParent.getParent();
 		}
 		return false;
 	}
