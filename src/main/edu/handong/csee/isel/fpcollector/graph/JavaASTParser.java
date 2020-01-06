@@ -15,7 +15,9 @@ import edu.handong.csee.isel.fpcollector.refactoring.Info;
 public class JavaASTParser {
 	CompilationUnit cUnit;
 	Info info;
-	
+	final static int DI = 0;
+	final static int D = 1;
+	final static int R = 2;
 	ControlNode root;
 	boolean isScope = false;
 	boolean isDefine = false;
@@ -90,11 +92,14 @@ public class JavaASTParser {
 								checkDefine(node);
 							else if (node.toString().equals(info.varName)){
 								DataNode n = new DataNode(node);
-								if(node.isDeclaration()) {
+								
+								if(isD(node) == D)
 									n.setState(VarState.D);
-								} else {
+								else if(isD(node) == DI)
+									n.setState(VarState.DI);
+								else if(isD(node) == R)
 									n.setState(VarState.R);
-								}
+								
 								if(isInCondition(node)) {
 									n.setInCondition(VarState.I);
 								} else {
@@ -813,13 +818,14 @@ public class JavaASTParser {
     	}
     }
 	
-	private boolean isD(SimpleName node) {
+	private int isD(SimpleName node) {
 		ASTNode tempParent = node.getParent();
-		if(tempParent instanceof SingleVariableDeclaration ||
-				tempParent instanceof VariableDeclarationFragment) {
-			return true;
+		if(tempParent instanceof SingleVariableDeclaration) {
+			return DI;
+		} else if(tempParent instanceof VariableDeclarationFragment) {
+			return D;
 		}
-		return false;
+		return R;
 	}
 	
 	private boolean isInCondition(SimpleName node) {
@@ -858,11 +864,18 @@ public class JavaASTParser {
 	}
 	
 	private void checkDefine(SimpleName node) {
-		if (node.toString().equals(info.varName) && node.isDeclaration()) {
+		if (node.toString().equals(info.varName)) {
 			isDefine = true;
 			
 			DataNode n = new DataNode(node);
-			n.setState(VarState.D);
+			
+			if(isD(node) == D)
+				n.setState(VarState.D);
+			else if(isD(node) == DI)
+				n.setState(VarState.DI);
+			else if(isD(node) == R)
+				n.setState(VarState.R);
+			
 			if (isInCondition(node)) n.setInCondition(VarState.I);
 			else n.setInCondition(VarState.O);
 			

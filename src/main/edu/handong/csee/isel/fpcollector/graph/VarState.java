@@ -4,5 +4,5 @@ package edu.handong.csee.isel.fpcollector.graph;
 //I for in conditional statement/loop
 //O for not in conditional statement/loop
 public enum VarState {
-	D, R, I, O
+	DI, D, R, I, O
 }
