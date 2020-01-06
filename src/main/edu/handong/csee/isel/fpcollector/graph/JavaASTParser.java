@@ -857,6 +857,9 @@ public class JavaASTParser {
 			
 			DataNode n = new DataNode(node);
 			n.setState(VarState.D);
+			if (isInCondition(node)) n.setInCondition(VarState.I);
+			else n.setInCondition(VarState.O);
+			
 			root.nexts.add(n);
 		}
 	}
