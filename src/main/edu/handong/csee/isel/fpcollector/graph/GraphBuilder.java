@@ -5,7 +5,7 @@ import edu.handong.csee.isel.fpcollector.refactoring.Info;
 public class GraphBuilder {
 	ControlNode root;
 	
-	public void run(Info info) {
+	public ControlNode run(Info info) {
 		JavaASTParser parser = new JavaASTParser(info);
 		
 		parser.run();
@@ -14,6 +14,7 @@ public class GraphBuilder {
 		System.out.println(root.node);
 		printInfo(root);
 		System.out.println("========================================================================================");
+		return root;
 	}
 	
 	void printInfo(ControlNode n) {
