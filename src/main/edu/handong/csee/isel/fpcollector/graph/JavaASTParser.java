@@ -713,6 +713,8 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) isDefine = false;
 						else if (lstUseVar.get(level + 1)) {
+							if (isEnd()) root.setState(ControlState.E);
+							
 							ControlNode temp = root;
 							root = root.parent;
 							root.nexts.add(temp);
@@ -934,6 +936,13 @@ public class JavaASTParser {
 			
 			root.nexts.add(n);
 		}
+	}
+	
+	private boolean isEnd() {
+		for (GraphNode n : root.nexts) {
+			if (n instanceof ControlNode) return false;
+		}
+		return true;
 	}
 	
 	public int getLineNum(int startPosition){

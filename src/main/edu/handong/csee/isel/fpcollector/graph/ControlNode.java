@@ -15,4 +15,8 @@ public class ControlNode extends GraphNode{
 		this.state = state;
 	}
 	
+	public void setState(ControlState state) {
+		this.state = state;
+	}
+	
 }

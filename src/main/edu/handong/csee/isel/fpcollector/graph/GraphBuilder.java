@@ -20,8 +20,8 @@ public class GraphBuilder {
 		for (int i = 0; i < n.nexts.size(); i++) {
 			GraphNode n_ =  n.nexts.get(i);
 			if (n_ instanceof DataNode)
-				System.out.println("n: " + n_.node + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
-			else System.out.println("n: " + n_.node);
+				System.out.println("(D) n: " + n_.node + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
+			else System.out.println("(C) n: " + n_.node + ", state : " + ((ControlNode)n_).state);
 			if (n_ instanceof ControlNode) {
 				printInfo((ControlNode)n_);
 			}
