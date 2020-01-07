@@ -125,7 +125,7 @@ public class Main {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+			int counta = 0;
 			ArrayList<ControlNode> graphs = new ArrayList<>();
 			// 2. build Graph
 			for(Info info : infos) {

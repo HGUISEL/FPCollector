@@ -90,7 +90,7 @@ public class JavaASTParser {
 						if (isScope) {
 							if (!isDefine)
 								checkDefine(node);
-							else if (node.toString().equals(info.varName)){
+							else if (node.toString().equals(info.varName) && getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)){
 								DataNode n = new DataNode(node);
 								
 								if(isD(node) == D)
@@ -105,9 +105,7 @@ public class JavaASTParser {
 								} else {
 									n.setInCondition(VarState.O);
 								}													
-								
-								n.setFrom(getFrom(node));
-								
+																							
 								root.nexts.add(n);
 								
 								for (int i = 0; i <= level; i++)
@@ -853,34 +851,18 @@ public class JavaASTParser {
 
 	private ASTNode getFrom(SimpleName node) {
 		ASTNode tempParent = node.getParent();
-		if(tempParent instanceof EnhancedForStatement) {
-			List properties = tempParent.structuralPropertiesForType();
-			
-			for(Iterator iterator = properties.iterator(); iterator.hasNext();) {
-				Object descriptor = iterator.next();
-				if(descriptor instanceof ChildListPropertyDescriptor) {
-					ChildListPropertyDescriptor list = (ChildListPropertyDescriptor) descriptor;
-	    			System.out.println("ChildList (" + list.getId()+ ") {");
-	    			for(Iterator iterate = ((List)node.getStructuralProperty(list)).iterator(); iterate.hasNext();) {
-	    				ASTNode temp = (ASTNode) iterate.next();
-	    				if(!(temp instanceof Block) && (temp != node)) {
-	    					System.out.println(temp);
-	    					return temp;
-	    				}
-	    			}
-				}
+		while(true) {
+			if(tempParent instanceof Block || tempParent instanceof MethodDeclaration) {
+				break;
 			}
+			else if(tempParent instanceof EnhancedForStatement) {
+				System.out.println(((EnhancedForStatement) tempParent).getExpression());
+				return (ASTNode) ((EnhancedForStatement) tempParent).getExpression();
+			}
+			tempParent = tempParent.getParent();			
 		}
-		
 		return null;
 	}
-	
-    @SuppressWarnings("rawtypes")
-	private static void printChild(List nodes) {
-    	for ( Iterator iterator = nodes.iterator(); iterator.hasNext();) {
-    		ASTNode node = (ASTNode) iterator.next();
-    	}
-    }
 	
 	private int isD(SimpleName node) {
 		
@@ -933,7 +915,8 @@ public class JavaASTParser {
 	}
 	
 	private void checkDefine(SimpleName node) {
-		if (node.toString().equals(info.varName) && !(node.getParent() instanceof MethodDeclaration)) {
+		if (node.toString().equals(info.varName) && !(node.getParent() instanceof MethodDeclaration) 
+				&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)) {
 			isDefine = true;
 			
 			DataNode n = new DataNode(node);
@@ -947,6 +930,8 @@ public class JavaASTParser {
 			
 			if (isInCondition(node)) n.setInCondition(VarState.I);
 			else n.setInCondition(VarState.O);
+			
+			n.setFrom(getFrom(node));
 			
 			root.nexts.add(n);
 		}
