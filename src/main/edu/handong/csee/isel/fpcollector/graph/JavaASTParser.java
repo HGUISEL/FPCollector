@@ -696,7 +696,10 @@ public class JavaASTParser {
 				
 				public void endVisit(DoStatement node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
 							
@@ -711,7 +714,10 @@ public class JavaASTParser {
 
 				public void endVisit(IfStatement node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
 							
@@ -726,7 +732,10 @@ public class JavaASTParser {
 				
 				public void endVisit(ForStatement node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
 							
@@ -741,7 +750,10 @@ public class JavaASTParser {
 				
 				public void endVisit(WhileStatement node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
 							
@@ -756,7 +768,10 @@ public class JavaASTParser {
 				
 				public void endVisit(EnhancedForStatement node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
 							
@@ -771,7 +786,10 @@ public class JavaASTParser {
 				
 				public void endVisit(TryStatement node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
 							
@@ -786,7 +804,10 @@ public class JavaASTParser {
 				
 				public void endVisit(CatchClause node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else if (root.parent.node instanceof TryStatement) {
 							if (isEnd()) root.setState(ControlState.E);
 							
@@ -801,7 +822,10 @@ public class JavaASTParser {
 				
 				public void endVisit(SwitchStatement node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
 							
@@ -816,7 +840,10 @@ public class JavaASTParser {
 				
 				public void endVisit(ReturnStatement node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else {
 							ControlNode temp = root;
 							root = root.parent;
@@ -827,7 +854,10 @@ public class JavaASTParser {
 				
 				public void endVisit(ThrowStatement node) {
 					if (isDefine) {
-						if (--level < 0) return ;
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+						}
 						else {
 							ControlNode temp = root;
 							root = root.parent;
@@ -893,7 +923,9 @@ public class JavaASTParser {
 					tempParent instanceof SwitchExpression) {
 				return true;
 			} 
-			tempParent = tempParent.getParent();
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
 		}
 		return false;
 	}
