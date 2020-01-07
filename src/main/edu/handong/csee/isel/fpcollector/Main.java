@@ -8,6 +8,7 @@ import edu.handong.csee.isel.fpcollector.contextextractor.ContextExtractor;
 import edu.handong.csee.isel.fpcollector.contextextractor.patternminer.PatternAdjustment;
 import edu.handong.csee.isel.fpcollector.evaluator.Evaluator;
 import edu.handong.csee.isel.fpcollector.fpsuspectsgetter.FPCollector;
+import edu.handong.csee.isel.fpcollector.graph.ControlNode;
 import edu.handong.csee.isel.fpcollector.graph.GraphBuilder;
 import edu.handong.csee.isel.fpcollector.graph.GraphNode;
 import edu.handong.csee.isel.fpcollector.refactoring.BNFChecker;
@@ -125,13 +126,18 @@ public class Main {
 				e.printStackTrace();
 			}
 			
+			ArrayList<ControlNode> graphs = new ArrayList<>();
 			// 2. build Graph
 			for(Info info : infos) {
 				GraphBuilder graph = new GraphBuilder();
 				
-				graph.run(info);
+				graphs.add(graph.run(info));
 
-				if (info == infos.get(10)) break;
+				if (info == infos.get(7)) break;
+			}
+			
+			for(ControlNode tempRoot : graphs) {
+				System.out.println(tempRoot.getNode());
 			}
 			
 //			PatternVector patternVector = new PatternVector();
