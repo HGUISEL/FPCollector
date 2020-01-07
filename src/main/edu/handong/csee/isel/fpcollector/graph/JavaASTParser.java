@@ -698,7 +698,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
@@ -716,7 +716,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
@@ -734,7 +734,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
@@ -752,7 +752,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
@@ -770,7 +770,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
@@ -788,7 +788,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
@@ -806,7 +806,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else if (root.parent.node instanceof TryStatement) {
 							if (isEnd()) root.setState(ControlState.E);
@@ -824,7 +824,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else if (lstUseVar.get(level + 1)) {
 							if (isEnd()) root.setState(ControlState.E);
@@ -842,7 +842,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else {
 							ControlNode temp = root;
@@ -856,7 +856,7 @@ public class JavaASTParser {
 					if (isDefine) {
 						if (--level < 0) {
 							isDefine = false;
-							isScope = false;
+//							isScope = false;
 						}
 						else {
 							ControlNode temp = root;

@@ -129,17 +129,17 @@ public class Main {
 			ArrayList<ControlNode> graphs = new ArrayList<>();
 			// 2. build Graph
 			for(Info info : infos) {
-				System.out.println(infos.indexOf(info));
+//				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
 				
 				graph.run(info);
 				graphs.add(graph.root);
-//				if (info == infos.get(7)) break;
+				if (info == infos.get(7)) break;
 			}
 			
-//			for(ControlNode g : graphs) {
-//				g.printInfo();
-//			}
+			for(ControlNode g : graphs) {
+				g.printInfo();
+			}
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST
