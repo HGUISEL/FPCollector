@@ -125,15 +125,16 @@ public class Main {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+			int counta = 0;
 			ArrayList<ControlNode> graphs = new ArrayList<>();
 			// 2. build Graph
 			for(Info info : infos) {
-				GraphBuilder graph = new GraphBuilder();
-				
+				GraphBuilder graph = new GraphBuilder();				
 				graphs.add(graph.run(info));
-
-				if (info == infos.get(7)) break;
+				
+				System.out.println("\n\n\n%%%%%%%%" + counta + "\n%%%%%%%%");
+				counta++;
+				if (info == infos.get(400)) break;
 			}
 			
 			for(ControlNode tempRoot : graphs) {
