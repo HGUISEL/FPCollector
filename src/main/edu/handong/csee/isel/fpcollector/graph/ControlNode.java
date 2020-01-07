@@ -19,4 +19,25 @@ public class ControlNode extends GraphNode{
 		this.state = state;
 	}
 	
+	public void printInfo() {
+		System.out.println(this.node);
+		printChildren(this);
+		System.out.println();
+		System.out.println("========================================================================================");
+	}
+	
+	private void printChildren(ControlNode n) {
+		for (int i = 0; i < n.nexts.size(); i++) {
+			GraphNode n_ =  n.nexts.get(i);
+			if (n_ instanceof DataNode)
+				System.out.println("(D) n: " + n_.node + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
+			else System.out.println("(C) n: " + n_.node + ", state : " + ((ControlNode)n_).state);
+			if (n_ instanceof ControlNode) {
+				printChildren((ControlNode)n_);
+			}
+		}
+	}
+	
+	
+	
 }

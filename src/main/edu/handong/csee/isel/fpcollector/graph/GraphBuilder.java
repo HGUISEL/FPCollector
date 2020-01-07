@@ -3,30 +3,13 @@ package edu.handong.csee.isel.fpcollector.graph;
 import edu.handong.csee.isel.fpcollector.refactoring.Info;
 
 public class GraphBuilder {
-	ControlNode root;
+	public ControlNode root;
 	
-	public ControlNode run(Info info) {
+	public void run(Info info) {
 		JavaASTParser parser = new JavaASTParser(info);
 		
 		parser.run();
-		root = parser.root;
-		
-		System.out.println(root.node);
-		printInfo(root);
-		System.out.println("========================================================================================");
-		return root;
-	}
-	
-	void printInfo(ControlNode n) {
-		for (int i = 0; i < n.nexts.size(); i++) {
-			GraphNode n_ =  n.nexts.get(i);
-			if (n_ instanceof DataNode)
-				System.out.println("(D) n: " + n_.node + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
-			else System.out.println("(C) n: " + n_.node + ", state : " + ((ControlNode)n_).state);
-			if (n_ instanceof ControlNode) {
-				printInfo((ControlNode)n_);
-			}
-		}
+		this.root = parser.root;
 	}
 }
 
