@@ -28,6 +28,7 @@ public class InfoCollector {
             	outputInfo.add(info);
         	}
         }
+        br.close();
 		return outputInfo;
 	}
 	
