@@ -132,10 +132,10 @@ public class Main {
 				
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-				if(counta == 11) {
+//				if(counta == 11) {
 					graph.run(info);
 					graphs.add(graph.root);
-				}
+//				}
 				counta++;
 				if (info == infos.get(11)) break;
 			}

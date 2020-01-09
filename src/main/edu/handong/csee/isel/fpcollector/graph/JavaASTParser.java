@@ -1058,17 +1058,14 @@ public class JavaASTParser {
 	
 	private VarState checkType(SimpleName node) {
 		ASTNode tempParent = node.getParent();
-		while(!(tempParent instanceof MethodDeclaration) || !(tempParent instanceof Block)) {
-			if(tempParent instanceof ArrayAccess) {
-				if(((ArrayAccess) tempParent).getIndex() instanceof NumberLiteral) {
-					return VarState.ArrIdxF;
-				} else
-					return VarState.ArrIdxC;
-			}
-			if(tempParent.getParent() != null) {
-				tempParent = tempParent.getParent();
-			} else break;
+		
+		if(tempParent instanceof ArrayAccess) {
+			if(((ArrayAccess) tempParent).getIndex() instanceof NumberLiteral) {
+				return VarState.ArrIdxF;
+			} else
+				return VarState.ArrIdxC;
 		}
+		
 		return VarState.NArr;		
 	}
 	
