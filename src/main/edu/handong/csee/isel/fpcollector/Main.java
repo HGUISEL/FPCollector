@@ -138,7 +138,6 @@ public class Main {
 				}
 				counta++;
 				if (info == infos.get(37)) break;
-				
 			}
 			
 			for(ControlNode g : graphs) {

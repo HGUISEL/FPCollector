@@ -969,6 +969,7 @@ public class JavaASTParser {
 							isDefine = false;
 							isScope = false;
 							isTerm = false;
+
 						}
 						else if (isTerm){
 							if(isEnd()) root.setState(ControlState.E);
