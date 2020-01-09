@@ -132,12 +132,12 @@ public class Main {
 				
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-				if(counta == 10) {
+				if(counta == 11) {
 					graph.run(info);
 					graphs.add(graph.root);
 				}
 				counta++;
-				if (info == infos.get(10)) break;
+				if (info == infos.get(11)) break;
 			}
 			
 			for(ControlNode g : graphs) {

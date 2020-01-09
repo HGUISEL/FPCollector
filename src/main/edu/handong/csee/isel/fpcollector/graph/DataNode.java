@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 public class DataNode extends GraphNode{
 	VarState state;
 	VarState inCondition;
+	VarState type;
 	ASTNode from;
 	
 	public DataNode(ASTNode node, int level) {
@@ -17,6 +18,10 @@ public class DataNode extends GraphNode{
 	
 	public void setInCondition(VarState inCondition) {
 		this.inCondition = inCondition;
+	}
+	
+	public void setType(VarState type) {
+		this.type = type;
 	}
 	
 	public void setFrom(ASTNode from) {

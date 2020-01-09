@@ -102,6 +102,13 @@ public class JavaASTParser {
 								else if(isD(node) == VarState.Ass)
 									n.setState(VarState.Ass);
 								
+								if(checkType(node) == VarState.ArrIdxC)
+									n.setType(VarState.ArrIdxC);
+								else if(checkType(node) == VarState.ArrIdxF)
+									n.setType(VarState.ArrIdxF);
+								else if(checkType(node) == VarState.NArr)
+									n.setType(VarState.NArr);
+								
 								if(isInCondition(node)) {
 									n.setInCondition(VarState.I);
 								} else {
@@ -1042,8 +1049,27 @@ public class JavaASTParser {
 				} else
 					return VarState.Ref;
 			}
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
 		}
 		return VarState.Ref;
+	}
+	
+	private VarState checkType(SimpleName node) {
+		ASTNode tempParent = node.getParent();
+		while(!(tempParent instanceof MethodDeclaration) || !(tempParent instanceof Block)) {
+			if(tempParent instanceof ArrayAccess) {
+				if(((ArrayAccess) tempParent).getIndex() instanceof NumberLiteral) {
+					return VarState.ArrIdxF;
+				} else
+					return VarState.ArrIdxC;
+			}
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
+		}
+		return VarState.NArr;		
 	}
 	
 	private boolean isInCondition(SimpleName node) {
@@ -1101,6 +1127,12 @@ public class JavaASTParser {
 			else if(isD(node) == VarState.Ass)
 				n.setState(VarState.Ass);
 			
+			if(checkType(node) == VarState.ArrIdxC)
+				n.setType(VarState.ArrIdxC);
+			else if(checkType(node) == VarState.ArrIdxF)
+				n.setType(VarState.ArrIdxF);
+			else if(checkType(node) == VarState.NArr)
+				n.setType(VarState.NArr);
 			
 			if (isInCondition(node)) n.setInCondition(VarState.I);
 			else n.setInCondition(VarState.O);
