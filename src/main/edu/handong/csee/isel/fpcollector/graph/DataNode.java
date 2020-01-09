@@ -7,8 +7,8 @@ public class DataNode extends GraphNode{
 	VarState inCondition;
 	ASTNode from;
 	
-	public DataNode(ASTNode node) {
-		super(node);
+	public DataNode(ASTNode node, int level) {
+		super(node, level);
 	}
 	
 	public void setState(VarState state) {
