@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 
 public class ControlNode extends GraphNode{
 	ControlState state;
+	ControlState property;
 	
 	ArrayList<GraphNode> nexts = new ArrayList<GraphNode>();
 	
@@ -18,6 +19,10 @@ public class ControlNode extends GraphNode{
 	
 	public void setState(ControlState state) {
 		this.state = state;
+	}
+	
+	public void setProperty(ControlState property) {
+		this.property = property;
 	}
 	
 	public void printInfo() {
@@ -42,7 +47,7 @@ public class ControlNode extends GraphNode{
 				for(int k = 0 ; k < n.level; k ++) {
 					System.out.printf("\t");
 				}
-				System.out.println("(C) n: " + n_.node.getClass().getSimpleName() + /*"( "+ ("" + n_.node).split("\n")[0] +" )" +*/ ", state : " + ((ControlNode)n_).state);
+				System.out.println("(C) n: " + n_.node.getClass().getSimpleName() + /*"( "+ ("" + n_.node).split("\n")[0] +" )" +*/ ", state : " + ((ControlNode)n_).state + " " + ((ControlNode)n_).property);
 			}
 			if (n_ instanceof ControlNode) {
 				printChildren((ControlNode)n_);

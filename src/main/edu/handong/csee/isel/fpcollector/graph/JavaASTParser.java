@@ -130,6 +130,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
+							n.setProperty(ControlState.L);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)
@@ -148,6 +149,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
+							n.setProperty(ControlState.C);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)
@@ -166,6 +168,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
+							n.setProperty(ControlState.L);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)
@@ -184,6 +187,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
+							n.setProperty(ControlState.L);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)
@@ -200,6 +204,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
+							n.setProperty(ControlState.L);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)
@@ -216,6 +221,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
+							n.setProperty(ControlState.C);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)
@@ -232,6 +238,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
+							n.setProperty(ControlState.C);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)
@@ -248,6 +255,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
+							n.setProperty(ControlState.C);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)
@@ -265,6 +273,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.E, level);
+							n.setProperty(ControlState.T);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)
@@ -282,6 +291,7 @@ public class JavaASTParser {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.E, level);
+							n.setProperty(ControlState.T);
 							n.parent = root;
 							root = n;
 							if (lstUseVar.size() <= level)

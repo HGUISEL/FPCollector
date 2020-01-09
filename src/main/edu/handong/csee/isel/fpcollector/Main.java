@@ -136,8 +136,8 @@ public class Main {
 					graph.run(info);
 					graphs.add(graph.root);
 //				}
-				counta++;
-				if (info == infos.get(11)) break;
+//				counta++;
+//				if (info == infos.get(11)) break;
 			}
 			
 			for(ControlNode g : graphs) {
