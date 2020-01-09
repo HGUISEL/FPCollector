@@ -3,7 +3,6 @@ package edu.handong.csee.isel.fpcollector.graph;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +52,6 @@ public class JavaASTParser {
 		char[] content = info.source.toCharArray();
 		parser.setSource(content);
 		//parser.setUnitName("temp.java");
-		@SuppressWarnings("unchecked")
 		Map<String, String> options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
 		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
@@ -1304,7 +1302,7 @@ public class JavaASTParser {
 //		
 //		return "";
 //	}
-
+	@SuppressWarnings("unused")
 	private String qulifiedNameInInnerClass(String typeNameOfReceiver, String fieldName) {
 		
 		for(TypeDeclaration typeDec:lstTypeDeclaration){
@@ -1354,7 +1352,7 @@ public class JavaASTParser {
 		return getQualifiedTypeName(node.getParent());
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "unused"})
 	private String getFieldType(JavaASTParser codeASTForReceiver, String fieldName) {
 		
 		// get Type names associate with fields
@@ -1370,6 +1368,7 @@ public class JavaASTParser {
 		return "";
 	}
 
+	@SuppressWarnings("unused")
 	private ArrayList<String> getPathForJavaSrcCodeFromTypeName(String path, String typeName) {
 
 		ArrayList<String> fullyQualitiedTypeNames = getPotentialFullyQualitifedTypeNames(this,typeName);
@@ -1438,6 +1437,7 @@ public class JavaASTParser {
 	 * @param leftOperand
 	 * @return String
 	 */
+	@SuppressWarnings("unused")
 	private String getOnlyNameFromArrayAccess(Expression operand) {
 		
 		if(operand instanceof ArrayAccess){
