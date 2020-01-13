@@ -52,13 +52,17 @@ public class InfoCollector {
 	
 	private String getScope(String scope, int op) {
 		String[] scopeList = scope.split("-");
-		
+		if(scopeList.length == 1) {
+			return scopeList[0];
+		}
 		return scopeList[op];
 	}
 	
 	private String getVarName(String token) {
 		String[] tokenList = token.split("'");
-		
+		if(tokenList.length == 1) {
+			return null;
+		}
 		return tokenList[1];
 	}
 

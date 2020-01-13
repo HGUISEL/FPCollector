@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
-import org.eclipse.jdt.core.dom.WhileStatement;
 
 public class BNFChecker {
 	Info info = new Info();

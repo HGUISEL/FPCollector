@@ -67,8 +67,14 @@ public class Main {
 		
 		//4. write file which contains FPC
 		FPCWriter fpcWriter = new FPCWriter();
-		//fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC);
-		fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC);
+		
+		if(input.rule.contains("DataflowAnomalyAnalysis"))
+			fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC);
+		else
+			fpcWriter.writeContexts(compareCurrentAndPast.FPC);
+		
+		
+		
 		System.out.println("Step 2 CLEAR");
 			
 		// 3. Get Pattern of the FPC
@@ -87,12 +93,12 @@ public class Main {
 				
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-				if(counta == 1316) {
+				if(counta == 0) {
 					graph.run(info);
 					graphs.add(graph.root);
 				}
 				counta++;
-				if (info == infos.get(1316)) break;
+				if (info == infos.get(0)) break;
 			}
 			
 			for(ControlNode g : graphs) {

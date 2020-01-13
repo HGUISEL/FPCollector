@@ -1,7 +1,5 @@
 package edu.handong.csee.isel.fpcollector.structures;
 
-import java.util.AbstractMap.SimpleEntry;
-
 public class PatternNode {
 	String pattern = "";
 	Integer score = 0;
