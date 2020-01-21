@@ -82,11 +82,20 @@ public class JavaASTParser {
 					
 					public boolean visit(SimpleName node) {
 						//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						IBinding binding = node.resolveBinding();
+						if(info.varName.get(0) == null && getLineNum(node.getStartPosition()) == Integer.parseInt(info.start) && binding instanceof IVariableBinding) {
+							System.out.println(""+getLineNum(node.getStartPosition()));
+							info.varName.add(node.getIdentifier());
+						}
+						
+						if(isScope && isDefine)
+							System.out.println(""+getLineNum(node.getStartPosition()) + node.resolveBinding());
+						
 						lstSimpleName.add(node);
 						if (isScope) {
 							if (!isDefine)
 								checkDefine(node);
-							else if (node.toString().equals(info.varName) /*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/){
+							else if (info.varName.contains(node.getIdentifier())  /*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/){
 								DataNode n = new DataNode(node, level);
 								
 								if(isD(node) == VarState.D)
@@ -1115,7 +1124,7 @@ public class JavaASTParser {
 	}
 	
 	private void checkDefine(SimpleName node) {
-		if (node.toString().equals(info.varName) && !(node.getParent() instanceof MethodDeclaration) 
+		if (info.varName.contains(node.getIdentifier()) && !(node.getParent() instanceof MethodDeclaration) 
 				/*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/) {
 			isDefine = true;
 			

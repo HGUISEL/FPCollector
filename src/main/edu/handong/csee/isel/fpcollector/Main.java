@@ -73,8 +73,6 @@ public class Main {
 		else
 			fpcWriter.writeContexts(compareCurrentAndPast.FPC);
 		
-		
-		
 		System.out.println("Step 2 CLEAR");
 			
 		// 3. Get Pattern of the FPC

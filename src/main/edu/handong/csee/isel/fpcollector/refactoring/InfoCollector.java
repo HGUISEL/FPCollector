@@ -23,7 +23,7 @@ public class InfoCollector {
             	info.source = getSource(tokenList[0]);
             	info.start = getScope(tokenList[1], 0);
             	info.end = getScope(tokenList[1], 1);
-            	info.varName = getVarName(tokenList[3]);
+            	info.varName.add(getVarName(tokenList[3]));
             	
             	outputInfo.add(info);
         	}
