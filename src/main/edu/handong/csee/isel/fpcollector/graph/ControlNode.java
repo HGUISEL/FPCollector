@@ -35,19 +35,19 @@ public class ControlNode extends GraphNode{
 		for (int i = 0; i < n.nexts.size(); i++) {
 			GraphNode n_ =  n.nexts.get(i);
 			if (n_ instanceof DataNode) {
-				for(int k = 0 ; k < n.level; k ++) {
+				for(int k = 0 ; k < n_.level; k ++) {
 					System.out.printf("\t");
 				}
 				if(n_.node instanceof SimpleName)
-					System.out.println("(D) n: " + n_.node.getClass().getSimpleName() + "( "+ n_.node +" )" +  ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).type + " " + ((DataNode)n_).from);
+					System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName() + "( "+ n_.node +" )" +  ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).type + " " + ((DataNode)n_).from);
 				else
-					System.out.println("(D) n: " + n_.node.getClass().getSimpleName()  + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
+					System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName()  + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
 			}
 			else {
-				for(int k = 0 ; k < n.level; k ++) {
+				for(int k = 0 ; k < n_.level; k ++) {
 					System.out.printf("\t");
 				}
-				System.out.println("(C) n: " + n_.node.getClass().getSimpleName() + /*"( "+ ("" + n_.node).split("\n")[0] +" )" +*/ ", state : " + ((ControlNode)n_).state + " " + ((ControlNode)n_).property);
+				System.out.println("level: " + n_.level + "(C) n: " + n_.node.getClass().getSimpleName() + /*"( "+ ("" + n_.node).split("\n")[0] +" )" +*/ ", state : " + ((ControlNode)n_).state + " " + ((ControlNode)n_).property);
 			}
 			if (n_ instanceof ControlNode) {
 				printChildren((ControlNode)n_);

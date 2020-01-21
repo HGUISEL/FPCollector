@@ -8,7 +8,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import org.eclipse.jdt.core.dom.*;
 
-import edu.handong.csee.isel.fpcollector.refactoring.JavaASTParser;
+import edu.handong.csee.isel.fpcollector.refactoring.JavaASTParserInRefac;
 import edu.handong.csee.isel.fpcollector.structures.VectorNode;
 
 public class ContextVectorGetter {
@@ -69,7 +69,7 @@ public class ContextVectorGetter {
 				bufReader.close();
 				}else continue;
 				
-				JavaASTParser codeAST = new JavaASTParser(source);
+				JavaASTParserInRefac codeAST = new JavaASTParserInRefac(source);
 				ArrayList<SimpleName> names = new ArrayList<>();
 				names = codeAST.getViolatedNames(var);
 				ArrayList<ASTNode> contexts = new ArrayList<>();

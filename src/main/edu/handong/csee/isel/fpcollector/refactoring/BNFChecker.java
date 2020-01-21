@@ -39,7 +39,7 @@ public class BNFChecker {
 	private void buildAST(PatternVector patternVector) {
 //		ArrayList<MethodDeclaration> methods = new ArrayList<>();
 		
-		JavaASTParser javaParser = new JavaASTParser(info.source);
+		JavaASTParserInRefac javaParser = new JavaASTParserInRefac(info.source);
 		MethodDeclaration m = javaParser.getViolatedMethod(Integer.parseInt(info.start));
 		
 		MethodAST mAST = new MethodAST();

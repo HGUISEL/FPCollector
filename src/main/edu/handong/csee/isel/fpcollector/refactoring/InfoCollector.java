@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import edu.handong.csee.isel.fpcollector.graph.JavaASTParser;
+
 public class InfoCollector {
 	ArrayList<Info> outputInfo = new ArrayList<>();
 	
@@ -24,6 +26,10 @@ public class InfoCollector {
             	info.start = getScope(tokenList[1], 0);
             	info.end = getScope(tokenList[1], 1);
             	info.varName.add(getVarName(tokenList[3]));
+            	if(info.varName.get(0) == null) {
+            		info.varName.remove(0);
+            		info.varName.addAll(getVarNameList(info));
+            	}
             	
             	outputInfo.add(info);
         	}
@@ -64,6 +70,11 @@ public class InfoCollector {
 			return null;
 		}
 		return tokenList[1];
+	}
+	
+	private ArrayList<String> getVarNameList(Info info){
+		JavaASTParser tempParser = new JavaASTParser(info);
+		return tempParser.getViolatedVariableList(info.source);
 	}
 
 }

@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimplePropertyDescriptor;
 
-import edu.handong.csee.isel.fpcollector.refactoring.JavaASTParser;
+import edu.handong.csee.isel.fpcollector.refactoring.JavaASTParserInRefac;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,7 +42,7 @@ public class LineVectorGetter {
 				}
 				bufReader.close();
 				
-				JavaASTParser codeAST = new JavaASTParser(source);
+				JavaASTParserInRefac codeAST = new JavaASTParserInRefac(source);
 				ArrayList<SimpleName> names = new ArrayList<>();
 				
 				names = codeAST.getViolatedNames(var);

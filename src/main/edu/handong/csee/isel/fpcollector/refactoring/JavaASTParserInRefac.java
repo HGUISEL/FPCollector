@@ -9,7 +9,7 @@ import java.util.Map;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 
-public class JavaASTParser {
+public class JavaASTParserInRefac {
 	CompilationUnit cUnit;
 	String source;
 	ArrayList<ImportDeclaration> lstImportDeclaration = new ArrayList<ImportDeclaration>();
@@ -33,12 +33,12 @@ public class JavaASTParser {
 	
 	PackageDeclaration pkgDeclaration;
 
-	public JavaASTParser(String source){
+	public JavaASTParserInRefac(String source){
 		this.source = source;
 		praseJavaFile(source);
 	}
 	
-	public JavaASTParser(String source, int start, int end) {
+	public JavaASTParserInRefac(String source, int start, int end) {
 		this.source = source;
 		praseJavaFile(source, start, end);
 	}
