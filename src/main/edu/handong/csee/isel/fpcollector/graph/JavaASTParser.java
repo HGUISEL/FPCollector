@@ -15,6 +15,7 @@ public class JavaASTParser {
 	CompilationUnit cUnit;
 	Info info;
 	ControlNode root;
+	SimpleName currentDefine; 
 	boolean isScope = false;
 	boolean isDefine = false;
 	boolean isTerm = false;
@@ -83,7 +84,7 @@ public class JavaASTParser {
 					}
 					
 					public boolean visit(SimpleName node) {
-						System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						
 						lstSimpleName.add(node);
 						if (isScope) {
@@ -114,8 +115,10 @@ public class JavaASTParser {
 									n.setInCondition(VarState.I);
 								} else {
 									n.setInCondition(VarState.O);
-								}													
-																							
+								}						
+								
+								n.setFrom(getFrom(node));
+								
 								root.nexts.add(n);
 								
 								for (int i = 0; i <= level; i++)
@@ -130,7 +133,7 @@ public class JavaASTParser {
 					public boolean visit(DoStatement node) {
 						if (isDefine) {
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							n.setProperty(ControlState.L);
 							n.parent = root;
@@ -150,7 +153,27 @@ public class JavaASTParser {
 						if (isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							
+							n.setProperty(ControlState.C);
+							n.parent = root;
+							root = n;
+							if (lstUseVar.size() <= level)
+								lstUseVar.add(false);
+							else
+								lstUseVar.set(level, false);
+						}
+						
+						return super.visit(node);
+					}
+					
+					public boolean visit(ConditionalExpression node) {
+						lstConditionalExpression.add(node);										
+						
+						if (isDefine) {
+							ControlNode n = new ControlNode(node, ControlState.M, level);
+							level ++;
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.C);
 							n.parent = root;
@@ -170,7 +193,7 @@ public class JavaASTParser {
 						if (isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.L);
 							n.parent = root;
@@ -190,7 +213,7 @@ public class JavaASTParser {
 						if (isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.L);
 							n.parent = root;
@@ -208,7 +231,7 @@ public class JavaASTParser {
 						if (isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.L);
 							n.parent = root;
@@ -226,7 +249,7 @@ public class JavaASTParser {
 						if (isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.C);
 							n.parent = root;
@@ -244,7 +267,7 @@ public class JavaASTParser {
 						if (isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.C);
 							n.parent = root;
@@ -262,7 +285,7 @@ public class JavaASTParser {
 						if (isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.C);
 							n.parent = root;
@@ -281,7 +304,7 @@ public class JavaASTParser {
 							isTerm = true;
 							ControlNode n = new ControlNode(node, ControlState.E, level);
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.T);
 							n.parent = root;
@@ -300,7 +323,7 @@ public class JavaASTParser {
 							isTerm = true;
 							ControlNode n = new ControlNode(node, ControlState.E, level);
 							level ++;
-							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.T);
 							n.parent = root;
@@ -371,10 +394,10 @@ public class JavaASTParser {
 					}
 					
 					//Expression ? Expression : Expression
-					public boolean visit(final ConditionalExpression node) {
-						lstConditionalExpression.add(node);
-						return super.visit(node);
-					}
+//					public boolean visit(final ConditionalExpression node) {
+//						lstConditionalExpression.add(node);
+//						return super.visit(node);
+//					}
 
 					public boolean visit(EnumConstantDeclaration node) {
 //						list.add(node.getName().toString());
@@ -738,7 +761,7 @@ public class JavaASTParser {
 				
 				public void endVisit(DoStatement node) {
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -761,12 +784,12 @@ public class JavaASTParser {
 							root = root.parent;
 						}
 					}
-					System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+					//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 
 				public void endVisit(IfStatement node) {
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -789,12 +812,40 @@ public class JavaASTParser {
 							root = root.parent;
 						}
 					} 
-					else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+					////else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+				}
+				
+				public void endVisit(ConditionalExpression node) {
+					if (isDefine) {
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						if (--level < 0) {
+							isDefine = false;
+							isScope = false;
+							isTerm = false;
+						}
+						else if (lstUseVar.get(level + 1)) {
+							if (isEnd()) root.setState(ControlState.E);
+							
+							ControlNode temp = root;
+							root = root.parent;
+							root.nexts.add(temp);
+						} else if (isTerm){
+							if(isEnd()) root.setState(ControlState.E);
+							
+							ControlNode temp = root;
+							root = root.parent;
+							root.nexts.add(temp);
+						}	 
+						else {
+							root = root.parent;
+						}
+					} 
+					////else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(ForStatement node) {
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -817,12 +868,12 @@ public class JavaASTParser {
 							root = root.parent;
 						}
 					} 
-						else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(WhileStatement node) {
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -847,12 +898,12 @@ public class JavaASTParser {
 						}
 					}
 					
-						else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(EnhancedForStatement node) {
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -876,12 +927,12 @@ public class JavaASTParser {
 						}
 					}
 					
-						else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						////else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(TryStatement node) {
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -904,12 +955,12 @@ public class JavaASTParser {
 							root = root.parent;
 						}
 					} 
-						else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						////else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(CatchClause node) {
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -933,12 +984,12 @@ public class JavaASTParser {
 							root = root.parent;
 						}
 					} 
-						else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						////else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(SwitchStatement node) {
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -962,13 +1013,13 @@ public class JavaASTParser {
 							root = root.parent;
 						}
 					} 
-						else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						////else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(ReturnStatement node) {
 					
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -987,13 +1038,13 @@ public class JavaASTParser {
 							root.nexts.add(temp);
 						}
 					} 
-						else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						////else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(ThrowStatement node) {
 					
 					if (isDefine) {
-						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -1013,7 +1064,7 @@ public class JavaASTParser {
 							root.nexts.add(temp);
 						}
 					} 
-						else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						////else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				});
@@ -1184,7 +1235,7 @@ public class JavaASTParser {
 		if (info.varName.contains(node.getIdentifier()) && !(node.getParent() instanceof MethodDeclaration) 
 				/*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/) {
 			isDefine = true;
-			
+			currentDefine = node;
 			DataNode n = new DataNode(node, level);
 			
 			if(isD(node) ==VarState.D)
