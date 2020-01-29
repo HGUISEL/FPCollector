@@ -90,19 +90,19 @@ public class Main {
 			ArrayList<ControlNode> graphs = new ArrayList<>();
 			// 2. build Graph
 			for(Info info : infos) {
+//				if (counta == 322) 
 				GraphDrawer gDrawer = new GraphDrawer();
 				
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 0) {
+//				if(counta == 322) {
 					graph.run(info);
 					graphs.add(graph.root);
 //				}
-//				counta++;
 //				if (info == infos.get(0)) break;
 				gDrawer.run(graph.root, counta);
 				counta++;
-				if (counta == 66) break;
+				
 			}
 			
 			GraphWriter graphWriter = new GraphWriter();
