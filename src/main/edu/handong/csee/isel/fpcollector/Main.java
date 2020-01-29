@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import edu.handong.csee.isel.fpcollector.graph.ControlNode;
 import edu.handong.csee.isel.fpcollector.graph.GraphBuilder;
 import edu.handong.csee.isel.fpcollector.graph.GraphWriter;
+import edu.handong.csee.isel.fpcollector.graph.visualize.GraphDrawer;
 import edu.handong.csee.isel.fpcollector.refactoring.FPCWriter;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
@@ -89,6 +90,7 @@ public class Main {
 			ArrayList<ControlNode> graphs = new ArrayList<>();
 			// 2. build Graph
 			for(Info info : infos) {
+				GraphDrawer gDrawer = new GraphDrawer();
 				
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
@@ -98,9 +100,16 @@ public class Main {
 //				}
 //				counta++;
 //				if (info == infos.get(0)) break;
+				gDrawer.run(graph.root, counta);
+				counta++;
+				if (counta == 66) break;
 			}
-//			GraphWriter graphWriter = new GraphWriter();
-//			graphWriter.writeGraph(graphs);
+			
+			
+			
+			
+			GraphWriter graphWriter = new GraphWriter();
+			graphWriter.writeGraph(graphs);
 //			
 			System.out.println("Step 3 CLEAR");
 			for(ControlNode g : graphs) {	

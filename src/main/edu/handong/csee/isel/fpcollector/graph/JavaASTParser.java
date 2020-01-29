@@ -337,6 +337,10 @@ public class JavaASTParser {
 						return super.visit(node);
 					}
 					
+					public boolean visit(final Assignment node) {
+						return super.visit(node);
+					}
+					
 					public boolean visit(final VariableDeclarationFragment node) {
 						lstVariableDeclarationFragment.add(node);
 						return super.visit(node);
@@ -432,11 +436,6 @@ public class JavaASTParser {
 					}
 
 					public boolean visit(final Block node) {
-
-						return super.visit(node);
-					}
-
-					public boolean visit(final Assignment node) {
 
 						return super.visit(node);
 					}

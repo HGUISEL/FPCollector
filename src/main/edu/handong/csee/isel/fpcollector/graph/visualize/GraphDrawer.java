@@ -1,6 +1,11 @@
 package edu.handong.csee.isel.fpcollector.graph.visualize;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.tree.*;
 
@@ -21,58 +26,70 @@ public class GraphDrawer extends JFrame{
 		for (GraphNode n_ : n.nexts) {
 			if (n_ instanceof DataNode) {
 				root.add(n_.node.getClass().getSimpleName() 
-						+ "(state: " + ((DataNode)n_).state + ", " + ((DataNode)n_).inCondition + ", " + ((DataNode)n_).type +  ")", "Sepcialization");
+						+ " (state: " + ((DataNode)n_).state + ", " 
+						+ ((DataNode)n_).inCondition + ", " 
+						+ ((DataNode)n_).type +  ")");
 				
-				if(n_.node instanceof SimpleName)
-					System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName() + "( "+ n_.node +" )" +  ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).type + " " + ((DataNode)n_).from);
-				else
-					System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName()  + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
+//				if(n_.node instanceof SimpleName)
+//					System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName() + "( "+ n_.node +" )" +  ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).type + " " + ((DataNode)n_).from);
+//				else
+//					System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName()  + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
 			}
 			else {
-				for(int k = 0 ; k < n_.level; k ++) {
-					System.out.printf("\t");
-				}
-				System.out.println("level: " + n_.level + "(C) n: " + n_.node.getClass().getSimpleName() + /*"( "+ ("" + n_.node).split("\n")[0] +" )" +*/ ", state : " + ((ControlNode)n_).state + " " + ((ControlNode)n_).property);
-			}
-			if (n_ instanceof ControlNode) {
-				printChildren((ControlNode)n_);
+				Node subRoot = new Node(n_.node.getClass().getSimpleName() 
+								+ " (state: " + ((ControlNode)n_).state + ", " 
+								+ ((ControlNode)n_).property +  ")");
+				
+				makeTree((ControlNode)n_, subRoot);
+				root.add(subRoot);
+//				for(int k = 0 ; k < n_.level; k ++) {
+//					System.out.printf("\t");
+//				}
+//				System.out.println("level: " + n_.level + "(C) n: " + n_.node.getClass().getSimpleName() + /*"( "+ ("" + n_.node).split("\n")[0] +" )" +*/ ", state : " + ((ControlNode)n_).state + " " + ((ControlNode)n_).property);
 			}
 		}
 	}
 	
-	public void run(ControlNode r) {
-        Container content = getContentPane();
+	public void run(ControlNode r, int name) {
         Node root = new Node("Method");
         
-        
-        
-        Node children = new Node("")
-        
-        
-
-        N weapons = new N("Weapons").add(
-            new N("One-handed").add(
-                new N("Sword").add("Proficiency", "Specialization"), 
-                new N("Mace").add("Proficiency")),
-            new N("Bow").add("Proficiency"));
-        root.add(weapons);
-
-        N phys = new N("Physical & Mental").add(
-            new N("Life"),
-            new N("Strength").add(
-                "Double", "Triple", "Quadruple"));
-
-        root.add(phys);
-        N med = new N("Medical");
-        med.add(new N("Bind Wounds"));
-        med.add(new N("Set Broken Bones"));
-        root.add(med);
+        makeTree(r, root);
 
         JTree tree = new JTree(root);
-        content.add(new JScrollPane(tree), BorderLayout.CENTER);
-        setSize(275, 300);
+        
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(500, 800);
+        this.add(tree);
+ 
+        //Expanding rows
+        for (int i = 0; i < tree.getRowCount(); i++) {
+            tree.expandRow(i);
+        }
+        
         setVisible(true);
+        
+        saveImage(tree, name);
 	}
+	
+	private void saveImage(JTree tree, int name) {
+        BufferedImage image = new BufferedImage(tree.getWidth(), tree.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics();
+        tree.paint(g);
+        g.dispose();
+ 
+        // File to save output Image
+        File newDir = new File("graphImage");
+		if(!newDir.exists()) {
+			newDir.mkdir();
+		}
+		
+        File imageOut = new File("graphImage/" + name + ".jpg");
+        try {
+            ImageIO.write(image, "jpg", imageOut);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
 	
 	private class Node extends DefaultMutableTreeNode {
         public Node(String s) {
