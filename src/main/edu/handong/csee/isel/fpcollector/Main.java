@@ -99,9 +99,9 @@ public class Main {
 //				counta++;
 //				if (info == infos.get(0)) break;
 			}
-//			GraphWriter graphWriter = new GraphWriter();
-//			graphWriter.writeGraph(graphs);
-//			
+			GraphWriter graphWriter = new GraphWriter();
+			graphWriter.writeGraph(graphs);
+			
 			System.out.println("Step 3 CLEAR");
 			for(ControlNode g : graphs) {	
 				g.printInfo();
