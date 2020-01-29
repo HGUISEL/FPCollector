@@ -105,12 +105,9 @@ public class Main {
 				if (counta == 66) break;
 			}
 			
-			
-			
-			
 			GraphWriter graphWriter = new GraphWriter();
 			graphWriter.writeGraph(graphs);
-//			
+			
 			System.out.println("Step 3 CLEAR");
 			for(ControlNode g : graphs) {	
 				g.printInfo();

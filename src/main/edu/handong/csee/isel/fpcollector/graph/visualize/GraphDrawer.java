@@ -42,6 +42,7 @@ public class GraphDrawer extends JFrame{
 				
 				makeTree((ControlNode)n_, subRoot);
 				root.add(subRoot);
+
 //				for(int k = 0 ; k < n_.level; k ++) {
 //					System.out.printf("\t");
 //				}
