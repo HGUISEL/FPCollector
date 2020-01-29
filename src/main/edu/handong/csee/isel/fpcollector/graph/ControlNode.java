@@ -6,10 +6,10 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.SimpleName;
 
 public class ControlNode extends GraphNode{
-	ControlState state;
-	ControlState property;
+	public ControlState state;
+	public ControlState property;
 	
-	ArrayList<GraphNode> nexts = new ArrayList<GraphNode>();
+	public ArrayList<GraphNode> nexts = new ArrayList<GraphNode>();
 	
 	public ControlNode(ASTNode node, ControlState state, int level) {
 		super(node, level);
