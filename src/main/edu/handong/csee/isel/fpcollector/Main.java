@@ -90,24 +90,21 @@ public class Main {
 			ArrayList<ControlNode> graphs = new ArrayList<>();
 			// 2. build Graph
 			for(Info info : infos) {
-//				if (counta == 322) 
-//				GraphDrawer gDrawer = new GraphDrawer();
-				
 				System.out.println(infos.indexOf(info));
-				info.printInfo();
-				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 322) {
-					graph.run(info);
-					graphs.add(graph.root);
-//				}
-//				if (info == infos.get(0)) break;
-//				gDrawer.run(graph.root, counta);
-				counta++;
+//				info.printInfo();
 				
+				GraphBuilder graph = new GraphBuilder();
+				graph.run(info);
+				graphs.add(graph.root);
+				
+				GraphDrawer gDrawer = new GraphDrawer();
+				gDrawer.run(graph.root, counta);
+				
+				counta++;
 			}
 			
-			GraphWriter graphWriter = new GraphWriter();
-			graphWriter.writeGraph(graphs);
+//			GraphWriter graphWriter = new GraphWriter();
+//			graphWriter.writeGraph(graphs);
 			
 			System.out.println("Step 3 CLEAR");
 			for(ControlNode g : graphs) {	
