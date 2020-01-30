@@ -91,21 +91,20 @@ public class Main {
 			// 2. build Graph
 			for(Info info : infos) {
 //				GraphDrawer gDrawer = new GraphDrawer();
-//				counta++;
+				counta++;
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 102) {
+				if(counta == 8) {
 					graph.run(info);
 					graphs.add(graph.root);
-//				}
+				}
 				
-//				if (info == infos.get(0)) break;
 //				gDrawer.run(graph.root, counta);
-//				if (counta == 102) break;
+				if (counta == 8) break;
 			}
 			
-//			GraphWriter graphWriter = new GraphWriter();
-//			graphWriter.writeGraph(graphs);
+			GraphWriter graphWriter = new GraphWriter();
+			graphWriter.writeGraph(graphs);
 			
 			System.out.println("Step 3 CLEAR");
 			for(ControlNode g : graphs) {	
