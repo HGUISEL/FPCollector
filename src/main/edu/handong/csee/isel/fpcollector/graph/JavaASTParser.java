@@ -84,7 +84,7 @@ public class JavaASTParser {
 					}
 					
 					public boolean visit(Block node) {
-						if(node.getParent() instanceof Initializer && !(node.getParent() instanceof MethodDeclaration))
+						if(node.getParent() instanceof Initializer)
 							checkScope(node);
 						
 						return super.visit(node);
