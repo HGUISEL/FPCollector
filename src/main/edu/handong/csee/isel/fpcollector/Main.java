@@ -91,25 +91,25 @@ public class Main {
 			// 2. build Graph
 			for(Info info : infos) {
 				System.out.println(infos.indexOf(info));
-//				info.printInfo();
+				if (counta == 7) info.printInfo();
 				
 				GraphBuilder graph = new GraphBuilder();
 				graph.run(info);
 				graphs.add(graph.root);
 				
-				GraphDrawer gDrawer = new GraphDrawer();
-				gDrawer.run(graph.root, counta);
+//				GraphDrawer gDrawer = new GraphDrawer();
+//				gDrawer.run(graph.root, counta);
 				
 				counta++;
 			}
 			
-//			GraphWriter graphWriter = new GraphWriter();
-//			graphWriter.writeGraph(graphs);
+			GraphWriter graphWriter = new GraphWriter();
+			graphWriter.writeGraph(graphs);
 			
-			System.out.println("Step 3 CLEAR");
-			for(ControlNode g : graphs) {	
-				g.printInfo();
-			}
+//			System.out.println("Step 3 CLEAR");
+//			for(ControlNode g : graphs) {	
+//				g.printInfo();
+//			}
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST

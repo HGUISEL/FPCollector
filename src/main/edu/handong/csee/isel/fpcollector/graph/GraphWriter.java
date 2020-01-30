@@ -19,7 +19,8 @@ public class GraphWriter {
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
 									.withHeader("Method", "Graph"));
 			) {			
-			for(ControlNode root : g) {				
+			for(ControlNode root : g) {
+				System.out.println(g.indexOf(root));
 				String Method = root.node.toString();
 				String Graph = root.writeInfo();				
 				csvPrinter.printRecord(Method, Graph);				

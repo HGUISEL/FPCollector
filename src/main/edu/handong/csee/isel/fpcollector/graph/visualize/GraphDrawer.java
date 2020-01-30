@@ -27,6 +27,7 @@ public class GraphDrawer extends JFrame{
 	}
 	
 	private void makeTree(ControlNode n, Node root) {
+		System.out.println(n.state);
 		if (n.state != ControlState.E) {
 			for (GraphNode n_ : n.nexts) {
 				if (n_ instanceof DataNode) {
