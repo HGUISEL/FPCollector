@@ -12,6 +12,7 @@ import javax.swing.tree.*;
 import org.eclipse.jdt.core.dom.SimpleName;
 
 import edu.handong.csee.isel.fpcollector.graph.ControlNode;
+import edu.handong.csee.isel.fpcollector.graph.ControlState;
 import edu.handong.csee.isel.fpcollector.graph.DataNode;
 import edu.handong.csee.isel.fpcollector.graph.GraphNode;
 
@@ -20,33 +21,37 @@ public class GraphDrawer extends JFrame{
 	
 	public GraphDrawer() {
 		super("Jtree");
+		
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(500, 800);
 	}
 	
 	private void makeTree(ControlNode n, Node root) {
-		for (GraphNode n_ : n.nexts) {
-			if (n_ instanceof DataNode) {
-				root.add(n_.node.getClass().getSimpleName() 
-						+ " (state: " + ((DataNode)n_).state + ", " 
-						+ ((DataNode)n_).inCondition + ", " 
-						+ ((DataNode)n_).type +  ")");
-				
-//				if(n_.node instanceof SimpleName)
-//					System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName() + "( "+ n_.node +" )" +  ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).type + " " + ((DataNode)n_).from);
-//				else
-//					System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName()  + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
-			}
-			else {
-				Node subRoot = new Node(n_.node.getClass().getSimpleName() 
-								+ " (state: " + ((ControlNode)n_).state + ", " 
-								+ ((ControlNode)n_).property +  ")");
-				
-				makeTree((ControlNode)n_, subRoot);
-				root.add(subRoot);
+		if (n.state != ControlState.E) {
+			for (GraphNode n_ : n.nexts) {
+				if (n_ instanceof DataNode) {
+					root.add(n_.node.getClass().getSimpleName() 
+							+ " (state: " + ((DataNode)n_).state + ", " 
+							+ ((DataNode)n_).inCondition + ", " 
+							+ ((DataNode)n_).type +  ")");
+					
+//					if(n_.node instanceof SimpleName)
+//						System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName() + "( "+ n_.node +" )" +  ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).type + " " + ((DataNode)n_).from);
+//					else
+//						System.out.println("level: " + n_.level + "(D) n: " + n_.node.getClass().getSimpleName()  + ", state : " + ((DataNode)n_).state + " " + ((DataNode)n_).inCondition + " " + ((DataNode)n_).from);
+				} else {
+					Node subRoot = new Node(n_.node.getClass().getSimpleName() 
+									+ " (state: " + ((ControlNode)n_).state + ", " 
+									+ ((ControlNode)n_).property +  ")");
+					
+					makeTree((ControlNode)n_, subRoot);
+					root.add(subRoot);
 
-//				for(int k = 0 ; k < n_.level; k ++) {
-//					System.out.printf("\t");
-//				}
-//				System.out.println("level: " + n_.level + "(C) n: " + n_.node.getClass().getSimpleName() + /*"( "+ ("" + n_.node).split("\n")[0] +" )" +*/ ", state : " + ((ControlNode)n_).state + " " + ((ControlNode)n_).property);
+//					for(int k = 0 ; k < n_.level; k ++) {
+//						System.out.printf("\t");
+//					}
+//					System.out.println("level: " + n_.level + "(C) n: " + n_.node.getClass().getSimpleName() + /*"( "+ ("" + n_.node).split("\n")[0] +" )" +*/ ", state : " + ((ControlNode)n_).state + " " + ((ControlNode)n_).property);
+				}
 			}
 		}
 	}
@@ -58,8 +63,6 @@ public class GraphDrawer extends JFrame{
 
         JTree tree = new JTree(root);
         
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(500, 800);
         this.add(tree);
  
         //Expanding rows
