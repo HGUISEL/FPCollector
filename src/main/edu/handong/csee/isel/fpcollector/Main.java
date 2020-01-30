@@ -91,16 +91,17 @@ public class Main {
 			// 2. build Graph
 			for(Info info : infos) {
 //				if (counta == 322) 
-				GraphDrawer gDrawer = new GraphDrawer();
+//				GraphDrawer gDrawer = new GraphDrawer();
 				
 				System.out.println(infos.indexOf(info));
+				info.printInfo();
 				GraphBuilder graph = new GraphBuilder();
 //				if(counta == 322) {
 					graph.run(info);
 					graphs.add(graph.root);
 //				}
 //				if (info == infos.get(0)) break;
-				gDrawer.run(graph.root, counta);
+//				gDrawer.run(graph.root, counta);
 				counta++;
 				
 			}
