@@ -1,1 +1,1 @@
-category/java/errorprone.xml/ImportFromSamePackage
+category/java/errorprone.xml/NullAssignment
