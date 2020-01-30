@@ -86,21 +86,22 @@ public class Main {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			int counta = 0;
+			int count = 0;
 			ArrayList<ControlNode> graphs = new ArrayList<>();
 			// 2. build Graph
 			for(Info info : infos) {
-				System.out.println(infos.indexOf(info));
-				if (counta == 7) info.printInfo();
+				count++;
+				System.out.println(count);
+//				info.printInfo();
 				
 				GraphBuilder graph = new GraphBuilder();
-				graph.run(info);
-				graphs.add(graph.root);
-				
+//				if(count == 8) {
+					graph.run(info);
+					graphs.add(graph.root);
+//				}
+					
 //				GraphDrawer gDrawer = new GraphDrawer();
 //				gDrawer.run(graph.root, counta);
-				
-				counta++;
 			}
 			
 			GraphWriter graphWriter = new GraphWriter();

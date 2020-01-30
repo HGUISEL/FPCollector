@@ -83,6 +83,13 @@ public class JavaASTParser {
 						return super.visit(node);
 					}
 					
+					public boolean visit(Block node) {
+						if (node.getParent() instanceof Initializer)
+							checkScope(node);
+						
+						return super.visit(node);
+					}
+					
 					public boolean visit(SimpleName node) {
 //						System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						
@@ -432,11 +439,6 @@ public class JavaASTParser {
 					}
 					public boolean visit(ThisExpression node) {
 //						list.add("ThisExpression");
-						return super.visit(node);
-					}
-
-					public boolean visit(final Block node) {
-
 						return super.visit(node);
 					}
 
@@ -1215,6 +1217,22 @@ public class JavaASTParser {
 	}
 	
 	private void checkScope(MethodDeclaration node) {
+		int sLine = getLineNum(node.getStartPosition());
+		int eLine = getLineNum(node.getStartPosition() + node.getLength());
+		
+		if (sLine <= Integer.parseInt(info.start) 
+				&& eLine >= Integer.parseInt(info.end)) {
+			isScope = true;
+			root = new ControlNode(node, ControlState.S, level);
+			lstUseVar.add(false);
+		}
+		else {
+			isScope = false;
+			isDefine = false;
+		}
+	}
+	
+	private void checkScope(Block node) {
 		int sLine = getLineNum(node.getStartPosition());
 		int eLine = getLineNum(node.getStartPosition() + node.getLength());
 		

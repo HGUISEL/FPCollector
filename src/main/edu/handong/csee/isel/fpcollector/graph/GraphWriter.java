@@ -14,13 +14,14 @@ public class GraphWriter {
 	
 	public void writeGraph (ArrayList<ControlNode> g) {
 //		String fileName = ;/* ./Result.csv */
+		int count = 0;
 		try(
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
 									.withHeader("Method", "Graph"));
 			) {			
 			for(ControlNode root : g) {
-				System.out.println(g.indexOf(root));
+				count++;
 				String Method = root.node.toString();
 				String Graph = root.writeInfo();				
 				csvPrinter.printRecord(Method, Graph);				
