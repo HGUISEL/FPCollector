@@ -33,14 +33,6 @@ public class InfoCollector {
             		info.varName.addAll(getVarNameList(info));
             	}
             	info.fieldName.addAll(getFieldList(info));
-            	System.out.println("info.fieldName.size() : "+ info.fieldName.size());
-            	System.out.println("info.varName.size() : "+ info.varName.size());
-            	for(String temp : info.varName) {
-            		System.out.println("var : " + temp);
-            	}
-            	for(String temp : info.fieldName) {
-            		System.out.println("field : " + temp);
-            	}
             	outputInfo.add(info);                       
         	}        
         }
