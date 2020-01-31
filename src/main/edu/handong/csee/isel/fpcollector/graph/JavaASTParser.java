@@ -18,7 +18,8 @@ public class JavaASTParser {
 	SimpleName currentDefine; 
 	boolean isScope = false;
 	boolean isDefine = false;
-	boolean isTerm = false;
+	boolean isTerm = false;	
+	boolean isField = false;
 	int level = 0;
 	
 	ArrayList<ImportDeclaration> lstImportDeclaration = new ArrayList<ImportDeclaration>();
