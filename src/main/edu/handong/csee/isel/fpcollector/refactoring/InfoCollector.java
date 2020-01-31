@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import edu.handong.csee.isel.fpcollector.graph.JavaASTParser;
 
 public class InfoCollector {
+	static final int VAR = 0;
+	static final int FIELD = 1;
 	ArrayList<Info> outputInfo = new ArrayList<>();
 	
 	public ArrayList<Info> run(String result_path) throws IOException {
@@ -30,9 +32,18 @@ public class InfoCollector {
             		info.varName.remove(0);
             		info.varName.addAll(getVarNameList(info));
             	}
-            	
-            	outputInfo.add(info);
+            	info.fieldName.addAll(getFieldList(info));
+            	System.out.println("info.fieldName.size() : "+ info.fieldName.size());
+            	System.out.println("info.varName.size() : "+ info.varName.size());
+            	for(String temp : info.varName) {
+            		System.out.println("var : " + temp);
+            	}
+            	for(String temp : info.fieldName) {
+            		System.out.println("field : " + temp);
+            	}
+            	outputInfo.add(info);                       
         	}
+        	break;
         }
         br.close();
 		return outputInfo;
@@ -74,7 +85,12 @@ public class InfoCollector {
 	
 	private ArrayList<String> getVarNameList(Info info){
 		JavaASTParser tempParser = new JavaASTParser(info);
-		return tempParser.getViolatedVariableList(info.source);
+		return tempParser.getViolatedVariableList(info.source, VAR);
+	}
+	
+	private ArrayList<String> getFieldList(Info info){
+		JavaASTParser tempParser = new JavaASTParser(info);
+		return tempParser.getViolatedVariableList(info.source, FIELD);
 	}
 
 }

@@ -94,13 +94,13 @@ public class Main {
 				counta++;
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-				if(counta == 8) {
+				if(counta == 1) {
 					graph.run(info);
 					graphs.add(graph.root);
 				}
 				
 //				gDrawer.run(graph.root, counta);
-				if (counta == 8) break;
+				if (counta == 1) break;
 			}
 			
 			GraphWriter graphWriter = new GraphWriter();
