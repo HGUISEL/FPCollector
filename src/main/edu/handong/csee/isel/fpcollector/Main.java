@@ -91,16 +91,16 @@ public class Main {
 			// 2. build Graph
 			for(Info info : infos) {
 //				GraphDrawer gDrawer = new GraphDrawer();
-				counta++;
+//				counta++;
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-				if(counta == 1) {
+//				if(counta == 1) {
 					graph.run(info);
 					graphs.add(graph.root);
-				}
+//				}
 				
 //				gDrawer.run(graph.root, counta);
-				if (counta == 1) break;
+//				if (counta == 1) break;
 			}
 			
 			GraphWriter graphWriter = new GraphWriter();

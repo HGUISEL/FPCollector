@@ -42,8 +42,7 @@ public class InfoCollector {
             		System.out.println("field : " + temp);
             	}
             	outputInfo.add(info);                       
-        	}
-        	break;
+        	}        
         }
         br.close();
 		return outputInfo;

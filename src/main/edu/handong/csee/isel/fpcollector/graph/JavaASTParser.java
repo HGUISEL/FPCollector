@@ -175,7 +175,7 @@ public class JavaASTParser {
 					}
 					
 					public boolean visit(DoStatement node) {
-						if (isDefine) {
+						if (isScope || isDefine) {
 							level ++;
 							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							ControlNode n = new ControlNode(node, ControlState.M, level);
@@ -194,7 +194,7 @@ public class JavaASTParser {
 					public boolean visit(IfStatement node) {
 						lstIfStatement.add(node);										
 						
-						if (isDefine) {
+						if (isScope || isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
 							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -208,13 +208,27 @@ public class JavaASTParser {
 								lstUseVar.set(level, false);
 						}
 						
+//						if (isDefine) {
+//							ControlNode n = new ControlNode(node, ControlState.M, level);
+//							level ++;
+//							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+//							
+//							n.setProperty(ControlState.C);
+//							n.parent = root;
+//							root = n;
+//							if (lstUseVar.size() <= level)
+//								lstUseVar.add(false);
+//							else
+//								lstUseVar.set(level, false);
+//						}
+						
 						return super.visit(node);
 					}
 					
 					public boolean visit(ConditionalExpression node) {
 						lstConditionalExpression.add(node);										
 						
-						if (isDefine) {
+						if (isScope || isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
 							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -234,7 +248,7 @@ public class JavaASTParser {
 					public boolean visit(ForStatement node) {
 						lstForStatement.add(node);
 						
-						if (isDefine) {
+						if (isScope || isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
 							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -254,7 +268,7 @@ public class JavaASTParser {
 					public boolean visit(WhileStatement node) {
 						lstWhileStatement.add(node);
 						
-						if (isDefine) {
+						if (isScope || isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
 							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -272,7 +286,7 @@ public class JavaASTParser {
 					}
 					
 					public boolean visit(EnhancedForStatement node) {
-						if (isDefine) {
+						if (isScope || isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
 							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -290,7 +304,7 @@ public class JavaASTParser {
 					}
 					
 					public boolean visit(TryStatement node) {
-						if (isDefine) {
+						if (isScope || isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
 							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -308,7 +322,7 @@ public class JavaASTParser {
 					}
 					
 					public boolean visit(CatchClause node) {
-						if (isDefine) {
+						if (isScope || isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
 							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -326,7 +340,7 @@ public class JavaASTParser {
 					}
 					
 					public boolean visit(SwitchStatement node) {
-						if (isDefine) {
+						if (isScope || isDefine) {
 							ControlNode n = new ControlNode(node, ControlState.M, level);
 							level ++;
 							System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -344,7 +358,7 @@ public class JavaASTParser {
 					}
 					
 					public boolean visit(ReturnStatement node) {						
-						if (isDefine) {
+						if (isScope || isDefine) {
 							isTerm = true;
 							ControlNode n = new ControlNode(node, ControlState.E, level);
 							level ++;
@@ -363,7 +377,7 @@ public class JavaASTParser {
 					}
 					
 					public boolean visit(ThrowStatement node) {
-						if (isDefine) {
+						if (isScope || isDefine) {
 							isTerm = true;
 							ControlNode n = new ControlNode(node, ControlState.E, level);
 							level ++;
