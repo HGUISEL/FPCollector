@@ -135,7 +135,7 @@ public class JavaASTParser {
 									
 									lstUseVar.set(i, true);
 							}
-							else if (info.fieldName.contains(node.getIdentifier())  /*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/){
+							else if (info.fieldName.contains(node.getIdentifier())/*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/){
 								DataNode n = new DataNode(node, level);
 								
 								if(isD(node) == VarState.D)
@@ -174,6 +174,50 @@ public class JavaASTParser {
 
 						return super.visit(node);
 					}
+					
+					public boolean visit(ThisExpression node) {
+						System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+												
+						if (isScope) {																					
+							if (info.fieldName.contains("this")/*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/){
+								DataNode n = new DataNode(node, level);
+								
+								if(isD(node) == VarState.D)
+									n.setState(VarState.FD);
+								else if(isD(node) == VarState.DI)
+									n.setState(VarState.FDI);
+								else if(isD(node) == VarState.Ref)
+									n.setState(VarState.Ref);
+								else if(isD(node) == VarState.DIN)
+									n.setState(VarState.FDIN);
+								else if(isD(node) == VarState.Ass)
+									n.setState(VarState.Ass);
+								
+								if(checkType(node) == VarState.ArrIdxC)
+									n.setType(VarState.ArrIdxC);
+								else if(checkType(node) == VarState.ArrIdxF)
+									n.setType(VarState.ArrIdxF);
+								else if(checkType(node) == VarState.NArr)
+									n.setType(VarState.NArr);
+								
+								if(isInCondition(node)) {
+									n.setInCondition(VarState.I);
+								} else {
+									n.setInCondition(VarState.O);
+								}						
+								
+								n.setFrom(getFrom(node));
+								
+								root.nexts.add(n);
+								
+								for (int i = 0; i <= level; i++)
+									
+									lstUseVar.set(i, true);
+							}
+						}
+
+						return super.visit(node);
+					}			
 					
 					public boolean visit(DoStatement node) {
 						if (isDefine) {
@@ -489,10 +533,6 @@ public class JavaASTParser {
 //						list.add("SynchronizedStatement");
 						return super.visit(node);
 					}
-					public boolean visit(ThisExpression node) {
-//						list.add("ThisExpression");
-						return super.visit(node);
-					}					
 
 					public boolean visit(final ExpressionStatement node) {
 
@@ -1182,6 +1222,15 @@ public class JavaASTParser {
 						lstFieldMemberDeclaration.add(((VariableDeclarationFragment) node.fragments().get(0)).getName().toString());											
 						return super.visit(node);
 					}
+					
+					public boolean visit(ThisExpression node) {
+						Integer lineNum = getLineNum(node.getStartPosition());						
+						
+						if(lineNum == Integer.parseInt(info.start)) {
+							lstViolatedField.add("this");
+						}					
+						return super.visit(node);
+					}
 				});
 			} catch (Exception e) {
 				System.out.println("Problem : " + e.toString());
@@ -1203,6 +1252,21 @@ public class JavaASTParser {
 	}
 
 	private ASTNode getFrom(SimpleName node) {
+		ASTNode tempParent = node.getParent();
+		while(true) {
+			if(tempParent instanceof Block || tempParent instanceof MethodDeclaration || tempParent instanceof TypeDeclaration) {
+				break;
+			}
+			else if(tempParent instanceof EnhancedForStatement) {
+				System.out.println(((EnhancedForStatement) tempParent).getExpression());
+				return (ASTNode) ((EnhancedForStatement) tempParent).getExpression();
+			}
+			tempParent = tempParent.getParent();			
+		}
+		return null;
+	}
+	
+	private ASTNode getFrom(ThisExpression node) {
 		ASTNode tempParent = node.getParent();
 		while(true) {
 			if(tempParent instanceof Block || tempParent instanceof MethodDeclaration || tempParent instanceof TypeDeclaration) {
@@ -1250,6 +1314,39 @@ public class JavaASTParser {
 		return VarState.Ref;
 	}
 	
+	private VarState isD(ThisExpression node) {
+		
+		ASTNode tempParent = node.getParent();
+//		System.out.println(tempParent.getClass().getSimpleName());
+	
+		if(tempParent instanceof SingleVariableDeclaration) {
+			return VarState.D;
+		} else if(tempParent instanceof VariableDeclarationFragment) {
+			if(((VariableDeclarationFragment) tempParent).getInitializer() == null) {
+				return VarState.D;
+			} else if(((VariableDeclarationFragment) tempParent).getInitializer().getClass().getSimpleName().equals("NullLiteral")) {
+				return VarState.DIN;
+			}
+			else
+			return VarState.DI;
+		}
+		
+		while(true) {
+			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
+				break;
+			} else if (tempParent instanceof Assignment) {
+				if(((Assignment) tempParent).getLeftHandSide().equals(node)) {
+					return VarState.Ass;
+				} else
+					return VarState.Ref;
+			}
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
+		}
+		return VarState.Ref;
+	}
+	
 	private VarState checkType(SimpleName node) {
 		ASTNode tempParent = node.getParent();
 		
@@ -1263,7 +1360,41 @@ public class JavaASTParser {
 		return VarState.NArr;		
 	}
 	
+	private VarState checkType(ThisExpression node) {
+		ASTNode tempParent = node.getParent();
+		
+		if(tempParent instanceof ArrayAccess) {
+			if(((ArrayAccess) tempParent).getIndex() instanceof NumberLiteral) {
+				return VarState.ArrIdxF;
+			} else
+				return VarState.ArrIdxC;
+		}
+		
+		return VarState.NArr;		
+	}
+	
 	private boolean isInCondition(SimpleName node) {
+		ASTNode tempParent = node.getParent();
+		while(true) {
+			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
+				break;
+			}
+			else if(tempParent instanceof ForStatement ||
+					tempParent instanceof IfStatement||
+					tempParent instanceof EnhancedForStatement||
+					tempParent instanceof WhileStatement ||
+					tempParent instanceof SwitchCase ||
+					tempParent instanceof SwitchExpression) {
+				return true;
+			} 
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
+		}
+		return false;
+	}
+	
+	private boolean isInCondition(ThisExpression node) {
 		ASTNode tempParent = node.getParent();
 		while(true) {
 			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
@@ -1314,7 +1445,10 @@ public class JavaASTParser {
 			isScope = true;
 			root = new ControlNode(node, ControlState.S, level);
 			lstUseVar.add(false);
-		}
+			if(info.fieldName.contains("this")) {
+				isDefine =true;
+			}
+		}		
 		else {
 			isScope = false;
 			isDefine = false;
