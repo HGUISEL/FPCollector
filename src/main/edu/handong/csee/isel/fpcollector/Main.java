@@ -5,8 +5,9 @@ import java.util.ArrayList;
 
 import edu.handong.csee.isel.fpcollector.graph.ControlNode;
 import edu.handong.csee.isel.fpcollector.graph.GraphBuilder;
+import edu.handong.csee.isel.fpcollector.graph.GraphInfo;
+import edu.handong.csee.isel.fpcollector.graph.GraphInfoGetter;
 import edu.handong.csee.isel.fpcollector.graph.GraphWriter;
-import edu.handong.csee.isel.fpcollector.graph.visualize.GraphDrawer;
 import edu.handong.csee.isel.fpcollector.refactoring.FPCWriter;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
@@ -101,15 +102,26 @@ public class Main {
 				
 //				gDrawer.run(graph.root, counta);
 //				if (counta == 1) break;
+			}	
+			
+			System.out.println("Step 3 CLEAR");
+			
+			//Step 4. Writing Graphs and its info in CSV file
+			for(ControlNode g : graphs) {	
+				g.printInfo();
+				GraphInfo tempGraph = new GraphInfo(g);
+				GraphInfoGetter tempGetter = new GraphInfoGetter();
+				tempGetter.getNodeNum(tempGraph);
+				System.out.println("DataNodeNum: " + tempGraph.dataNodeNum + "\tControlNodeNum: " + tempGraph.controlNodeNum +
+						"\nSimpleName: " + tempGraph.nodeNum.get(1) + "\nThisExpression: " + tempGraph.nodeNum.get(2) + "\nDoStatement: " + tempGraph.nodeNum.get(3)
+						+ "\nIfStatement: " + tempGraph.nodeNum.get(4) + "\nConditionalExpression: " + tempGraph.nodeNum.get(5) + "\nForStatement: " + tempGraph.nodeNum.get(6)
+						+ "\nWhileStatement: " + tempGraph.nodeNum.get(7) + "\nEnhancedForStatement: " + tempGraph.nodeNum.get(8)+ "\nTryStatement: " + tempGraph.nodeNum.get(9)
+						+"\nCatchClause: " + tempGraph.nodeNum.get(10) + "\nSwitchStatement: " + tempGraph.nodeNum.get(11) +"\nReturnStatement: " + tempGraph.nodeNum.get(12)
+						+"\nThrowStatement: " + tempGraph.nodeNum.get(13));
 			}
 			
 			GraphWriter graphWriter = new GraphWriter();
-			graphWriter.writeGraph(graphs);
-			
-			System.out.println("Step 3 CLEAR");
-			for(ControlNode g : graphs) {	
-				g.printInfo();
-			}
+			graphWriter.writeGraph(graphs);		
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST
