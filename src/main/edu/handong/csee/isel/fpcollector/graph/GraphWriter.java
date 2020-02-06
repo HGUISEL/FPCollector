@@ -12,19 +12,20 @@ import org.apache.commons.csv.CSVPrinter;
 public class GraphWriter {
 	public String fileName ="./GraphRepresentation.csv";
 	
-	public void writeGraph (ArrayList<ControlNode> g) {
+	public void writeGraph (ArrayList<GraphInfo> g) {
 //		String fileName = ;/* ./Result.csv */
 		int count = 0;
 		try(
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-									.withHeader("Method", "Graph"));
+									.withHeader("Method", "Graph", "Graph Information"));
 			) {			
-			for(ControlNode root : g) {
+			for(GraphInfo tempGraph : g) {
 				count++;
-				String Method = root.node.toString();
-				String Graph = root.writeInfo();				
-				csvPrinter.printRecord(Method, Graph);				
+				String method = tempGraph.root.node.toString();
+				String graph = tempGraph.root.writeInfo();
+				String graphInfo = tempGraph.getNumberInfo();
+				csvPrinter.printRecord(method, graph, graphInfo);				
 			}
 			writer.flush();
 			writer.close();

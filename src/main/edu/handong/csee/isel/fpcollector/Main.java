@@ -107,21 +107,19 @@ public class Main {
 			System.out.println("Step 3 CLEAR");
 			
 			//Step 4. Writing Graphs and its info in CSV file
+			ArrayList<GraphInfo> graphInfos = new ArrayList<>();
+			
 			for(ControlNode g : graphs) {	
 				g.printInfo();
-				GraphInfo tempGraph = new GraphInfo(g);
+				GraphInfo tempGraphInfo = new GraphInfo(g);
 				GraphInfoGetter tempGetter = new GraphInfoGetter();
-				tempGetter.getNodeNum(tempGraph);
-				System.out.println("DataNodeNum: " + tempGraph.dataNodeNum + "\tControlNodeNum: " + tempGraph.controlNodeNum +
-						"\nSimpleName: " + tempGraph.nodeNum.get(1) + "\nThisExpression: " + tempGraph.nodeNum.get(2) + "\nDoStatement: " + tempGraph.nodeNum.get(3)
-						+ "\nIfStatement: " + tempGraph.nodeNum.get(4) + "\nConditionalExpression: " + tempGraph.nodeNum.get(5) + "\nForStatement: " + tempGraph.nodeNum.get(6)
-						+ "\nWhileStatement: " + tempGraph.nodeNum.get(7) + "\nEnhancedForStatement: " + tempGraph.nodeNum.get(8)+ "\nTryStatement: " + tempGraph.nodeNum.get(9)
-						+"\nCatchClause: " + tempGraph.nodeNum.get(10) + "\nSwitchStatement: " + tempGraph.nodeNum.get(11) +"\nReturnStatement: " + tempGraph.nodeNum.get(12)
-						+"\nThrowStatement: " + tempGraph.nodeNum.get(13));
+				tempGetter.getNodeNum(tempGraphInfo);
+				graphInfos.add(tempGraphInfo);				
 			}
 			
 			GraphWriter graphWriter = new GraphWriter();
-			graphWriter.writeGraph(graphs);		
+			graphWriter.writeGraph(graphInfos);		
+			System.out.println("Step 4 Clear");
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST
