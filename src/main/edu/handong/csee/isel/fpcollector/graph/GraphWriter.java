@@ -20,13 +20,19 @@ public class GraphWriter {
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
 									.withHeader("Path", "Method", "Graph", "Graph Information"));
-			) {				
+			) {
+			String totalInfo = "";
 			for(Integer totalNodeNum : g.keySet()) {
+				totalInfo += "Number of Size "+ totalNodeNum + " : " + g.get(totalNodeNum).size() + "\n";				
+			}
+			csvPrinter.printRecord("Total", "Graph", "Information : ", totalInfo);
+			for(Integer totalNodeNum : g.keySet()) {			
 				for(GraphInfo tempGraph : g.get(totalNodeNum)) {
 					String path = tempGraph.root.path;
 					String method = tempGraph.root.node.toString();
 					String graph = tempGraph.root.writeInfo();
 					String graphInfo = tempGraph.getNumberInfo();
+					
 					csvPrinter.printRecord(path, method, graph, graphInfo);
 				}
 			}

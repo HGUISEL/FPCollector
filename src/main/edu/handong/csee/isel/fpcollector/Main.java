@@ -130,8 +130,10 @@ public class Main {
 			GraphWriter graphWriter = new GraphWriter();
 			graphWriter.writeGraph(graphCompartor.clusterByTotalNum);		
 			
+			
+			
 			System.out.println("Step 5 Clear");
-						
+			
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST
