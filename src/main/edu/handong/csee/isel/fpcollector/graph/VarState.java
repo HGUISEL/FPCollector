@@ -10,6 +10,7 @@ package edu.handong.csee.isel.fpcollector.graph;
 	6) FD for definition without Initialization
 2.Reference
 	1) Ass for being used to be Assigned, but Not Initialization
+	1) FAss for being used to be field Assigned, but Not Initialization
 	2) Ref for being used
 	2) FRef for field being used
 --------------------------------------
@@ -23,5 +24,5 @@ About Type
 3. NArr for None-ArrayType
  * */
 public enum VarState {
-	DIN, DI, D, FDIN, FDI, FD, I, O, Ass, Ref, FRef, ArrIdxC, ArrIdxF, NArr
+	DIN, DI, D, FDIN, FDI, FD, I, O, Ass, FAss, Ref, FRef, ArrIdxC, ArrIdxF, NArr
 }

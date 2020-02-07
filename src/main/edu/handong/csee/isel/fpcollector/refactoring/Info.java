@@ -8,6 +8,7 @@ public class Info {
 	public ArrayList<String> fieldName = new ArrayList<>();
 	public String start;
 	public String end;
+	public String path;
 	
 	public void printInfo() {
 		System.out.println("source: " + this.source);

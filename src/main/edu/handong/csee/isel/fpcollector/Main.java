@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import edu.handong.csee.isel.fpcollector.graph.ControlNode;
 import edu.handong.csee.isel.fpcollector.graph.GraphBuilder;
+import edu.handong.csee.isel.fpcollector.graph.GraphComparator;
 import edu.handong.csee.isel.fpcollector.graph.GraphInfo;
 import edu.handong.csee.isel.fpcollector.graph.GraphInfoGetter;
 import edu.handong.csee.isel.fpcollector.graph.GraphWriter;
@@ -106,7 +107,7 @@ public class Main {
 			
 			System.out.println("Step 3 CLEAR");
 			
-			//Step 4. Writing Graphs and its info in CSV file
+			//Step 4. Get Graph Information
 			ArrayList<GraphInfo> graphInfos = new ArrayList<>();
 			
 			for(ControlNode g : graphs) {	
@@ -117,9 +118,20 @@ public class Main {
 				graphInfos.add(tempGraphInfo);				
 			}
 			
-			GraphWriter graphWriter = new GraphWriter();
-			graphWriter.writeGraph(graphInfos);		
 			System.out.println("Step 4 Clear");
+			
+			//Step 5. Graph Comparison
+			GraphComparator graphCompartor = new GraphComparator();
+			
+			for(GraphInfo g : graphInfos) {
+				graphCompartor.clusterByTotalNodeNum(g);
+			}
+			
+			GraphWriter graphWriter = new GraphWriter();
+			graphWriter.writeGraph(graphCompartor.clusterByTotalNum);		
+			
+			System.out.println("Step 5 Clear");
+						
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST

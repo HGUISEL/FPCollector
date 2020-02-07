@@ -23,7 +23,7 @@ public class InfoCollector {
         	if (line.startsWith("/")) {
         		String[] tokenList = line.split(",", -1);
             	Info info = new Info();
-            	
+            	info.path = tokenList[0];
             	info.source = getSource(tokenList[0]);
             	info.start = getScope(tokenList[1], 0);
             	info.end = getScope(tokenList[1], 1);
