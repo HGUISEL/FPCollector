@@ -7,7 +7,104 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.ArrayAccess;
+import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
+import org.eclipse.jdt.core.dom.ArrayType;
+import org.eclipse.jdt.core.dom.AssertStatement;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BlockComment;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CastExpression;
+import org.eclipse.jdt.core.dom.CatchClause;
+import org.eclipse.jdt.core.dom.CharacterLiteral;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.ConstructorInvocation;
+import org.eclipse.jdt.core.dom.ContinueStatement;
+import org.eclipse.jdt.core.dom.CreationReference;
+import org.eclipse.jdt.core.dom.Dimension;
+import org.eclipse.jdt.core.dom.DoStatement;
+import org.eclipse.jdt.core.dom.EmptyStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.Initializer;
+import org.eclipse.jdt.core.dom.InstanceofExpression;
+import org.eclipse.jdt.core.dom.IntersectionType;
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.LabeledStatement;
+import org.eclipse.jdt.core.dom.LambdaExpression;
+import org.eclipse.jdt.core.dom.LineComment;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MemberRef;
+import org.eclipse.jdt.core.dom.MemberValuePair;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.MethodRef;
+import org.eclipse.jdt.core.dom.MethodRefParameter;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.NameQualifiedType;
+import org.eclipse.jdt.core.dom.NormalAnnotation;
+import org.eclipse.jdt.core.dom.NullLiteral;
+import org.eclipse.jdt.core.dom.NumberLiteral;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PostfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.PrimitiveType;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.QualifiedType;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
+import org.eclipse.jdt.core.dom.SuperFieldAccess;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+import org.eclipse.jdt.core.dom.SuperMethodReference;
+import org.eclipse.jdt.core.dom.SwitchCase;
+import org.eclipse.jdt.core.dom.SwitchExpression;
+import org.eclipse.jdt.core.dom.SwitchStatement;
+import org.eclipse.jdt.core.dom.SynchronizedStatement;
+import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextElement;
+import org.eclipse.jdt.core.dom.ThisExpression;
+import org.eclipse.jdt.core.dom.ThrowStatement;
+import org.eclipse.jdt.core.dom.TryStatement;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
+import org.eclipse.jdt.core.dom.TypeLiteral;
+import org.eclipse.jdt.core.dom.TypeMethodReference;
+import org.eclipse.jdt.core.dom.TypeParameter;
+import org.eclipse.jdt.core.dom.UnionType;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.core.dom.WhileStatement;
+import org.eclipse.jdt.core.dom.WildcardType;
 
 import edu.handong.csee.isel.fpcollector.refactoring.Info;
 
@@ -80,10 +177,9 @@ public class JavaASTParser {
 
 					public boolean visit(MethodDeclaration node) {
 						lstMethodDeclaration.add(node);
-//						System.out.println("level : " + level);
-						checkScope(node);
-						
-						return super.visit(node);
+//						System.out.println("level : " + level);					
+						checkScope(node);																		
+						return super.visit(node);												
 					}
 					
 					public boolean visit(Block node) {
@@ -113,6 +209,8 @@ public class JavaASTParser {
 									n.setState(VarState.DIN);
 								else if(isD(node) == VarState.Ass)
 									n.setState(VarState.Ass);
+								else if(isD(node) == VarState.NAss)
+									n.setState(VarState.NAss);
 								
 								if(checkType(node) == VarState.ArrIdxC)
 									n.setType(VarState.ArrIdxC);
@@ -148,6 +246,8 @@ public class JavaASTParser {
 									n.setState(VarState.FDIN);
 								else if(isD(node) == VarState.Ass)
 									n.setState(VarState.FAss);
+								else if(isD(node) == VarState.NAss)
+									n.setState(VarState.FNAss);
 								
 								if(checkType(node) == VarState.ArrIdxC)
 									n.setType(VarState.ArrIdxC);
@@ -166,8 +266,7 @@ public class JavaASTParser {
 								
 								root.nexts.add(n);
 								
-								for (int i = 0; i <= level; i++)
-									
+								for (int i = 0; i <= level; i++)									
 									lstUseVar.set(i, true);
 							}
 						}
@@ -192,6 +291,8 @@ public class JavaASTParser {
 									n.setState(VarState.FDIN);
 								else if(isD(node) == VarState.Ass)
 									n.setState(VarState.FAss);
+								else if(isD(node) == VarState.NAss)
+									n.setState(VarState.FNAss);
 								
 								if(checkType(node) == VarState.ArrIdxC)
 									n.setType(VarState.ArrIdxC);
@@ -850,7 +951,7 @@ public class JavaASTParser {
 					//Log.info("WildcardType");
 					//Log.info(node);
 					return super.visit(node);
-				}
+				}						
 				
 				public void endVisit(DoStatement node) {
 					if (isDefine) {
@@ -910,7 +1011,7 @@ public class JavaASTParser {
 				
 				public void endVisit(ConditionalExpression node) {
 					if (isDefine) {
-//						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -933,12 +1034,12 @@ public class JavaASTParser {
 							root = root.parent;
 						}
 					} 
-					//else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+					//else //System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(ForStatement node) {
 					if (isDefine) {
-//						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -966,7 +1067,7 @@ public class JavaASTParser {
 				
 				public void endVisit(WhileStatement node) {
 					if (isDefine) {
-//						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -996,7 +1097,7 @@ public class JavaASTParser {
 				
 				public void endVisit(EnhancedForStatement node) {
 					if (isDefine) {
-//						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -1025,7 +1126,7 @@ public class JavaASTParser {
 				
 				public void endVisit(TryStatement node) {
 					if (isDefine) {
-//						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -1053,7 +1154,7 @@ public class JavaASTParser {
 				
 				public void endVisit(CatchClause node) {
 					if (isDefine) {
-//						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -1077,12 +1178,12 @@ public class JavaASTParser {
 							root = root.parent;
 						}
 					} 
-						//else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						////else System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 				}
 				
 				public void endVisit(SwitchStatement node) {
 					if (isDefine) {
-//						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -1112,7 +1213,7 @@ public class JavaASTParser {
 				public void endVisit(ReturnStatement node) {
 					
 					if (isDefine) {
-//						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -1120,9 +1221,12 @@ public class JavaASTParser {
 						}
 						else if (isTerm){
 							if(isEnd()) root.setState(ControlState.E);
-							
+							if(root.node instanceof MethodDeclaration) {
+								return;
+							}
 							ControlNode temp = root;
-							root = root.parent;
+							root = root.parent;	
+							System.out.println(temp.node);
 							root.nexts.add(temp);
 						}	 
 						else {
@@ -1137,7 +1241,7 @@ public class JavaASTParser {
 				public void endVisit(ThrowStatement node) {
 					
 					if (isDefine) {
-//						System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+						//System.out.println("level : " + level + ", Endnode : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 						if (--level < 0) {
 							isDefine = false;
 							isScope = false;
@@ -1302,7 +1406,12 @@ public class JavaASTParser {
 			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
 				break;
 			} else if (tempParent instanceof Assignment) {
-				if(((Assignment) tempParent).getLeftHandSide().equals(node)) {
+				ASTNode lHS = ((Assignment) tempParent).getLeftHandSide();				
+				if(lHS.toString().contains(node.toString())){
+					if (((Assignment) tempParent).getRightHandSide() instanceof NullLiteral){
+						return VarState.NAss;
+					}
+					else
 					return VarState.Ass;
 				} else
 					return VarState.Ref;
@@ -1488,6 +1597,8 @@ public class JavaASTParser {
 				n.setState(VarState.Ref);
 			else if(isD(node) == VarState.Ass)
 				n.setState(VarState.Ass);
+			else if(isD(node) == VarState.NAss)
+				n.setState(VarState.NAss);
 			
 			if(checkType(node) == VarState.ArrIdxC)
 				n.setType(VarState.ArrIdxC);
@@ -1534,6 +1645,8 @@ public class JavaASTParser {
 				n.setState(VarState.FRef);
 			else if(isD(node) == VarState.Ass)
 				n.setState(VarState.FAss);
+			else if(isD(node) == VarState.NAss)
+				n.setState(VarState.FNAss);
 			
 			if(checkType(node) == VarState.ArrIdxC)
 				n.setType(VarState.ArrIdxC);

@@ -83,12 +83,13 @@ public class Main {
 			// 1. read input
 			ArrayList<Info> infos = new ArrayList<>();
 			InfoCollector inforCollector = new InfoCollector();
+			
 			try {
-				infos = inforCollector.run(fpcWriter.fileName);
+				infos = inforCollector.run(fpcWriter.fileName);				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			int counta = 0;
+			int counta =0;
 			ArrayList<ControlNode> graphs = new ArrayList<>();
 			// 2. build Graph
 			for(Info info : infos) {
@@ -96,7 +97,7 @@ public class Main {
 //				counta++;
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 1) {
+//				if(counta == 239) {
 					graph.run(info);
 					graphs.add(graph.root);
 //				}
