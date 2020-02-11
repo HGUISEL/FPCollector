@@ -97,13 +97,13 @@ public class Main {
 //				counta++;
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 239) {
+//				if(counta == 272) {
 					graph.run(info);
 					graphs.add(graph.root);
 //				}
 				
 //				gDrawer.run(graph.root, counta);
-//				if (counta == 1) break;
+//				if (counta == 272) break;
 			}	
 			
 			System.out.println("Step 3 CLEAR");

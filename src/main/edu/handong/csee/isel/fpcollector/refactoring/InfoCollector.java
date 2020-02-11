@@ -21,14 +21,13 @@ public class InfoCollector {
 		
 		br.readLine();
 		String line = "";
-//		int count = 0;
         while ((line = br.readLine()) != null) {
-//        	count ++;
-//        	if(count == 239)        
+        	        
         	if (line.startsWith("/")) {
-        		String[] tokenList = line.split(",", -1);
-            	Info info = new Info();
-            	info.path = tokenList[0];            	
+        		String[] tokenList = line.split(",", -1);            	        		
+        		
+        		Info info = new Info();
+            	info.path = tokenList[0];
             	info.source = getSource(tokenList[0]);
             	info.start = getScope(tokenList[1], 0);
             	info.end = getScope(tokenList[1], 1);

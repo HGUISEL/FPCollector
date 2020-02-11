@@ -1114,13 +1114,17 @@ public class JavaASTParser {
 					public boolean visit(SimpleName node) {
 						ASTNode parent = node.getParent();
 						Integer lineNum = getLineNum(node.getStartPosition());
+						
 						if((parent instanceof VariableDeclarationFragment || parent instanceof SingleVariableDeclaration) 
 								&& !(parent.getParent() instanceof FieldDeclaration)) {
 							lstVariableDeclaration.add(node.getIdentifier());
+							
+							for(String temp : lstFieldMemberDeclaration)
+								lstVariableDeclaration.remove(temp);
 						}
 						
-						if(lineNum == Integer.parseInt(info.start) && lstVariableDeclaration.contains(node.getIdentifier())) {
-							lstViolatedVariables.add(node);
+						if(lineNum == Integer.parseInt(info.start) && lstVariableDeclaration.contains(node.getIdentifier())) {							
+							lstViolatedVariables.add(node);															
 						}					
 						else if (lineNum == Integer.parseInt(info.start) && lstFieldMemberDeclaration.contains(node.getIdentifier())) {
 							lstViolatedField.add(node);
