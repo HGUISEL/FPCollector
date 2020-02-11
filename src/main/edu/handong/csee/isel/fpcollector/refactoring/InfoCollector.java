@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import edu.handong.csee.isel.fpcollector.graph.JavaASTParser;
 
 public class InfoCollector {
@@ -30,12 +32,11 @@ public class InfoCollector {
             	info.source = getSource(tokenList[0]);
             	info.start = getScope(tokenList[1], 0);
             	info.end = getScope(tokenList[1], 1);
-            	info.varName.add(getVarName(tokenList[3]));
-            	if(info.varName.get(0) == null) {
-            		info.varName.remove(0);
-            		info.varName.addAll(getVarNameList(info));
-            	}
-            	info.fieldName.addAll(getFieldList(info));
+            	
+            	info.varNodes.addAll(getVarList(info));
+            	info.fieldNodes.addAll(getFieldList(info));
+            	info.nodesToStrings();
+            	
             	outputInfo.add(info);                       
         	}        
         }
@@ -77,12 +78,12 @@ public class InfoCollector {
 		return tokenList[1];
 	}
 	
-	private ArrayList<String> getVarNameList(Info info){
+	private ArrayList<ASTNode> getVarList(Info info){
 		JavaASTParser tempParser = new JavaASTParser(info);
 		return tempParser.getViolatedVariableList(info.source, VAR);
 	}
 	
-	private ArrayList<String> getFieldList(Info info){
+	private ArrayList<ASTNode> getFieldList(Info info){
 		JavaASTParser tempParser = new JavaASTParser(info);
 		return tempParser.getViolatedVariableList(info.source, FIELD);
 	}

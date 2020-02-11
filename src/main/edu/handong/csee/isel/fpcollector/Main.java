@@ -108,6 +108,9 @@ public class Main {
 			
 			System.out.println("Step 3 CLEAR");
 			
+//			GraphWriter graphWriter = new GraphWriter();
+//			graphWriter.writeGraph(graphs);
+			
 			//Step 4. Get Graph Information
 			ArrayList<GraphInfo> graphInfos = new ArrayList<>();
 			
@@ -129,9 +132,7 @@ public class Main {
 			}
 			
 			GraphWriter graphWriter = new GraphWriter();
-			graphWriter.writeGraph(graphCompartor.clusterByTotalNum);		
-			
-			
+			graphWriter.writeGraph(graphCompartor.clusterByTotalNum);
 			
 			System.out.println("Step 5 Clear");
 			
