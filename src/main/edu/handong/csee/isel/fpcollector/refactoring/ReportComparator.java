@@ -17,11 +17,14 @@ public class ReportComparator {
 				if(currentCode.equals(pastCode)) {
 					FPC.add(current.reportInformation.get(i) + "%%%%%" +currentCode);
 					past.alarmedCodes.remove(j);
+					past.reportInformation.remove(j);
 					break;
 				}
 			}
 		}
-		TPC.addAll(past.alarmedCodes);
+		
+		for (int i = 0; i < past.alarmedCodes.size(); i++)
+			TPC.add(past.reportInformation.get(i) + "%%%%%" + past.alarmedCodes.get(i));
 	}
 	
 	public void getFixingRate(ReportReader current, ReportReader past) {
