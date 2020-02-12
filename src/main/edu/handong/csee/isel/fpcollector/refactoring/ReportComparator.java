@@ -5,10 +5,11 @@ import java.util.ArrayList;
 public class ReportComparator {
 	//In FPC, its elements' form : report_information$$$violated_code
 	public ArrayList<String> FPC = new ArrayList<>();
+	public ArrayList<String> TPC = new ArrayList<>();
 	
 	public double fixingRate =0.0;
 	
-	public void getFPC(ReportReader current, ReportReader past){
+	public void getTFPC(ReportReader current, ReportReader past){
 		for(int i = 0 ; i < current.alarmedCodes.size(); i++) {
 			String currentCode = current.alarmedCodes.get(i);
 			for(int j = 0 ; j < past.alarmedCodes.size(); j++) {
@@ -20,6 +21,7 @@ public class ReportComparator {
 				}
 			}
 		}
+		TPC.addAll(past.alarmedCodes);
 	}
 	
 	public void getFixingRate(ReportReader current, ReportReader past) {

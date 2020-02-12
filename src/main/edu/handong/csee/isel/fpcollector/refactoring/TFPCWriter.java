@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-public class FPCWriter {
-	public String fileName ="./FalsePositiveCandidate.csv";
+public class TFPCWriter {
+	public String fileName;
 	
-	public void writeContexts (ArrayList<String> FPC) {
-//		String fileName = ;/* ./Result.csv */
+	public void writeContexts (ArrayList<String> FPC, String type) {
+		fileName = "./" + type + "Candidate.csv";/* ./Result.csv */
 		try(
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
@@ -40,8 +40,8 @@ public class FPCWriter {
 		} 
 	}
 	
-	public void writeContextsForDFA (ArrayList<String> FPC) {
-		String fileName = "./FalsePositiveCandidate.csv";/* ./Result.csv */
+	public void writeContextsForDFA (ArrayList<String> FPC, String type) {
+		fileName = "./" + type + "Candidate.csv";/* ./Result.csv */
 		try(
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
