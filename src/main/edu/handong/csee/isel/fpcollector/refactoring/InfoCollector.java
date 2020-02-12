@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import edu.handong.csee.isel.fpcollector.graph.JavaASTParser;
 
 public class InfoCollector {
@@ -20,24 +22,25 @@ public class InfoCollector {
 		
 		br.readLine();
 		String line = "";
-//		int count = 0;
         while ((line = br.readLine()) != null) {
-//        	count ++;
-//        	if(count == 239)        
+        	        
         	if (line.startsWith("/")) {
-        		String[] tokenList = line.split(",", -1);
-            	Info info = new Info();
-            	info.path = tokenList[0];            	
+        		String[] tokenList = line.split(",", -1);            	        		
+        		
+        		Info info = new Info();
+            	info.path = tokenList[0];
             	info.source = getSource(tokenList[0]);
             	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(info.source)));
             	info.start = Integer.parseInt(getScope(tokenList[1], 0, info.sourceByLine));
             	info.end = Integer.parseInt(getScope(tokenList[1], 1, info.sourceByLine));
-            	info.varName.add(getVarName(tokenList[3]));
-            	if(info.varName.get(0) == null) {
-            		info.varName.remove(0);
-            		info.varName.addAll(getVarNameList(info));
+            	info.varNames.add(getVarName(tokenList[3]));
+            	if(info.varNames.get(0) == null) {
+            		info.varNames.remove(0);
+            		info.varNodes.addAll(getVarList(info));
+                	info.fieldNodes.addAll(getFieldList(info));
+                	info.nodesToStrings();
             	}
-            	info.fieldName.addAll(getFieldList(info));
+            	
             	outputInfo.add(info);                       
         	}        
         }
@@ -105,12 +108,12 @@ public class InfoCollector {
 		return tokenList[1];
 	}
 	
-	private ArrayList<String> getVarNameList(Info info){
+	private ArrayList<ASTNode> getVarList(Info info){
 		JavaASTParser tempParser = new JavaASTParser(info);
 		return tempParser.getViolatedVariableList(info.source, VAR);
 	}
 	
-	private ArrayList<String> getFieldList(Info info){
+	private ArrayList<ASTNode> getFieldList(Info info){
 		JavaASTParser tempParser = new JavaASTParser(info);
 		return tempParser.getViolatedVariableList(info.source, FIELD);
 	}

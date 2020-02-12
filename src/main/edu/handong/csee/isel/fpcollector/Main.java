@@ -97,16 +97,19 @@ public class Main {
 //				counta++;
 				System.out.println(infos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 239) {
+//				if(counta == 272) {
 					graph.run(info);
 					graphs.add(graph.root);
 //				}
 				
 //				gDrawer.run(graph.root, counta);
-//				if (counta == 1) break;
+//				if (counta == 272) break;
 			}	
 			
 			System.out.println("Step 3 CLEAR");
+			
+//			GraphWriter graphWriter = new GraphWriter();
+//			graphWriter.writeGraph(graphs);
 			
 			//Step 4. Get Graph Information
 			ArrayList<GraphInfo> graphInfos = new ArrayList<>();
@@ -129,9 +132,7 @@ public class Main {
 			}
 			
 			GraphWriter graphWriter = new GraphWriter();
-			graphWriter.writeGraph(graphCompartor.clusterByTotalNum);		
-			
-			
+			graphWriter.writeGraph(graphCompartor.clusterByTotalNum);
 			
 			System.out.println("Step 5 Clear");
 			
