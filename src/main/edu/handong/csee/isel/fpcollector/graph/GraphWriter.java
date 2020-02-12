@@ -27,7 +27,7 @@ public class GraphWriter {
 			}
 			csvPrinter.printRecord("Total", "Graph", "Information : ", totalInfo);
 			for(Integer totalNodeNum : g.keySet()) {
-				if(totalNodeNum == 0 || totalNodeNum == 1) continue;
+//				if(totalNodeNum == 0 || totalNodeNum == 1) continue;
 				for(GraphInfo tempGraph : g.get(totalNodeNum)) {
 					String path = tempGraph.root.path;
 					String method = tempGraph.root.node.toString();
