@@ -84,7 +84,8 @@ public class InfoCollector {
 			while(!sourceByLine.get(i).contains(";")
 					&& !sourceByLine.get(i).contains("//")
 					&& !sourceByLine.get(i).contains("{")
-					&& !sourceByLine.get(i).contains("}")) {
+					&& !sourceByLine.get(i).contains("}")
+					) {
 				i--;
 			}
 			return (i + 2) + "";

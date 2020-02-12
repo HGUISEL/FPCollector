@@ -33,7 +33,7 @@ public class GraphWriter {
 					String method = tempGraph.root.node.toString();
 					String graph = tempGraph.root.writeInfo();
 					String graphInfo = tempGraph.getNumberInfo();
-					
+		
 					csvPrinter.printRecord(path, method, graph, graphInfo);
 				}
 			}
