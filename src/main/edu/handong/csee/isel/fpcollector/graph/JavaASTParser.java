@@ -1313,10 +1313,10 @@ public class JavaASTParser {
 							lstVariableDeclaration.add(node.getIdentifier());
 						}
 						
-						if(lineNum == Integer.parseInt(info.start) && lstVariableDeclaration.contains(node.getIdentifier())) {
+						if(lineNum == info.start && lstVariableDeclaration.contains(node.getIdentifier())) {
 							lstViolatedVariables.add(node.getIdentifier());
 						}					
-						else if (lineNum == Integer.parseInt(info.start) && lstFieldMemberDeclaration.contains(node.getIdentifier())) {
+						else if (lineNum == info.start && lstFieldMemberDeclaration.contains(node.getIdentifier())) {
 							lstViolatedField.add(node.getIdentifier());
 						}
 						return super.visit(node);
@@ -1330,7 +1330,7 @@ public class JavaASTParser {
 					public boolean visit(ThisExpression node) {
 						Integer lineNum = getLineNum(node.getStartPosition());						
 						
-						if(lineNum == Integer.parseInt(info.start)) {
+						if(lineNum == info.start) {
 							lstViolatedField.add("this");
 						}					
 						return super.visit(node);
@@ -1549,8 +1549,8 @@ public class JavaASTParser {
 		int sLine = getLineNum(node.getStartPosition());
 		int eLine = getLineNum(node.getStartPosition() + node.getLength());
 		
-		if (sLine <= Integer.parseInt(info.start) 
-				&& eLine >= Integer.parseInt(info.end)) {
+		if (sLine <= info.start
+				&& eLine >= info.end) {
 			isScope = true;
 			root = new ControlNode(node, ControlState.S, level, info.path);
 			lstUseVar.add(false);
@@ -1568,8 +1568,8 @@ public class JavaASTParser {
 		int sLine = getLineNum(node.getStartPosition());
 		int eLine = getLineNum(node.getStartPosition() + node.getLength());
 		
-		if (sLine <= Integer.parseInt(info.start) 
-				&& eLine >= Integer.parseInt(info.end)) {
+		if (sLine <= info.start 
+				&& eLine >= info.end) {
 			isScope = true;
 			root = new ControlNode(node, ControlState.S, level, info.path);
 			lstUseVar.add(false);

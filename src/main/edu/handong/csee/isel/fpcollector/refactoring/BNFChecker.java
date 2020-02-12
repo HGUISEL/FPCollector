@@ -40,7 +40,7 @@ public class BNFChecker {
 //		ArrayList<MethodDeclaration> methods = new ArrayList<>();
 		
 		JavaASTParserInRefac javaParser = new JavaASTParserInRefac(info.source);
-		MethodDeclaration m = javaParser.getViolatedMethod(Integer.parseInt(info.start));
+		MethodDeclaration m = javaParser.getViolatedMethod(info.start);
 		
 		MethodAST mAST = new MethodAST();
 		mAST.asts.add(m);

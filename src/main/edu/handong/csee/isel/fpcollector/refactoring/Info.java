@@ -4,10 +4,11 @@ import java.util.ArrayList;
 
 public class Info {
 	public String source;
+	public ArrayList<String> sourceByLine;
 	public ArrayList<String> varName = new ArrayList<>();
 	public ArrayList<String> fieldName = new ArrayList<>();
-	public String start;
-	public String end;
+	public int start;
+	public int end;
 	public String path;
 	
 	public void printInfo() {
