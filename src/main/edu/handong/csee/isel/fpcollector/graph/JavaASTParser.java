@@ -1123,10 +1123,10 @@ public class JavaASTParser {
 								lstVariableDeclaration.remove(temp);
 						}
 						
-						if(lineNum == info.start && lstVariableDeclaration.contains(node.getIdentifier())) {
+						if(lineNum >= info.start && lineNum <= info.end && lstVariableDeclaration.contains(node.getIdentifier())) {
 							lstViolatedVariables.add(node);
 						}					
-						else if (lineNum == info.start && lstFieldMemberDeclaration.contains(node.getIdentifier())) {
+						else if (lineNum >= info.start && lineNum <= info.end && lstFieldMemberDeclaration.contains(node.getIdentifier())) {
 							lstViolatedField.add(node);
 						}
 						return super.visit(node);
