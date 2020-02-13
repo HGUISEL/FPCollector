@@ -1,5 +1,6 @@
 package edu.handong.csee.isel.fpcollector.refactoring;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class ReportComparator {
@@ -9,7 +10,7 @@ public class ReportComparator {
 	
 	public double fixingRate =0.0;
 	
-	public void getTFPC(ReportReader current, ReportReader past){
+	public void getTFPC(ReportReader current, ReportReader past, String projectName){
 		for(int i = 0 ; i < current.alarmedCodes.size(); i++) {
 			String currentCode = current.alarmedCodes.get(i);
 			for(int j = 0 ; j < past.alarmedCodes.size(); j++) {
@@ -23,8 +24,14 @@ public class ReportComparator {
 			}
 		}
 		
-		for (int i = 0; i < past.alarmedCodes.size(); i++)
-			TPC.add(past.reportInformation.get(i) + "%%%%%" + past.alarmedCodes.get(i));
+		for (int i = 0; i < past.alarmedCodes.size(); i++) {
+			String[] reportInfo = past.reportInformation.get(i).split(":");
+			reportInfo[0].replaceFirst(projectName + "_P", projectName);
+			File f = new File(reportInfo[0]);
+			
+			if (f.exists())
+				TPC.add(past.reportInformation.get(i) + "%%%%%" + past.alarmedCodes.get(i));
+		}
 	}
 	
 	public void getFixingRate(ReportReader current, ReportReader past) {

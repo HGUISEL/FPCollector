@@ -67,7 +67,7 @@ public class Main {
 			
 		//3. compare is there anything same
 		ReportComparator compareCurrentAndPast = new ReportComparator();
-		compareCurrentAndPast.getTFPC(currentReport, pastReport);
+		compareCurrentAndPast.getTFPC(currentReport, pastReport, input.projectName);
 		
 		//4. write file which contains FPC
 		TFPCWriter fpcWriter = new TFPCWriter();
@@ -88,14 +88,18 @@ public class Main {
 			// 1. read input
 			ArrayList<Info> fpcInfos = new ArrayList<>();
 			ArrayList<Info> tpcInfos = new ArrayList<>();
-			InfoCollector inforCollector = new InfoCollector();
+			InfoCollector fpcCollector = new InfoCollector();
+			InfoCollector tpcCollector = new InfoCollector();
 			
 			try {
-				fpcInfos = inforCollector.run(fpcWriter.fileName);
-				tpcInfos = inforCollector.run(tpcWriter.fileName);
+				fpcInfos = fpcCollector.run(fpcWriter.fileName);
+				tpcInfos = tpcCollector.run(tpcWriter.fileName);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			System.out.println("fpInfo: " + fpcInfos.size());
+			System.out.println("tpInfo: " + tpcInfos.size());
 			int counta =0;
 			ArrayList<ControlNode> fpcGraphs = new ArrayList<>();
 			ArrayList<ControlNode> tpcGraphs = new ArrayList<>();
