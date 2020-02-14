@@ -67,7 +67,7 @@ public class Main {
 			
 		//3. compare is there anything same
 		ReportComparator compareCurrentAndPast = new ReportComparator();
-		compareCurrentAndPast.getTFPC(currentReport, pastReport, input.projectName);
+		compareCurrentAndPast.run(currentReport, pastReport, input.projectName);
 		
 		//4. write file which contains FPC
 		TFPCWriter fpcWriter = new TFPCWriter();
