@@ -157,18 +157,14 @@ public class Main {
 			GraphComparator fpcGraphCompartor = new GraphComparator();
 			GraphComparator tpcGraphCompartor = new GraphComparator();
 			
-			for(GraphInfo g : fpcGraphInfos) {
-				fpcGraphCompartor.clusterByTotalNodeNum(g);
-			}
-			
-			for(GraphInfo g : tpcGraphInfos) {
-				tpcGraphCompartor.clusterByTotalNodeNum(g);
-			}
+			fpcGraphCompartor.run(fpcGraphInfos);
+			tpcGraphCompartor.run(tpcGraphInfos);
 			
 			GraphWriter graphWriter = new GraphWriter();
-			graphWriter.writeGraph(fpcGraphCompartor.clusterByTotalNum, "FPC");
-			graphWriter.writeGraph(tpcGraphCompartor.clusterByTotalNum, "TPC");
+			graphWriter.writeGraph(fpcGraphCompartor.clusterByTotalNumRank, "FPC", fpcGraphCompartor.totalGraphSize);
+			graphWriter.writeGraph(tpcGraphCompartor.clusterByTotalNumRank, "TPC", tpcGraphCompartor.totalGraphSize);
 			
+			graphWriter.writeRankGraph(fpcGraphCompartor, tpcGraphCompartor);
 			System.out.println("Step 5 Clear");
 			
 			
