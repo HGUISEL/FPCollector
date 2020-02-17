@@ -10,7 +10,7 @@ import edu.handong.csee.isel.fpcollector.graph.GraphInfo;
 import edu.handong.csee.isel.fpcollector.graph.GraphInfoGetter;
 import edu.handong.csee.isel.fpcollector.graph.GraphWriter;
 import edu.handong.csee.isel.fpcollector.graph.NodeResolver;
-import edu.handong.csee.isel.fpcollector.refactoring.FPCWriter;
+import edu.handong.csee.isel.fpcollector.refactoring.TFPCWriter;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
 import edu.handong.csee.isel.fpcollector.refactoring.Info;
@@ -68,44 +68,64 @@ public class Main {
 			
 		//3. compare is there anything same
 		ReportComparator compareCurrentAndPast = new ReportComparator();
-		compareCurrentAndPast.getFPC(currentReport, pastReport);
+		compareCurrentAndPast.run(currentReport, pastReport, input.projectName);
 		
 		//4. write file which contains FPC
-		FPCWriter fpcWriter = new FPCWriter();
+		TFPCWriter fpcWriter = new TFPCWriter();
+		TFPCWriter tpcWriter = new TFPCWriter();
 		
-		if(input.rule.contains("DataflowAnomalyAnalysis"))
-			fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC);
-		else
-			fpcWriter.writeContexts(compareCurrentAndPast.FPC);
+		if(input.rule.contains("DataflowAnomalyAnalysis")) {
+			fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC, "FPC");
+			tpcWriter.writeContextsForDFA(compareCurrentAndPast.TPC, "TPC");
+			
+		} else {
+			fpcWriter.writeContexts(compareCurrentAndPast.FPC, "FPC");
+			tpcWriter.writeContexts(compareCurrentAndPast.TPC, "TPC");
+		}
 		
 		System.out.println("Step 2 CLEAR");
 			
 		// 3. Get Pattern of the FPC
 			// 1. read input
-			ArrayList<Info> infos = new ArrayList<>();
-			InfoCollector inforCollector = new InfoCollector();
+			ArrayList<Info> fpcInfos = new ArrayList<>();
+			ArrayList<Info> tpcInfos = new ArrayList<>();
+			InfoCollector fpcCollector = new InfoCollector();
+			InfoCollector tpcCollector = new InfoCollector();
 			
 			try {
-				infos = inforCollector.run(fpcWriter.fileName);				
+				fpcInfos = fpcCollector.run(fpcWriter.fileName);
+				tpcInfos = tpcCollector.run(tpcWriter.fileName);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			System.out.println("fpInfo: " + fpcInfos.size());
+			System.out.println("tpInfo: " + tpcInfos.size());
 			int counta =0;
-			ArrayList<ControlNode> graphs = new ArrayList<>();
+			ArrayList<ControlNode> fpcGraphs = new ArrayList<>();
+			ArrayList<ControlNode> tpcGraphs = new ArrayList<>();
 			// 2. build Graph
-			for(Info info : infos) {
+			for(Info info : fpcInfos) {
 //				GraphDrawer gDrawer = new GraphDrawer();
 //				counta++;
-				System.out.println(infos.indexOf(info));
+//				System.out.println(FPCinfos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
 //				if(counta == 272) {
 					graph.run(info);
-					graphs.add(graph.root);
+					fpcGraphs.add(graph.root);
 //				}
 				
 //				gDrawer.run(graph.root, counta);
 //				if (counta == 272) break;
-			}	
+			}
+
+			for(Info info : tpcInfos) {
+				GraphBuilder graph = new GraphBuilder();
+//				if(counta == 272) {
+					graph.run(info);
+					tpcGraphs.add(graph.root);
+//				}
+			}
 			
 			System.out.println("Step 3 CLEAR");
 			
@@ -113,39 +133,55 @@ public class Main {
 //			graphWriter.writeGraph(graphs);
 			
 			//Step 4. Get Graph Information
-			ArrayList<GraphInfo> graphInfos = new ArrayList<>();
+			ArrayList<GraphInfo> fpcGraphInfos = new ArrayList<>();
+			ArrayList<GraphInfo> tpcGraphInfos = new ArrayList<>();
 			
-			for(ControlNode g : graphs) {	
+			for(ControlNode g : fpcGraphs) {	
 				g.printInfo();
 				GraphInfo tempGraphInfo = new GraphInfo(g);
 				GraphInfoGetter tempGetter = new GraphInfoGetter();
 				tempGetter.getNodeNum(tempGraphInfo);
-				graphInfos.add(tempGraphInfo);				
+				fpcGraphInfos.add(tempGraphInfo);				
+			}
+			
+			for(ControlNode g : tpcGraphs) {	
+				g.printInfo();
+				GraphInfo tempGraphInfo = new GraphInfo(g);
+				GraphInfoGetter tempGetter = new GraphInfoGetter();
+				tempGetter.getNodeNum(tempGraphInfo);
+				tpcGraphInfos.add(tempGraphInfo);				
 			}
 			
 			System.out.println("Step 4 Clear");
 			
 			//Step 5. Graph Comparison
-			GraphComparator graphComparator = new GraphComparator();
+			GraphComparator fpcGraphComparator = new GraphComparator();
+			GraphComparator tpcGraphComparator = new GraphComparator();
 			
-			for(GraphInfo g : graphInfos) {
-				graphComparator.clusterByTotalNodeNum(g);
+			for(GraphInfo g : fpcGraphInfos) {
+				fpcGraphComparator.clusterByTotalNode(g);
 			}
 			
+			for(GraphInfo g : tpcGraphInfos) {
+				tpcGraphComparator.clusterByTotalNode(g);
+			}
+			
+			System.out.println("Step 5 Clear");
 			
 			//Step 6.
 			//transform each graph to one string and clustering graphs with there properties
 			NodeResolver nodeResolver = new NodeResolver();
-			nodeResolver.transformNode(graphComparator.clusterByTotalNum);
-						
-			for(GraphInfo g : graphInfos) {
-				graphComparator.clusterByTotalNode(g);
-			}
+			nodeResolver.transformNode(fpcGraphComparator.clusterByTotalNum);
+			nodeResolver.transformNode(tpcGraphComparator.clusterByTotalNum);
 			
 			GraphWriter graphWriter = new GraphWriter();
-			graphWriter.writeGraphS(graphComparator.clusterByTotalNode);
+			graphWriter.writeGraph(fpcGraphComparator.clusterByTotalNum, "FPC");
+			graphWriter.writeGraph(tpcGraphComparator.clusterByTotalNum, "TPC");
 			
-			System.out.println("Step 5 Clear");
+//			GraphWriter graphWriter = new GraphWriter();
+//			graphWriter.writeGraphS(graphComparator.clusterByTotalNode);
+			
+			
 			
 			
 //			PatternVector patternVector = new PatternVector();

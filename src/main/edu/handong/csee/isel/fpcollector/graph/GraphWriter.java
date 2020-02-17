@@ -11,10 +11,11 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 public class GraphWriter {
-	public String fileName ="./GraphRepresentation.csv";
+	public String fileName;
 	
-	public void writeGraph (HashMap<Integer, ArrayList<GraphInfo>> g) {
+	public void writeGraph (HashMap<Integer, ArrayList<GraphInfo>> g, String type) {
 //		String fileName = ;/* ./Result.csv */
+		 fileName = "./" + type + "GraphRepresentation.csv";
 		
 		try(
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
@@ -65,7 +66,7 @@ public class GraphWriter {
 					String path = tempGraph.root.info.path;
 					String method = tempGraph.root.node.toString();
 					String graph = tempGraph.root.writeInfo();
-					String graphInfo = totalNodeNum + ": " + NodeInterpreter.interpret(totalNodeNum)+ "\n" + tempGraph.getNumberInfo();
+					String graphInfo = totalNodeNum + ": " + /*NodeInterpreter.interpret(totalNodeNum)*/ "\n" + tempGraph.getNumberInfo();
 		
 					csvPrinter.printRecord(path, method, graph, graphInfo);
 				}

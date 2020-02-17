@@ -25,5 +25,11 @@ public class NodeInterpreter {
 	public String interpret(String graphString) {
 		String pattern = "";
 		
+		pattern = "level: " + graphString.substring(0, 1);
+		
+		
+		
+		
+		return pattern;
 	}
 }

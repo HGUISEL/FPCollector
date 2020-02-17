@@ -4,11 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
 public class ReportReader {
 	public ArrayList<String> reportInformation;
-	public ArrayList<String> alarmedCodes;
+	public ArrayList<SimpleEntry<String, String>> alarmedCodes = new ArrayList<>();
 	
 	public void readReport(String reportFilePath) {
 		
@@ -35,16 +36,15 @@ public class ReportReader {
 		return resultInfo;
 	}
 	
-	private ArrayList<String> readCodes(ArrayList<String> reportInformation){
-		ArrayList<String> alarmedCodes = new ArrayList<>();
+	private ArrayList<SimpleEntry<String, String>> readCodes(ArrayList<String> reportInformation){
+		ArrayList<SimpleEntry<String, String>> alarmedCodes = new ArrayList<>();
 		int lineNum = 0;
 		
 		for(String reportInstance : reportInformation) {
 			if(reportInstance.split(":").length > 2) {
 				lineNum = Integer.parseInt(reportInstance.split(":")[1]);
-				alarmedCodes.add(readLineOfCode(reportInstance, lineNum));
+				alarmedCodes.add(new SimpleEntry<String, String>(readLineOfCode(reportInstance, lineNum), reportInstance));
 			}
-			else alarmedCodes.add("null");
 		}
 		return alarmedCodes;
 	}
