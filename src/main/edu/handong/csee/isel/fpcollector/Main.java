@@ -9,6 +9,7 @@ import edu.handong.csee.isel.fpcollector.graph.GraphComparator;
 import edu.handong.csee.isel.fpcollector.graph.GraphInfo;
 import edu.handong.csee.isel.fpcollector.graph.GraphInfoGetter;
 import edu.handong.csee.isel.fpcollector.graph.GraphWriter;
+import edu.handong.csee.isel.fpcollector.graph.NodeResolver;
 import edu.handong.csee.isel.fpcollector.refactoring.FPCWriter;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
@@ -125,14 +126,24 @@ public class Main {
 			System.out.println("Step 4 Clear");
 			
 			//Step 5. Graph Comparison
-			GraphComparator graphCompartor = new GraphComparator();
+			GraphComparator graphComparator = new GraphComparator();
 			
 			for(GraphInfo g : graphInfos) {
-				graphCompartor.clusterByTotalNodeNum(g);
+				graphComparator.clusterByTotalNodeNum(g);
+			}
+			
+			
+			//Step 6.
+			//transform each graph to one string and clustering graphs with there properties
+			NodeResolver nodeResolver = new NodeResolver();
+			nodeResolver.transformNode(graphComparator.clusterByTotalNum);
+						
+			for(GraphInfo g : graphInfos) {
+				graphComparator.clusterByTotalNode(g);
 			}
 			
 			GraphWriter graphWriter = new GraphWriter();
-			graphWriter.writeGraph(graphCompartor.clusterByTotalNum);
+			graphWriter.writeGraphS(graphComparator.clusterByTotalNode);
 			
 			System.out.println("Step 5 Clear");
 			

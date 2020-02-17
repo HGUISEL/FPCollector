@@ -176,7 +176,7 @@ public class JavaASTParser {
 					
 					public boolean visit(TypeDeclaration node) {
 						if(methodStart == 0 && methodEnd == 0) {
-							ControlNode n = new ControlNode(node, ControlState.S, level, info.path);
+							ControlNode n = new ControlNode(node, ControlState.S, level, info);
 							root = n;				
 							root.parent = null;
 						}
@@ -185,7 +185,7 @@ public class JavaASTParser {
 					
 					public boolean visit(EnumDeclaration node) {
 						if(methodStart == 0 && methodEnd == 0) {
-							ControlNode n = new ControlNode(node, ControlState.S, level, info.path);
+							ControlNode n = new ControlNode(node, ControlState.S, level, info);
 							root = n;				
 							root.parent = null;
 						}
@@ -201,7 +201,7 @@ public class JavaASTParser {
 								if(violatedNodeisIn(node, info.varNodes.get(0))){
 									methodStart = node.getStartPosition();
 									methodEnd = node.getStartPosition() + node.getLength();
-									ControlNode n = new ControlNode(node, ControlState.S, level, info.path);
+									ControlNode n = new ControlNode(node, ControlState.S, level, info);
 									n.parent = root;
 									root.nexts.add(n);
 									root = n;
@@ -210,7 +210,7 @@ public class JavaASTParser {
 								if(violatedNodeisIn(node, info.fieldNodes.get(0))){
 									methodStart = node.getStartPosition();
 									methodEnd = node.getStartPosition() + node.getLength();
-									ControlNode n = new ControlNode(node, ControlState.S, level, info.path);
+									ControlNode n = new ControlNode(node, ControlState.S, level, info);
 									n.parent = root;
 									root.nexts.add(n);
 									root = n;
@@ -219,13 +219,12 @@ public class JavaASTParser {
 								if(violatedNodeisIn(node, info.fieldNodes.get(0)) && violatedNodeisIn(node, info.varNodes.get(0))) {
 									methodStart = node.getStartPosition();
 									methodEnd = node.getStartPosition() + node.getLength();
-									ControlNode n = new ControlNode(node, ControlState.S, level, info.path);
+									ControlNode n = new ControlNode(node, ControlState.S, level, info);
 									n.parent = root;
 									root.nexts.add(n);
 									root = n;
 								}
-							}							
-															
+							}																						
 						}
 						return super.visit(node);												
 					}										
@@ -237,7 +236,7 @@ public class JavaASTParser {
 									if(violatedNodeisIn(node, info.varNodes.get(0))){
 										blockStart = node.getStartPosition();
 										blockEnd = node.getStartPosition() + node.getLength();
-										ControlNode n = new ControlNode(node, ControlState.S, level, info.path);
+										ControlNode n = new ControlNode(node, ControlState.S, level, info);
 										n.parent = root;
 										root.nexts.add(n);
 										root = n;
@@ -246,7 +245,7 @@ public class JavaASTParser {
 									if(violatedNodeisIn(node, info.fieldNodes.get(0))){
 										methodStart = node.getStartPosition();
 										methodEnd = node.getStartPosition() + node.getLength();
-										ControlNode n = new ControlNode(node, ControlState.S, level, info.path);
+										ControlNode n = new ControlNode(node, ControlState.S, level, info);
 										n.parent = root;
 										root.nexts.add(n);
 										root = n;
@@ -255,7 +254,7 @@ public class JavaASTParser {
 									if(violatedNodeisIn(node, info.fieldNodes.get(0)) && violatedNodeisIn(node, info.varNodes.get(0))) {
 										methodStart = node.getStartPosition();
 										methodEnd = node.getStartPosition() + node.getLength();
-										ControlNode n = new ControlNode(node, ControlState.S, level, info.path);
+										ControlNode n = new ControlNode(node, ControlState.S, level, info);
 										n.parent = root;
 										root.nexts.add(n);
 										root = n;
@@ -275,7 +274,7 @@ public class JavaASTParser {
 						
 						if (isNodeInMethodOrBlock(node)) {
 							if (info.varNames.contains(node.getIdentifier())){
-								DataNode n = new DataNode(node, level);
+								DataNode n = new DataNode(node, level, info);
 								
 								if(isD(node) == VarState.D)
 									n.setState(VarState.D);
@@ -308,7 +307,7 @@ public class JavaASTParser {
 								root.nexts.add(n);															
 							}
 							else if (info.fieldNames.contains(node.getIdentifier())/*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/){
-								DataNode n = new DataNode(node, level);
+								DataNode n = new DataNode(node, level, info);
 								
 								if(isD(node) == VarState.D)
 									n.setState(VarState.FD);
@@ -350,7 +349,7 @@ public class JavaASTParser {
 												
 						if (isNodeInMethodOrBlock(node)) {																					
 							if (info.fieldNames.contains("this")/*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/){
-								DataNode n = new DataNode(node, level);
+								DataNode n = new DataNode(node, level, info);
 								
 								if(isD(node) == VarState.D)
 									n.setState(VarState.FD);
@@ -391,7 +390,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.L);
 							n.parent = root;
 							root.nexts.add(n);
@@ -415,7 +414,7 @@ public class JavaASTParser {
 						
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
-							ControlNode n = new ControlNode(node, ControlState.M, level);							
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);							
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
 							
 							n.setProperty(ControlState.C);
@@ -456,7 +455,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.C);
 							n.parent = root;
 							root.nexts.add(n);
@@ -481,7 +480,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.L);
 							n.parent = root;
 							root.nexts.add(n);
@@ -506,7 +505,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.L);
 							n.parent = root;
 							root.nexts.add(n);
@@ -529,7 +528,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.L);
 							n.parent = root;
 							root.nexts.add(n);
@@ -553,7 +552,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.C);
 							n.parent = root;
 							root.nexts.add(n);
@@ -576,7 +575,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.C);
 							n.parent = root;
 							root.nexts.add(n);
@@ -599,7 +598,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.C);
 							n.parent = root;
 							root.nexts.add(n);
@@ -622,7 +621,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.T);
 							n.parent = root;
 							root.nexts.add(n);
@@ -646,7 +645,7 @@ public class JavaASTParser {
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-							ControlNode n = new ControlNode(node, ControlState.M, level);
+							ControlNode n = new ControlNode(node, ControlState.M, level, info);
 							n.setProperty(ControlState.T);
 							n.parent = root;
 							root.nexts.add(n);
