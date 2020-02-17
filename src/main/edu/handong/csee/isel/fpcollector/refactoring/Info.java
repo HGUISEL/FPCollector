@@ -15,6 +15,7 @@ public class Info {
 	public ArrayList<ASTNode> fieldNodes = new ArrayList<>();
 	public int start;
 	public int end;
+	public int startPosition;
 	public String path;
 	
 	

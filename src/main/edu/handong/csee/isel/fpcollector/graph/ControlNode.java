@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.SimpleName;
 
+import edu.handong.csee.isel.fpcollector.refactoring.Info;
+
 public class ControlNode extends GraphNode{	
 	public ControlState state;
 	public ControlState property;
@@ -17,8 +19,8 @@ public class ControlNode extends GraphNode{
 		this.state = state;
 	}
 	
-	public ControlNode(ASTNode node, ControlState state, int level, String path) {
-		super(node, level, path);
+	public ControlNode(ASTNode node, ControlState state, int level, Info info) {
+		super(node, level, info);
 		
 		this.state = state;
 	}

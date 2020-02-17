@@ -2,11 +2,17 @@ package edu.handong.csee.isel.fpcollector.graph;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import edu.handong.csee.isel.fpcollector.refactoring.Info;
+
 public class DataNode extends GraphNode{
 	public VarState state;
 	public VarState inCondition;
 	public VarState type;
 	public ASTNode from;
+	
+	public DataNode(ASTNode node, int level, Info info) {
+		super(node, level, info);
+	}
 	
 	public DataNode(ASTNode node, int level) {
 		super(node, level);
