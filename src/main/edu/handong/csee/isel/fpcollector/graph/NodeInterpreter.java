@@ -25,10 +25,12 @@ public class NodeInterpreter {
 	public String interpret(String graphString) {
 		String pattern = "";
 		
+		//interpret level
 		pattern = "level: " + graphString.substring(0, 1);
 		
+		//interpret state
 		
-		
+		//interpret node type
 		
 		return pattern;
 	}
