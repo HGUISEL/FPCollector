@@ -24,7 +24,7 @@ public class ReportComparator {
 			for(int j = 0 ; j < past.alarmedCodes.size(); j++) {
 				String pastPath = past.alarmedCodes.get(j).getValue().split(":")[0].replaceFirst(projectName + "_P", projectName);
 				String pastCode = past.alarmedCodes.get(j).getKey();
-				if(currentCode.equals(pastCode) && currentPath.split(":")[0].equals(pastPath)) {
+				if(currentCode.equals(pastCode) /*&& currentPath.split(":")[0].equals(pastPath)*/) {
 					FPC.add(currentPath + "%%%%%" +currentCode);
 					past.alarmedCodes.remove(j);
 					break;
@@ -41,11 +41,11 @@ public class ReportComparator {
 	private void getTPC(ReportReader past, String projectName) {
 		for (int i = 0; i < past.alarmedCodes.size(); i++) {
 			String pastReportInfo = past.alarmedCodes.get(i).getValue();
-			String reportPath = pastReportInfo.split(":")[0].replaceFirst(projectName + "_P", projectName);
+//			String reportPath = pastReportInfo.split(":")[0].replaceFirst(projectName + "_P", projectName);
 //			System.out.println(reportInfo[0]);
-			File f = new File(reportPath);
+//			File f = new File(reportPath);
 			
-			if (f.exists())
+//			if (f.exists())
 //				System.out.println(past.reportInformation.get(i) + "%%%%%" + past.alarmedCodes.get(i));
 				TPC.add(pastReportInfo + "%%%%%" + past.alarmedCodes.get(i).getKey());
 		}
