@@ -28,9 +28,9 @@ import org.eclipse.jdt.core.dom.WhileStatement;
  * <ControlState> := <L> | <T> | <C>
  * <DataState> := (<Define> | <Reference>)<InCondition><Type><getFrom>
  * 
- * <L> := 00000
- * <T> := 00001
- * <C> := 00002
+ * <L> := 99999
+ * <T> := 99998
+ * <C> := 99997
  * 
  * <Define> := 0(DIN) | 1(DI) | 2(D) | 3(FDIN) | 4(FDI) | 5(FD)
  * <Reference> := 6(Ass) | 7(FAss) | 8(Ref) | 9(FRef) | 10(NAss) | 11(FNAss)
@@ -157,11 +157,11 @@ public class NodeResolver {
 	private String addState(GraphNode n) {		
 		if(n instanceof ControlNode) {
 			if(((ControlNode) n).property == ControlState.L)
-				return "00000";
+				return "99999";
 			else if(((ControlNode) n).property == ControlState.T)
-				return "00001";
+				return "99998";
 			else if(((ControlNode) n).property == ControlState.C)
-				return "00002";
+				return "99997";
 		} else if (n instanceof DataNode) {
 			if(((DataNode) n).state == VarState.DIN)
 				return "00";
