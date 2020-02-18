@@ -185,7 +185,7 @@ public class Main {
 			//rank graph
 			graphWriter.writeRankGraphTotalNum(fpcGraphComparator, tpcGraphComparator);			
 			graphWriter.writeRankGraph(fpcGraphComparator, tpcGraphComparator);	
-			
+			System.out.println("Step 6 Clear");
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST

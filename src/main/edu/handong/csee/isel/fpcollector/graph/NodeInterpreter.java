@@ -32,11 +32,11 @@ public class NodeInterpreter {
 	}
 	
 	private String getLevel(String g) {
-		return "level: " + g.substring(0, 1);
+		return "level: " + g.substring(0, 2) +",";
 	}
 	
 	private String getState(String g) {
-		String stateVec = g.substring(2, 6);
+		String stateVec = g.substring(2, 7);
 		String state = "";
 		if(stateVec.equals("99999")) {
 			state = "Loop ControlNode";
@@ -45,7 +45,7 @@ public class NodeInterpreter {
 		} else if(stateVec.equals("99997")) {
 			state = "Conditional ControlNode";
 		} else {
-			switch(stateVec.substring(0, 1)) {
+			switch(stateVec.substring(0, 2)) {
 				case "00" : state = "Defined, Initialized with Null"; break;
 				case "01" : state = "Defined, Initialized"; break;
 				case "02" : state = "Defined DataNode"; break;
@@ -80,7 +80,7 @@ public class NodeInterpreter {
 //			 * 8(EnhancedForStatement), 9(TryStatement), 10(CatchClause), 11(SwitchStatement), 12(ReutrnStatement), 13(ThrowStatement)}
 	
 	private String getASTNodeType(String g) {
-		switch(g.substring(7, 8)) {
+		switch(g.substring(7, 9)) {
 			case "01" : return "SimpleName";
 			case "02" : return "ThisExpression";
 			case "03" : return "DoStatement";
