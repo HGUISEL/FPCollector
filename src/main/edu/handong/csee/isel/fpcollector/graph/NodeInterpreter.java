@@ -24,7 +24,6 @@ package edu.handong.csee.isel.fpcollector.graph;
 public class NodeInterpreter {
 	public String interpret(String graphString) {
 		String pattern = "";
-		
 		pattern = getLevel(graphString);
 		pattern += " "+getState(graphString);
 		pattern += getASTNodeType(graphString);
