@@ -80,9 +80,9 @@ public class GraphWriter {
 		} 
 	}
 	
-	public void writeRankGraph(GraphComparator fpcGraphCompartor, GraphComparator tpcGraphCompartor) {
+	public void writeRankGraph(GraphComparator fpcGraphCompartor, GraphComparator tpcGraphCompartor, String projectName) {
 //		String fileName = ;/* ./Result.csv */
-		 fileName = "./" + "NodeRankGraphRepresentation.csv";
+		 fileName = "./" + projectName + "NodeRankGraphRepresentation.csv";
 		 
 		 ArrayList<Entry<String, ArrayList<GraphInfo>>> fpcGraphs = fpcGraphCompartor.clusterByTotalNodeRank;
 		 ArrayList<Entry<String, ArrayList<GraphInfo>>> tpcGraphs = tpcGraphCompartor.clusterByTotalNodeRank;
@@ -134,9 +134,9 @@ public class GraphWriter {
 		} 
 	}
 	
-	public void writeRankGraphTotalNum(GraphComparator fpcGraphCompartor, GraphComparator tpcGraphCompartor) {
+	public void writeRankGraphTotalNum(GraphComparator fpcGraphCompartor, GraphComparator tpcGraphCompartor, String projectName) {
 //		String fileName = ;/* ./Result.csv */
-		 fileName = "./" + "NumRankGraphRepresentation.csv";
+		 fileName = "./" + projectName + "NumRankGraphRepresentation.csv";
 		 
 		 ArrayList<Entry<Integer, ArrayList<GraphInfo>>> fpcGraphs = fpcGraphCompartor.clusterByTotalNumRank;
 		 ArrayList<Entry<Integer, ArrayList<GraphInfo>>> tpcGraphs = tpcGraphCompartor.clusterByTotalNumRank;

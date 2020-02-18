@@ -75,12 +75,12 @@ public class Main {
 		TFPCWriter tpcWriter = new TFPCWriter();
 		
 		if(input.rule.contains("DataflowAnomalyAnalysis")) {
-			fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC, "FPC");
-			tpcWriter.writeContextsForDFA(compareCurrentAndPast.TPC, "TPC");
+			fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC, input.projectName + "FPC");
+			tpcWriter.writeContextsForDFA(compareCurrentAndPast.TPC, input.projectName + "TPC");
 			
 		} else {
-			fpcWriter.writeContexts(compareCurrentAndPast.FPC, "FPC");
-			tpcWriter.writeContexts(compareCurrentAndPast.TPC, "TPC");
+			fpcWriter.writeContexts(compareCurrentAndPast.FPC, input.projectName + "FPC");
+			tpcWriter.writeContexts(compareCurrentAndPast.TPC, input.projectName + "TPC");
 		}
 		
 		System.out.println("Step 2 CLEAR");
@@ -175,16 +175,16 @@ public class Main {
 			GraphWriter graphWriter = new GraphWriter();
 
 			//cluster by total node num
-			graphWriter.writeGraph(fpcGraphComparator.clusterByTotalNumRank, "FPCTNNum", fpcGraphComparator.totalGraphSize);
-			graphWriter.writeGraph(tpcGraphComparator.clusterByTotalNumRank, "TPCTNNum", tpcGraphComparator.totalGraphSize);
+			graphWriter.writeGraph(fpcGraphComparator.clusterByTotalNumRank, input.projectName + "FPCTNNum", fpcGraphComparator.totalGraphSize);
+			graphWriter.writeGraph(tpcGraphComparator.clusterByTotalNumRank, input.projectName + "TPCTNNum", tpcGraphComparator.totalGraphSize);
 			
 			//cluster by violated node
-			graphWriter.writeGraphS(fpcGraphComparator.clusterByTotalNodeRank, "FPCNode", fpcGraphComparator.totalGraphSize);
-			graphWriter.writeGraphS(tpcGraphComparator.clusterByTotalNodeRank, "TPCNode", tpcGraphComparator.totalGraphSize);
+			graphWriter.writeGraphS(fpcGraphComparator.clusterByTotalNodeRank, input.projectName + "FPCNode", fpcGraphComparator.totalGraphSize);
+			graphWriter.writeGraphS(tpcGraphComparator.clusterByTotalNodeRank, input.projectName + "TPCNode", tpcGraphComparator.totalGraphSize);
 			
 			//rank graph
-			graphWriter.writeRankGraphTotalNum(fpcGraphComparator, tpcGraphComparator);			
-			graphWriter.writeRankGraph(fpcGraphComparator, tpcGraphComparator);	
+			graphWriter.writeRankGraphTotalNum(fpcGraphComparator, tpcGraphComparator, input.projectName);			
+			graphWriter.writeRankGraph(fpcGraphComparator, tpcGraphComparator, input.projectName);	
 			System.out.println("Step 6 Clear");
 			
 //			PatternVector patternVector = new PatternVector();
