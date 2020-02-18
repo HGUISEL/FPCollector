@@ -257,3 +257,4 @@ public class Main {
 //			getScore.run(truePositivePattern, falsePositivePattern, buggyPattern);
 		}
 }
+

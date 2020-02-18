@@ -1,7 +1,6 @@
 # Ignore personal information
 *.csv
 *.txt
-git/
 
 ### Gradle ###
 .gradle
