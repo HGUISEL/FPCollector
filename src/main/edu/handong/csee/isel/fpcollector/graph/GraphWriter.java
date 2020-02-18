@@ -98,13 +98,14 @@ public class GraphWriter {
 			String TPC = "";
 			String FPC = "";
 			String None = "None";
-					
+			NodeInterpreter interpreter = new NodeInterpreter();
 			for (Entry<String, ArrayList<GraphInfo>> fpcGraph : fpcGraphs) {
 				boolean existTPC = false;
 				for (Entry<String, ArrayList<GraphInfo>> tpcGraph : tpcGraphs) {
 					if (tpcGraph.getKey().equals(fpcGraph.getKey())) {
 						existTPC = true;
-						TPCFPC += "Number of Size "+ fpcGraph.getKey() 
+						
+						TPCFPC += "Pattern : "+ interpreter.interpret(fpcGraph.getKey()) 
 										+ " : (fpc: " + fpcGraph.getValue().size() 
 										+ " / " + (double)fpcGraph.getValue().size()/fpcTotalSize*100 
 										+ ") (tpc: " + tpcGraph.getValue().size() 
@@ -114,13 +115,13 @@ public class GraphWriter {
 					}
 				}
 				if (!existTPC) 
-					FPC += "Number of Size "+ fpcGraph.getKey() 
+					FPC += "Pattern : "+ interpreter.interpret(fpcGraph.getKey()) 
 								+ " : (fpc: " + fpcGraph.getValue().size() 
 								+ " / " + (double)fpcGraph.getValue().size()/fpcTotalSize*100 + ")\n";
 			}
 			
 			for (Entry<String, ArrayList<GraphInfo>> tpcGraph : tpcGraphs) {
-				TPC += "Number of Size "+ tpcGraph.getKey() 
+				TPC += "Pattern : "+ interpreter.interpret(tpcGraph.getKey()) 
 							+ " : (tpc: " + tpcGraph.getValue().size() 
 							+ " / " + (double)tpcGraph.getValue().size()/tpcTotalSize*100 + ")\n";
 			}
@@ -226,20 +227,19 @@ public class GraphWriter {
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
 									.withHeader("Path", "Method", "Graph", "Graph Information"));
 			) {
+			NodeInterpreter interpreter = new NodeInterpreter();
 			String totalInfo = "";
 			for(String totalNodeNum : g.keySet()) {
-				totalInfo += "Number of Size "+ totalNodeNum + " : " + g.get(totalNodeNum).size() + "\n";				
+				totalInfo += "Pattern : "+ interpreter.interpret(totalNodeNum) + " : " + g.get(totalNodeNum).size() + "\n";				
 			}
 			csvPrinter.printRecord("Total", "Graph", "Information : ", totalInfo);
 			for(String totalNodeNum : g.keySet()) {
-//				if(totalNodeNum == 0 || totalNodeNum == 1) continue;
-				NodeInterpreter nodeInterpreter = new NodeInterpreter();
-				
+//				if(totalNodeNum == 0 || totalNodeNum == 1) continue;				
 				for(GraphInfo tempGraph : g.get(totalNodeNum)) {
 					String path = tempGraph.root.info.path;
 					String method = tempGraph.root.node.toString();
 					String graph = tempGraph.root.writeInfo();
-					String graphInfo = totalNodeNum + ": " + /*NodeInterpreter.interpret(totalNodeNum)*/ "\n" + tempGraph.getNumberInfo();
+					String graphInfo = totalNodeNum + ": " + interpreter.interpret(totalNodeNum) + "\n" + tempGraph.getNumberInfo();
 		
 					csvPrinter.printRecord(path, method, graph, graphInfo);
 				}

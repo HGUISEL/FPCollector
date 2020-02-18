@@ -25,8 +25,8 @@ public class NodeInterpreter {
 	public String interpret(String graphString) {
 		String pattern = "";
 		pattern = getLevel(graphString);
-		pattern += " "+getState(graphString);
-		pattern += getASTNodeType(graphString);
+		pattern += " " + getState(graphString);
+		pattern += " " + getASTNodeType(graphString);
 		
 		return pattern;
 	}
