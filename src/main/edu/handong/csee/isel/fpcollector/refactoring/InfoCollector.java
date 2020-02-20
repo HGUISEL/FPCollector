@@ -22,17 +22,23 @@ public class InfoCollector {
 		
 		br.readLine();
 		String line = "";
+		int count = 0;
+		
         while ((line = br.readLine()) != null) {
-        	        
+        	       
         	if (line.startsWith("/")) {
         		String[] tokenList = line.split(",", -1);            	        		
-        		
+        		count ++;
         		Info info = new Info();
             	info.path = tokenList[0];
             	info.source = getSource(tokenList[0]);
             	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(info.source)));
             	info.start = Integer.parseInt(getScope(tokenList[1], 0, info.sourceByLine));
             	info.end = Integer.parseInt(getScope(tokenList[1], 1, info.sourceByLine));
+            	if(count < 3900)
+            	System.out.println(count);
+            	if(count >= 3915) 
+             		System.out.println(count);
             	info.varNames.add(getVarName(tokenList[3]));
             	if(info.varNames.get(0) == null) {
             		info.varNames.remove(0);

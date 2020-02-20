@@ -54,7 +54,7 @@ public class Main {
 		RunTool runPmdOnPast = new RunTool();
 		runPmdOnPast.getReport(CHECKOUT, input.toolCommand, gitCheckout.checkoutPath, input.rule, input.projectName);
 			
-		System.out.println("Step 1 CLEAR");
+		System.out.println("\nStep 1(Clone&Checkout) CLEAR\n");
 			
 //2. Collecting False Positive Candidates
 			
@@ -83,7 +83,7 @@ public class Main {
 			tpcWriter.writeContexts(compareCurrentAndPast.TPC, input.projectName + "TPC");
 		}
 		
-		System.out.println("Step 2 CLEAR");
+		System.out.println("\nStep 2(Extract FPC/TPC) CLEAR\n");
 			
 		// 3. Get Pattern of the FPC
 			// 1. read input
