@@ -99,8 +99,90 @@ public class Main {
 		return strs;
 	}
 	
-	public static void main(String[] args) {
+	private static ArrayList<ArrayList<ControlNode>> drawGraph(String fpcCandidateFileName, String tpcCandidateFileName) {
+		ArrayList<ArrayList<ControlNode>> args = new ArrayList<ArrayList<ControlNode>>();
+		
+		// 1. read input
+		ArrayList<Info> fpcInfos = new ArrayList<>();
+		ArrayList<Info> tpcInfos = new ArrayList<>();
+		InfoCollector fpcCollector = new InfoCollector();
+		InfoCollector tpcCollector = new InfoCollector();
+		
+		try {
+			fpcInfos = fpcCollector.run(fpcCandidateFileName);
+			fpcCollector = null;
 			
+			tpcInfos = tpcCollector.run(tpcCandidateFileName);
+			tpcCollector = null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("fpInfo: " + fpcInfos.size());
+		System.out.println("tpInfo: " + tpcInfos.size());
+		
+//		int count = 0;
+		ArrayList<ControlNode> fpcGraphs = new ArrayList<>();
+		ArrayList<ControlNode> tpcGraphs = new ArrayList<>();
+		
+		// 2. build Graph
+		for(Info info : fpcInfos) {
+//			count++;
+//			if (count % 10 == 0) System.out.println(count);
+			GraphBuilder graph = new GraphBuilder();
+				graph.run(info);
+				fpcGraphs.add(graph.root);
+		}
+		args.add(fpcGraphs);
+		fpcInfos = null;
+		fpcGraphs = null;
+
+		for(Info info : tpcInfos) {
+			GraphBuilder graph = new GraphBuilder();
+				graph.run(info);
+				tpcGraphs.add(graph.root);
+		}
+		args.add(tpcGraphs);
+		tpcInfos = null;
+		tpcGraphs = null;
+		
+		System.out.println("Step 3 CLEAR");
+		
+		return args;
+	}
+	
+	private static ArrayList<ArrayList<GraphInfo>> getGraphInfo(ArrayList<ControlNode> fpcGraphs, ArrayList<ControlNode> tpcGraphs) {
+		ArrayList<ArrayList<GraphInfo>> graphInfos = new ArrayList<ArrayList<GraphInfo>>();
+		ArrayList<GraphInfo> fpcGraphInfos = new ArrayList<>();
+		ArrayList<GraphInfo> tpcGraphInfos = new ArrayList<>();
+			
+			for(ControlNode g : fpcGraphs) {
+				g.printInfo();
+				GraphInfo tempGraphInfo = new GraphInfo(g);
+				GraphInfoGetter tempGetter = new GraphInfoGetter();
+				tempGetter.getNodeNum(tempGraphInfo);
+				fpcGraphInfos.add(tempGraphInfo);
+			}
+			graphInfos.add(fpcGraphInfos);
+			fpcGraphInfos = null;
+			
+			for(ControlNode g : tpcGraphs) {	
+				g.printInfo();
+				GraphInfo tempGraphInfo = new GraphInfo(g);
+				GraphInfoGetter tempGetter = new GraphInfoGetter();
+				tempGetter.getNodeNum(tempGraphInfo);
+				tpcGraphInfos.add(tempGraphInfo);				
+			}
+			graphInfos.add(tpcGraphInfos);
+			tpcGraphInfos = null;
+			
+			System.out.println("Step 4 Clear");
+			
+			return graphInfos;
+	}
+	
+	public static void main(String[] args) {
+
 		// 1. Preparing for Collecting False Positive Candidates
 		String[] strs = getPMDReport(args);
 		
@@ -117,90 +199,27 @@ public class Main {
 		String fpcCandidateFileName = strs[0];
 		String tpcCandidateFileName = strs[1];
 		
-		System.out.println("fpcCandidateFile: " + fpcCandidateFileName);
-		System.out.println("tpcCandidateFile: " + fpcCandidateFileName);
-		
 		// 3. Get Pattern of the FPC
-			// 1. read input
-			ArrayList<Info> fpcInfos = new ArrayList<>();
-			ArrayList<Info> tpcInfos = new ArrayList<>();
-			InfoCollector fpcCollector = new InfoCollector();
-			InfoCollector tpcCollector = new InfoCollector();
+		ArrayList<ArrayList<ControlNode>> graphs = new ArrayList<ArrayList<ControlNode>>();
+		ArrayList<ControlNode> fpcGraphs = new ArrayList<>();
+		ArrayList<ControlNode> tpcGraphs = new ArrayList<>();
+		
+		graphs = drawGraph(fpcCandidateFileName, tpcCandidateFileName);
+		fpcGraphs = graphs.get(0);
+		tpcGraphs = graphs.get(1);
+		graphs = null;
 			
-			try {
-				fpcInfos = fpcCollector.run(fpcCandidateFileName);
-				tpcInfos = tpcCollector.run(tpcCandidateFileName);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			System.out.println("fpInfo: " + fpcInfos.size());
-			System.out.println("tpInfo: " + tpcInfos.size());
-			
-			int counta = 0;
-			ArrayList<ControlNode> fpcGraphs = new ArrayList<>();
-			ArrayList<ControlNode> tpcGraphs = new ArrayList<>();
-			
-			// 2. build Graph
-			for(Info info : fpcInfos) {
-//				GraphDrawer gDrawer = new GraphDrawer();
-				counta++;
-				if (counta % 10 == 0) System.out.println(counta);
-				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 272) {
-					graph.run(info);
-					fpcGraphs.add(graph.root);
-//				}
-				
-//				gDrawer.run(graph.root, counta);
-//				if (counta == 272) break;
-			}
-
-			for(Info info : tpcInfos) {
-				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 272) {
-					graph.run(info);
-					tpcGraphs.add(graph.root);
-//				}
-			}
-			
-			System.out.println("Step 3 CLEAR");
-			
-			// remove instances
-			fpcInfos = null;
-			tpcInfos = null;
-			fpcCollector = null;
-			tpcCollector = null;
-			
-//			GraphWriter graphWriter = new GraphWriter();
-//			graphWriter.writeGraph(graphs);
-			
-			//Step 4. Get Graph Information
-			ArrayList<GraphInfo> fpcGraphInfos = new ArrayList<>();
-			ArrayList<GraphInfo> tpcGraphInfos = new ArrayList<>();
-			
-			int count = 0;
-			for(ControlNode g : fpcGraphs) {
-				g.printInfo();
-				GraphInfo tempGraphInfo = new GraphInfo(g);
-				GraphInfoGetter tempGetter = new GraphInfoGetter();
-				tempGetter.getNodeNum(tempGraphInfo);
-				fpcGraphInfos.add(tempGraphInfo);
-			}
-			
-			for(ControlNode g : tpcGraphs) {	
-				g.printInfo();
-				GraphInfo tempGraphInfo = new GraphInfo(g);
-				GraphInfoGetter tempGetter = new GraphInfoGetter();
-				tempGetter.getNodeNum(tempGraphInfo);
-				tpcGraphInfos.add(tempGraphInfo);				
-			}
-			
-			System.out.println("Step 4 Clear");
-			
-			// remove instances
-			fpcGraphs = null;
-			tpcGraphs = null;
+		//Step 4. Get Graph Information
+		ArrayList<ArrayList<GraphInfo>> graphInfos = new ArrayList<ArrayList<GraphInfo>>(); 
+		ArrayList<GraphInfo> fpcGraphInfos = new ArrayList<>();
+		ArrayList<GraphInfo> tpcGraphInfos = new ArrayList<>();
+		
+		graphInfos = getGraphInfo(fpcGraphs, tpcGraphs);
+		fpcGraphInfos = graphInfos.get(0);
+		tpcGraphInfos = graphInfos.get(1);
+		graphInfos = null;
+		fpcGraphs = null;
+		tpcGraphs = null;
 			
 			//Step 5. Graph Comparison
 			GraphComparator fpcGraphComparator = new GraphComparator();
