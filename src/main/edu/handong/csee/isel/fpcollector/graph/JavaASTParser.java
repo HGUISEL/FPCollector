@@ -140,6 +140,8 @@ public class JavaASTParser {
 	ArrayList<ASTNode> lstViolatedField = new ArrayList<>();
 	ArrayList<ASTNode> lstLevelNode = new ArrayList<ASTNode>();
 	ArrayList<Boolean> lstUseVar = new ArrayList<Boolean>();
+	ArrayList<ASTNode> lstViolatedVariablesNode = new ArrayList<>();
+	ArrayList<ASTNode> lstViolatedFieldNode = new ArrayList<>();
 	
 	PackageDeclaration pkgDeclaration;
 
@@ -197,7 +199,7 @@ public class JavaASTParser {
 //						System.out.println("level : " + level);					
 //						checkScope(node);
 						if(methodStart == 0 && methodEnd == 0) {
-							if(info.varNodes.size() > 0) {
+							if(info.varNames.size() > 0) {
 								if(violatedNodeisIn(node, info.varNodes.get(0))){
 									methodStart = node.getStartPosition();
 									methodEnd = node.getStartPosition() + node.getLength();
@@ -206,7 +208,7 @@ public class JavaASTParser {
 									root.nexts.add(n);
 									root = n;
 								}
-							} else if(info.fieldNodes.size() > 0) {
+							} else if(info.fieldNames.size() > 0) {
 								if(violatedNodeisIn(node, info.fieldNodes.get(0))){
 									methodStart = node.getStartPosition();
 									methodEnd = node.getStartPosition() + node.getLength();
@@ -215,7 +217,7 @@ public class JavaASTParser {
 									root.nexts.add(n);
 									root = n;
 								}
-							} else if (info.fieldNodes.size() > 0 && info.varNodes.size() > 0) {
+							} else if (info.fieldNames.size() > 0 && info.varNames.size() > 0) {
 								if(violatedNodeisIn(node, info.fieldNodes.get(0)) && violatedNodeisIn(node, info.varNodes.get(0))) {
 									methodStart = node.getStartPosition();
 									methodEnd = node.getStartPosition() + node.getLength();
@@ -1114,14 +1116,19 @@ public class JavaASTParser {
 						ASTNode parent = node.getParent();
 						Integer lineNum = getLineNum(node.getStartPosition());
 //						if(lineNum == 370)
-//							System.out.println(lineNum);
-						
+//							System.out.println(lineNum);						
 						if((parent instanceof VariableDeclarationFragment || parent instanceof SingleVariableDeclaration) 
 								&& !(parent.getParent() instanceof FieldDeclaration)) {
 							lstVariableDeclaration.add(node.getIdentifier());
 							
 							for(String temp : lstFieldMemberDeclaration)
 								lstVariableDeclaration.remove(temp);
+						}
+						
+						if(info.varNames.size() > 0) {
+							if(node.getIdentifier().equals(info.varNames.get(0)) && getLineNum(node.getStartPosition()) == info.start) {
+								lstViolatedVariablesNode.add(node);
+							}
 						}
 						
 						if(lineNum >= info.start && lineNum <= info.end && lstVariableDeclaration.contains(node.getIdentifier())) {
@@ -1159,11 +1166,18 @@ public class JavaASTParser {
 		
 		lstViolatedVariables.removeAll(lstViolatedField);
 		
-		//type 1 for field
-		if(type == 1)
+//		static final int VAR = 0;
+//		static final int FIELD = 1;
+//		static final int VARNODE = 2;
+//		static final int FIELDNODE = 3;
+		if(type == 0)
+			return lstViolatedVariables;
+		else if(type == 1)
 			return lstViolatedField;
-		
-		return lstViolatedVariables;
+		else if(type == 2)
+			return lstViolatedVariablesNode;
+		else 
+			return lstViolatedFieldNode;
 	}
 
 	private boolean violatedNodeisIn(ASTNode node, ASTNode targetNode) {

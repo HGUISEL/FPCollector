@@ -1,1 +1,1 @@
-https://github.com/apache/netbeans.git
+https://github.com/apache/isis.git

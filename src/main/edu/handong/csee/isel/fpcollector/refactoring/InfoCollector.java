@@ -14,6 +14,9 @@ import edu.handong.csee.isel.fpcollector.graph.JavaASTParser;
 public class InfoCollector {
 	static final int VAR = 0;
 	static final int FIELD = 1;
+	static final int VARNODE = 2;
+	static final int FIELDNODE = 3;
+	
 	ArrayList<Info> outputInfo = new ArrayList<>();
 	
 	public ArrayList<Info> run(String result_path) throws IOException {
@@ -35,16 +38,19 @@ public class InfoCollector {
             	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(info.source)));
             	info.start = Integer.parseInt(getScope(tokenList[1], 0, info.sourceByLine));
             	info.end = Integer.parseInt(getScope(tokenList[1], 1, info.sourceByLine));
-            	if(count < 3900)
-            	System.out.println(count);
-            	if(count >= 3915) 
-             		System.out.println(count);
+//            	if(count < 3900)
+//            	System.out.println(count);
+//            	if(count >= 3915) 
+//             		System.out.println(count);
             	info.varNames.add(getVarName(tokenList[3]));
             	if(info.varNames.get(0) == null) {
             		info.varNames.remove(0);
             		info.varNodes.addAll(getVarList(info));
                 	info.fieldNodes.addAll(getFieldList(info));
                 	info.nodesToStrings();
+            	} else {
+            		info.varNodes.addAll(getVarNode(info));
+            		info.fieldNodes.addAll(getFieldNode(info));
             	}
             	
             	outputInfo.add(info);                       
@@ -52,6 +58,16 @@ public class InfoCollector {
         }
         br.close();
 		return outputInfo;
+	}
+	
+	private ArrayList<ASTNode> getVarNode(Info info){
+		JavaASTParser tempParser = new JavaASTParser(info);
+		return tempParser.getViolatedVariableList(info.source, VARNODE);
+	}
+	
+	private ArrayList<ASTNode> getFieldNode(Info info){		
+		JavaASTParser tempParser = new JavaASTParser(info);
+		return tempParser.getViolatedVariableList(info.source, FIELDNODE);		
 	}
 	
 	private String getSource(String file_path) throws IOException {
