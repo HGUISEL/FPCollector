@@ -27,10 +27,9 @@ public class Main {
 	final static int CLONE = 2;
 	final static int CHECKOUT = 3;
 	
-	public static void main(String[] args) {
-			
-//1. Preparing for Collecting False Positive Candidates
-			
+	private static String[] getPMDReport(String[] args) {
+		String[] strs = new String[4];
+				
 		//1. read input file
 		Input input = new Input();
 		if(input.getInput(args) == FAILED) {
@@ -55,36 +54,72 @@ public class Main {
 		runPmdOnPast.getReport(CHECKOUT, input.toolCommand, gitCheckout.checkoutPath, input.rule, input.projectName);
 			
 		System.out.println("Step 1 CLEAR");
-			
-//2. Collecting False Positive Candidates
-			
+		
+		strs[0] = input.projectName;
+		strs[1] = input.rule;
+		strs[2] = runPmdOnCurrent.reportPath;
+		strs[3] = runPmdOnPast.reportPath;
+		
+		return strs;
+	}
+	
+	private static String[] collectFPC(String currentReportPath, String pastReportPath, String projectName, String ruleName) {
+		String[] strs = new String[2];
+		
 		//1. read report of present project
 		//2. read report of past project
 		ReportReader currentReport = new ReportReader();
 		ReportReader pastReport = new ReportReader();
 			
-		currentReport.readReport(runPmdOnCurrent.reportPath);
-		pastReport.readReport(runPmdOnPast.reportPath);
+		currentReport.readReport(currentReportPath);
+		pastReport.readReport(pastReportPath);
 			
 		//3. compare is there anything same
 		ReportComparator compareCurrentAndPast = new ReportComparator();
-		compareCurrentAndPast.run(currentReport, pastReport, input.projectName);
+		compareCurrentAndPast.run(currentReport, pastReport, projectName);
 		
 		//4. write file which contains FPC
 		TFPCWriter fpcWriter = new TFPCWriter();
 		TFPCWriter tpcWriter = new TFPCWriter();
 		
-		if(input.rule.contains("DataflowAnomalyAnalysis")) {
-			fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC, input.projectName + "FPC");
-			tpcWriter.writeContextsForDFA(compareCurrentAndPast.TPC, input.projectName + "TPC");
+		if(ruleName.contains("DataflowAnomalyAnalysis")) {
+			fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC, projectName + "FPC");
+			tpcWriter.writeContextsForDFA(compareCurrentAndPast.TPC, projectName + "TPC");
 			
 		} else {
-			fpcWriter.writeContexts(compareCurrentAndPast.FPC, input.projectName + "FPC");
-			tpcWriter.writeContexts(compareCurrentAndPast.TPC, input.projectName + "TPC");
+			fpcWriter.writeContexts(compareCurrentAndPast.FPC, projectName + "FPC");
+			tpcWriter.writeContexts(compareCurrentAndPast.TPC, projectName + "TPC");
 		}
 		
 		System.out.println("Step 2 CLEAR");
+		
+		strs[0] = fpcWriter.fileName;
+		strs[1] = tpcWriter.fileName;
+		
+		return strs;
+	}
+	
+	public static void main(String[] args) {
 			
+		// 1. Preparing for Collecting False Positive Candidates
+		String[] strs = getPMDReport(args);
+		
+		// remove instances
+		String projectName = strs[0];
+		String ruleName = strs[1];
+		String currentReportPath = strs[2];
+		String pastReportPath = strs[3];
+			
+		// 2. Collecting False Positive Candidates
+		strs = collectFPC(currentReportPath, pastReportPath, projectName, ruleName);
+		
+		// remove instances
+		String fpcCandidateFileName = strs[0];
+		String tpcCandidateFileName = strs[1];
+		
+		System.out.println("fpcCandidateFile: " + fpcCandidateFileName);
+		System.out.println("tpcCandidateFile: " + fpcCandidateFileName);
+		
 		// 3. Get Pattern of the FPC
 			// 1. read input
 			ArrayList<Info> fpcInfos = new ArrayList<>();
@@ -93,22 +128,24 @@ public class Main {
 			InfoCollector tpcCollector = new InfoCollector();
 			
 			try {
-				fpcInfos = fpcCollector.run(fpcWriter.fileName);
-				tpcInfos = tpcCollector.run(tpcWriter.fileName);
+				fpcInfos = fpcCollector.run(fpcCandidateFileName);
+				tpcInfos = tpcCollector.run(tpcCandidateFileName);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
 			System.out.println("fpInfo: " + fpcInfos.size());
 			System.out.println("tpInfo: " + tpcInfos.size());
-			int counta =0;
+			
+			int counta = 0;
 			ArrayList<ControlNode> fpcGraphs = new ArrayList<>();
 			ArrayList<ControlNode> tpcGraphs = new ArrayList<>();
+			
 			// 2. build Graph
 			for(Info info : fpcInfos) {
 //				GraphDrawer gDrawer = new GraphDrawer();
-//				counta++;
-//				System.out.println(FPCinfos.indexOf(info));
+				counta++;
+				if (counta % 10 == 0) System.out.println(counta);
 				GraphBuilder graph = new GraphBuilder();
 //				if(counta == 272) {
 					graph.run(info);
@@ -129,6 +166,12 @@ public class Main {
 			
 			System.out.println("Step 3 CLEAR");
 			
+			// remove instances
+			fpcInfos = null;
+			tpcInfos = null;
+			fpcCollector = null;
+			tpcCollector = null;
+			
 //			GraphWriter graphWriter = new GraphWriter();
 //			graphWriter.writeGraph(graphs);
 			
@@ -136,12 +179,13 @@ public class Main {
 			ArrayList<GraphInfo> fpcGraphInfos = new ArrayList<>();
 			ArrayList<GraphInfo> tpcGraphInfos = new ArrayList<>();
 			
-			for(ControlNode g : fpcGraphs) {	
+			int count = 0;
+			for(ControlNode g : fpcGraphs) {
 				g.printInfo();
 				GraphInfo tempGraphInfo = new GraphInfo(g);
 				GraphInfoGetter tempGetter = new GraphInfoGetter();
 				tempGetter.getNodeNum(tempGraphInfo);
-				fpcGraphInfos.add(tempGraphInfo);				
+				fpcGraphInfos.add(tempGraphInfo);
 			}
 			
 			for(ControlNode g : tpcGraphs) {	
@@ -153,6 +197,10 @@ public class Main {
 			}
 			
 			System.out.println("Step 4 Clear");
+			
+			// remove instances
+			fpcGraphs = null;
+			tpcGraphs = null;
 			
 			//Step 5. Graph Comparison
 			GraphComparator fpcGraphComparator = new GraphComparator();
@@ -175,16 +223,16 @@ public class Main {
 			GraphWriter graphWriter = new GraphWriter();
 
 			//cluster by total node num
-			graphWriter.writeGraph(fpcGraphComparator.clusterByTotalNumRank, input.projectName + "FPCTNNum", fpcGraphComparator.totalGraphSize);
-			graphWriter.writeGraph(tpcGraphComparator.clusterByTotalNumRank, input.projectName + "TPCTNNum", tpcGraphComparator.totalGraphSize);
+			graphWriter.writeGraph(fpcGraphComparator.clusterByTotalNumRank, projectName + "FPCTNNum", fpcGraphComparator.totalGraphSize);
+			graphWriter.writeGraph(tpcGraphComparator.clusterByTotalNumRank, projectName + "TPCTNNum", tpcGraphComparator.totalGraphSize);
 			
 			//cluster by violated node
-			graphWriter.writeGraphS(fpcGraphComparator.clusterByTotalNodeRank, input.projectName + "FPCNode", fpcGraphComparator.totalGraphSize);
-			graphWriter.writeGraphS(tpcGraphComparator.clusterByTotalNodeRank, input.projectName + "TPCNode", tpcGraphComparator.totalGraphSize);
+			graphWriter.writeGraphS(fpcGraphComparator.clusterByTotalNodeRank, projectName + "FPCNode", fpcGraphComparator.totalGraphSize);
+			graphWriter.writeGraphS(tpcGraphComparator.clusterByTotalNodeRank, projectName + "TPCNode", tpcGraphComparator.totalGraphSize);
 			
 			//rank graph
-			graphWriter.writeRankGraphTotalNum(fpcGraphComparator, tpcGraphComparator, input.projectName);			
-			graphWriter.writeRankGraph(fpcGraphComparator, tpcGraphComparator, input.projectName);	
+			graphWriter.writeRankGraphTotalNum(fpcGraphComparator, tpcGraphComparator, projectName);			
+			graphWriter.writeRankGraph(fpcGraphComparator, tpcGraphComparator, projectName);	
 			System.out.println("Step 6 Clear");
 			
 //			PatternVector patternVector = new PatternVector();

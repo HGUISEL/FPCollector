@@ -22,9 +22,12 @@ public class InfoCollector {
 		
 		br.readLine();
 		String line = "";
+		int c = 0;
         while ((line = br.readLine()) != null) {
-        	        
         	if (line.startsWith("/")) {
+        		c++;
+            	if (c % 10 == 0) System.out.println(c);
+            	
         		String[] tokenList = line.split(",", -1);            	        		
         		
         		Info info = new Info();
