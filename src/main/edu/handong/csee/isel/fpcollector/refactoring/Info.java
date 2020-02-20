@@ -18,7 +18,6 @@ public class Info {
 	public int startPosition;
 	public String path;
 	
-	
 	public void nodesToStrings() {
 		for(ASTNode node : varNodes) {
 			if(node instanceof SimpleName)

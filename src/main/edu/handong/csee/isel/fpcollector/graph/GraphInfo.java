@@ -8,6 +8,7 @@ public class GraphInfo {
 	public int dataNodeNum = 0;
 	public String graph2String = "";
 	public HashMap<Integer, Integer> nodeNum = new HashMap<>();
+	
 	public GraphInfo(ControlNode root) {
 		this.root = root;
 	}
