@@ -151,7 +151,7 @@ public class JavaASTParser {
 		ASTParser parser = ASTParser.newParser(AST.JLS12);
 
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		char[] content = info.source.toCharArray();
+		char[] content = String.join("\n", info.sourceByLine).toCharArray();
 		parser.setSource(content);
 		//parser.setUnitName("temp.java");
 		Map<String, String> options = JavaCore.getOptions();
@@ -1082,13 +1082,11 @@ public class JavaASTParser {
 
 	}
 	
-	public ArrayList<ASTNode> getViolatedVariableList(String source, int type) {		
-		info.source = source;
-		
+	public ArrayList<ASTNode> getViolatedVariableList(String source, int type) {
 		ASTParser parser = ASTParser.newParser(AST.JLS12);
 
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		char[] content = info.source.toCharArray();
+		char[] content = source.toCharArray();
 		parser.setSource(content);
 		//parser.setUnitName("temp.java");
 		Map<String, String> options = JavaCore.getOptions();
@@ -1361,7 +1359,7 @@ public class JavaASTParser {
 	}
 
 	public String getStringCode(){
-		return info.source;
+		return String.join("\n", info.sourceByLine);
 	}
 
 	public CompilationUnit getCompilationUnit(){

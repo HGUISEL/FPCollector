@@ -121,14 +121,14 @@ public class Main {
 		System.out.println("fpInfo: " + fpcInfos.size());
 		System.out.println("tpInfo: " + tpcInfos.size());
 		
-//		int count = 0;
+		int count = 0;
 		ArrayList<ControlNode> fpcGraphs = new ArrayList<>();
 		ArrayList<ControlNode> tpcGraphs = new ArrayList<>();
 		
 		// 2. build Graph
 		for(Info info : fpcInfos) {
-//			count++;
-//			if (count % 10 == 0) System.out.println(count);
+			count++;
+			if (count % 10 == 0) System.out.println(count);
 			GraphBuilder graph = new GraphBuilder();
 				graph.run(info);
 				fpcGraphs.add(graph.root);
@@ -181,6 +181,50 @@ public class Main {
 			return graphInfos;
 	}
 	
+	private static GraphComparator[] compareGraph(ArrayList<GraphInfo> fpcGraphInfos, ArrayList<GraphInfo> tpcGraphInfos) {
+		GraphComparator[] comparators = new GraphComparator[2];
+		GraphComparator fpcGraphComparator = new GraphComparator();
+		GraphComparator tpcGraphComparator = new GraphComparator();
+		
+		fpcGraphComparator.run(fpcGraphInfos);
+		comparators[0] = (fpcGraphComparator);
+		fpcGraphComparator = null;
+		
+		tpcGraphComparator.run(tpcGraphInfos);
+		comparators[1] = (tpcGraphComparator);
+		tpcGraphComparator = null;
+		
+		System.out.println("Step 5 Clear");
+		
+		return comparators;
+	}
+	
+	private static void clusterGraph(GraphComparator fpcGraphComparator, GraphComparator tpcGraphComparator, 
+			ArrayList<GraphInfo> fpcGraphInfos, ArrayList<GraphInfo> tpcGraphInfos, String projectName) {
+		//transform each graph to one string and clustering graphs with there properties
+		NodeResolver nodeResolver = new NodeResolver();
+		nodeResolver.transformNode(fpcGraphComparator.clusterByTotalNum);
+		nodeResolver.transformNode(tpcGraphComparator.clusterByTotalNum);
+		
+		fpcGraphComparator.cluster(fpcGraphInfos);
+		tpcGraphComparator.cluster(tpcGraphInfos);
+		
+		GraphWriter graphWriter = new GraphWriter();
+
+		//cluster by total node num
+		graphWriter.writeGraph(fpcGraphComparator.clusterByTotalNumRank, projectName + "FPCTNNum", fpcGraphComparator.totalGraphSize);
+		graphWriter.writeGraph(tpcGraphComparator.clusterByTotalNumRank, projectName + "TPCTNNum", tpcGraphComparator.totalGraphSize);
+		
+		//cluster by violated node
+		graphWriter.writeGraphS(fpcGraphComparator.clusterByTotalNodeRank, projectName + "FPCNode", fpcGraphComparator.totalGraphSize);
+		graphWriter.writeGraphS(tpcGraphComparator.clusterByTotalNodeRank, projectName + "TPCNode", tpcGraphComparator.totalGraphSize);
+		
+		//rank graph
+		graphWriter.writeRankGraphTotalNum(fpcGraphComparator, tpcGraphComparator, projectName);			
+		graphWriter.writeRankGraph(fpcGraphComparator, tpcGraphComparator, projectName);	
+		System.out.println("Step 6 Clear");
+	}
+	
 	public static void main(String[] args) {
 
 		// 1. Preparing for Collecting False Positive Candidates
@@ -221,38 +265,18 @@ public class Main {
 		fpcGraphs = null;
 		tpcGraphs = null;
 			
-			//Step 5. Graph Comparison
-			GraphComparator fpcGraphComparator = new GraphComparator();
-			GraphComparator tpcGraphComparator = new GraphComparator();
+		//Step 5. Graph Comparison
+		GraphComparator[] comparators = new GraphComparator[2];
+		GraphComparator fpcGraphComparator = new GraphComparator();
+		GraphComparator tpcGraphComparator = new GraphComparator();
+		
+		comparators = compareGraph(fpcGraphInfos, tpcGraphInfos);
+		fpcGraphComparator = comparators[0];
+		tpcGraphComparator = comparators[1];
+		comparators = null;
 			
-			fpcGraphComparator.run(fpcGraphInfos);
-			tpcGraphComparator.run(tpcGraphInfos);
-			
-			System.out.println("Step 5 Clear");
-			
-			//Step 6.
-			//transform each graph to one string and clustering graphs with there properties
-			NodeResolver nodeResolver = new NodeResolver();
-			nodeResolver.transformNode(fpcGraphComparator.clusterByTotalNum);
-			nodeResolver.transformNode(tpcGraphComparator.clusterByTotalNum);
-			
-			fpcGraphComparator.cluster(fpcGraphInfos);
-			tpcGraphComparator.cluster(tpcGraphInfos);
-			
-			GraphWriter graphWriter = new GraphWriter();
-
-			//cluster by total node num
-			graphWriter.writeGraph(fpcGraphComparator.clusterByTotalNumRank, projectName + "FPCTNNum", fpcGraphComparator.totalGraphSize);
-			graphWriter.writeGraph(tpcGraphComparator.clusterByTotalNumRank, projectName + "TPCTNNum", tpcGraphComparator.totalGraphSize);
-			
-			//cluster by violated node
-			graphWriter.writeGraphS(fpcGraphComparator.clusterByTotalNodeRank, projectName + "FPCNode", fpcGraphComparator.totalGraphSize);
-			graphWriter.writeGraphS(tpcGraphComparator.clusterByTotalNodeRank, projectName + "TPCNode", tpcGraphComparator.totalGraphSize);
-			
-			//rank graph
-			graphWriter.writeRankGraphTotalNum(fpcGraphComparator, tpcGraphComparator, projectName);			
-			graphWriter.writeRankGraph(fpcGraphComparator, tpcGraphComparator, projectName);	
-			System.out.println("Step 6 Clear");
+		//Step 6.
+		clusterGraph(fpcGraphComparator, tpcGraphComparator, fpcGraphInfos, tpcGraphInfos, projectName);
 			
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST

@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.ThisExpression;
 
 public class Info {
-	public String source;
+//	public String source;
 	public ArrayList<String> sourceByLine;
 	public ArrayList<String> varNames = new ArrayList<>();
 	public ArrayList<String> fieldNames = new ArrayList<>();
@@ -34,7 +34,7 @@ public class Info {
 	}
 	
 	public void printInfo() {
-		System.out.println("source: " + this.source);
+		System.out.println("source: " + String.join("\n", this.sourceByLine));
 		if (this.varNames.size() >= 1)
 			System.out.println("varName0: " + this.varNames.get(0));
 		System.out.println("start: " + this.start);

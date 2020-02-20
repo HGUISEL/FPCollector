@@ -32,8 +32,7 @@ public class InfoCollector {
         		
         		Info info = new Info();
             	info.path = tokenList[0];
-            	info.source = getSource(tokenList[0]);
-            	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(info.source)));
+            	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(getSource(tokenList[0]))));
             	info.start = Integer.parseInt(getScope(tokenList[1], 0, info.sourceByLine));
             	info.end = Integer.parseInt(getScope(tokenList[1], 1, info.sourceByLine));
             	info.varNames.add(getVarName(tokenList[3]));
@@ -114,12 +113,12 @@ public class InfoCollector {
 	
 	private ArrayList<ASTNode> getVarList(Info info){
 		JavaASTParser tempParser = new JavaASTParser(info);
-		return tempParser.getViolatedVariableList(info.source, VAR);
+		return tempParser.getViolatedVariableList(String.join("\n", info.sourceByLine), VAR);
 	}
 	
 	private ArrayList<ASTNode> getFieldList(Info info){
 		JavaASTParser tempParser = new JavaASTParser(info);
-		return tempParser.getViolatedVariableList(info.source, FIELD);
+		return tempParser.getViolatedVariableList(String.join("\n", info.sourceByLine), FIELD);
 	}
 }
 
