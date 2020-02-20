@@ -198,7 +198,7 @@ public class Main {
 		GraphComparator tpcGraphComparator = new GraphComparator();
 		
 		fpcGraphComparator = compareGraph(fpcGraphInfos);
-		tpcGraphComparator = compareGraph(fpcGraphInfos);
+		tpcGraphComparator = compareGraph(tpcGraphInfos);
 		System.out.println("Step 5 Clear");
 			
 		//Step 6.

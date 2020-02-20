@@ -32,7 +32,7 @@ public class GraphWriter {
 //				Integer i = g.getKey();
 //				if(totalNodeNum == 0 || totalNodeNum == 1) continue;
 				for (GraphInfo tempGraph : g.getValue()) {
-					String path = tempGraph.root.info.path;
+					String path = tempGraph.root.path;
 					String method = tempGraph.root.node.toString();
 					String graph = tempGraph.root.writeInfo();
 					String graphInfo = tempGraph.getNumberInfo();
@@ -65,7 +65,7 @@ public class GraphWriter {
 //				Integer i = g.getKey();
 //				if(totalNodeNum == 0 || totalNodeNum == 1) continue;
 				for (GraphInfo tempGraph : g.getValue()) {
-					String path = tempGraph.root.info.path;
+					String path = tempGraph.root.path;
 					String method = tempGraph.root.node.toString();
 					String graph = tempGraph.root.writeInfo();
 					String graphInfo = tempGraph.getNumberInfo();
@@ -204,7 +204,7 @@ public class GraphWriter {
 			for(Integer totalNodeNum : g.keySet()) {
 //				if(totalNodeNum == 0 || totalNodeNum == 1) continue;
 				for(GraphInfo tempGraph : g.get(totalNodeNum)) {
-					String path = tempGraph.root.info.path;
+					String path = tempGraph.root.path;
 					String method = tempGraph.root.node.toString();
 					String graph = tempGraph.root.writeInfo();
 					String graphInfo = tempGraph.getNumberInfo();
@@ -236,7 +236,7 @@ public class GraphWriter {
 			for(String totalNodeNum : g.keySet()) {
 //				if(totalNodeNum == 0 || totalNodeNum == 1) continue;				
 				for(GraphInfo tempGraph : g.get(totalNodeNum)) {
-					String path = tempGraph.root.info.path;
+					String path = tempGraph.root.path;
 					String method = tempGraph.root.node.toString();
 					String graph = tempGraph.root.writeInfo();
 					String graphInfo = totalNodeNum + ": " + interpreter.interpret(totalNodeNum) + "\n" + tempGraph.getNumberInfo();
@@ -262,7 +262,7 @@ public class GraphWriter {
 			String totalInfo = "";			
 			csvPrinter.printRecord("Total", "Graph", "Information : ", totalInfo);
 			for(ControlNode tempGraph : g) {							
-					String path = tempGraph.info.path;
+					String path = tempGraph.path;
 					String method = tempGraph.node.toString();
 					String graph = tempGraph.writeInfo();					
 					

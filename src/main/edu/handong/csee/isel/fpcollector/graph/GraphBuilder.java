@@ -1,6 +1,5 @@
 package edu.handong.csee.isel.fpcollector.graph;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -118,22 +117,6 @@ public class GraphBuilder {
 	int blockEnd = 0;			
 	int level = 0;
 	
-	ArrayList<ImportDeclaration> lstImportDeclaration = new ArrayList<ImportDeclaration>();
-	ArrayList<MethodDeclaration> lstMethodDeclaration = new ArrayList<MethodDeclaration>();
-	ArrayList<MethodInvocation> lstMethodInvocation = new ArrayList<MethodInvocation>();
-	ArrayList<FieldDeclaration> lstFieldDeclaration = new ArrayList<FieldDeclaration>();
-	ArrayList<FieldAccess> lstFieldAccess = new ArrayList<FieldAccess>();
-	ArrayList<IfStatement> lstIfStatement = new ArrayList<IfStatement>();
-	ArrayList<ForStatement> lstForStatement = new ArrayList<ForStatement>();
-	ArrayList<WhileStatement> lstWhileStatement = new ArrayList<WhileStatement>();
-	ArrayList<VariableDeclarationFragment> lstVariableDeclarationFragment = new ArrayList<VariableDeclarationFragment>();
-	ArrayList<ClassInstanceCreation> lstClassInstanceCreation = new ArrayList<ClassInstanceCreation>();
-	ArrayList<SingleVariableDeclaration> lstSingleVariableDeclaration = new ArrayList<SingleVariableDeclaration>();
-	ArrayList<SimpleName> lstSimpleName = new ArrayList<SimpleName>();
-	ArrayList<TypeDeclaration> lstTypeDeclaration = new ArrayList<TypeDeclaration>();
-	ArrayList<InfixExpression> lstInfixExpression = new ArrayList<InfixExpression>();
-	ArrayList<ConditionalExpression> lstConditionalExpression = new ArrayList<ConditionalExpression>();
-	
 	ArrayList<ASTNode> lstViolatedVariables = new ArrayList<>();
 	ArrayList<String> lstVariableDeclaration = new ArrayList<>();
 	ArrayList<String> lstFieldMemberDeclaration = new ArrayList<>();
@@ -193,7 +176,6 @@ public class GraphBuilder {
 					}
 					
 					public boolean visit(MethodDeclaration node) {											
-						lstMethodDeclaration.add(node);
 //						System.out.println("level : " + level);					
 //						checkScope(node);
 						if(methodStart == 0 && methodEnd == 0) {
@@ -269,8 +251,6 @@ public class GraphBuilder {
 					
 					public boolean visit(SimpleName node) {
 						//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-						
-						lstSimpleName.add(node);
 						
 						if (isNodeInMethodOrBlock(node)) {
 							if (info.varNames.contains(node.getIdentifier())){
@@ -410,8 +390,6 @@ public class GraphBuilder {
 					}
 
 					public boolean visit(IfStatement node) {
-						lstIfStatement.add(node);										
-						
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							ControlNode n = new ControlNode(node, ControlState.M, level, info);							
@@ -450,8 +428,6 @@ public class GraphBuilder {
 					}
 					
 					public boolean visit(ConditionalExpression node) {
-						lstConditionalExpression.add(node);										
-						
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -475,8 +451,6 @@ public class GraphBuilder {
 					}																																																																	
 					
 					public boolean visit(ForStatement node) {
-						lstForStatement.add(node);
-						
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -500,8 +474,6 @@ public class GraphBuilder {
 					}
 					
 					public boolean visit(WhileStatement node) {
-						lstWhileStatement.add(node);
-						
 						if (isNodeInMethodOrBlock(node)) {
 							level ++;
 							//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
@@ -670,42 +642,34 @@ public class GraphBuilder {
 					}
 					
 					public boolean visit(final VariableDeclarationFragment node) {
-						lstVariableDeclarationFragment.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(MethodInvocation node) {
-						lstMethodInvocation.add(node);
 						return super.visit(node);
 					}									
 
 					public boolean visit(final FieldDeclaration node) {
-						lstFieldDeclaration.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final SingleVariableDeclaration node) {
-						lstSingleVariableDeclaration.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final ClassInstanceCreation node) {
-						lstClassInstanceCreation.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final FieldAccess node) {
-						lstFieldAccess.add(node);
 						return super.visit(node);
 					}
 
 					public boolean visit(InfixExpression node) {
-						lstInfixExpression.add(node);
 						return super.visit(node);
 					}
 					
 					public boolean visit(final ImportDeclaration node) {
-						lstImportDeclaration.add(node);
 						return super.visit(node);
 					}
 					
@@ -1366,100 +1330,10 @@ public class GraphBuilder {
 		return cUnit;
 	}
 	
-	public ArrayList<MethodDeclaration> getMethodDeclarations() {
-		return lstMethodDeclaration;
-	}
-	
-	public ArrayList<MethodInvocation> getMethodInvocations() {
-		return lstMethodInvocation;
-	}
-	
-	public ArrayList<TypeDeclaration> getTypeDeclarations() {
-		return lstTypeDeclaration;
-	}
-
-	public ArrayList<FieldDeclaration> getFieldDeclarations() {
-		return lstFieldDeclaration;
-	}
-	
-	public HashMap<String,VariableDeclarationFragment> getMapForFieldDeclarations() {
-		
-		HashMap<String,VariableDeclarationFragment> maps = new HashMap<String,VariableDeclarationFragment>();
-		
-		for(FieldDeclaration fieldDec:lstFieldDeclaration){
-			
-			@SuppressWarnings("unchecked")
-			List<VariableDeclarationFragment> fieldDecFrags = fieldDec.fragments();
-			
-			for(VariableDeclarationFragment varDecFrag:fieldDecFrags){
-				maps.put(varDecFrag.getName().toString(), varDecFrag);
-			}
-		}
-		
-		return maps;
-	}
-
-	public ArrayList<FieldAccess> getFieldAccesses() {
-		return lstFieldAccess;
-	}
-	
-	public ArrayList<IfStatement> getIfStatements() {
-		return lstIfStatement;
-	}
-	
-	public ArrayList<ForStatement> getForStatements() {
-		return lstForStatement;
-	}
-	
-	public ArrayList<WhileStatement> getWhileStatements() {
-		return lstWhileStatement;
-	}
-	
-	public ArrayList<InfixExpression> getInfixExpressions() {
-		return lstInfixExpression;
-	}
-
-	public ArrayList<SimpleName> getSimpleNames() {
-		return lstSimpleName;
-	}
-	
-	public ArrayList<VariableDeclarationFragment> getVariableDeclarationFragments() {
-		return lstVariableDeclarationFragment;
-	}
-
-	public ArrayList<ClassInstanceCreation> getClassInstanceCreations() {
-		return lstClassInstanceCreation;
-	}
-	
-	public ArrayList<SingleVariableDeclaration> getSingleVariableDeclarations() {
-		return lstSingleVariableDeclaration;
-	}
-	
-	public ArrayList<ImportDeclaration> getImportDeclarations() {
-		return lstImportDeclaration;
-	}
-	
-	public ArrayList<ConditionalExpression> getConditionalExpressions() {
-		return lstConditionalExpression;
-	}
-	
 	public PackageDeclaration getPackageDeclaration(){
 		return pkgDeclaration;
 	}
 	
-	@SuppressWarnings("unused")
-	private String qulifiedNameInInnerClass(String typeNameOfReceiver, String fieldName) {
-		
-		for(TypeDeclaration typeDec:lstTypeDeclaration){
-			String qTypeName = getQualifiedTypeName(typeDec);
-			if(qTypeName.equals(typeNameOfReceiver)){
-				return getFieldType(typeDec,fieldName);
-			}
-		}
-		
-		return "";
-	}
-
 	private String getFieldType(TypeDeclaration typeDec, String fieldName) {
 		final ArrayList<FieldDeclaration> lstFieldDecs = new ArrayList<FieldDeclaration>();
 		
@@ -1495,86 +1369,6 @@ public class GraphBuilder {
 		}
 		
 		return getQualifiedTypeName(node.getParent());
-	}
-
-	@SuppressWarnings({"unchecked", "unused"})
-	private String getFieldType(GraphBuilder codeASTForReceiver, String fieldName) {
-		
-		// get Type names associate with fields
-				for(FieldDeclaration fDc:codeASTForReceiver.getFieldDeclarations()){
-					String typeName = fDc.getType().toString();
-					
-					for(VariableDeclarationFragment vDcF:(List<VariableDeclarationFragment>)fDc.fragments()){
-						if(vDcF.getName().toString().equals(fieldName))
-						 return typeName;
-					}
-				}
-		
-		return "";
-	}
-
-	@SuppressWarnings("unused")
-	private ArrayList<String> getPathForJavaSrcCodeFromTypeName(String path, String typeName) {
-
-		ArrayList<String> fullyQualitiedTypeNames = getPotentialFullyQualitifedTypeNames(this,typeName);
-
-		String className = "";
-
-		for(TypeDeclaration tD:this.getTypeDeclarations()){
-			//if(tD.modifiers().toString().contains("public"))
-			// TODO: consider the first class as the main class
-			className = tD.getName().toString();
-			break;
-		}
-
-		// get package name and Class name
-		String fullyQualifiedClassName = "";
-		if(this.getPackageDeclaration() == null){
-			fullyQualifiedClassName = className;
-		}else{
-			fullyQualifiedClassName = this.getPackageDeclaration().getName().toString() + "." + className;
-		}
-		// add this to fullyQualitiedTypeNames as well
-		//fullyQualitiedTypeNames.add(fullyQualifiedClassName);
-
-		String pathPrefix = path.replace("/" + fullyQualifiedClassName.replace(".", File.separator) + ".java", "");
-
-		ArrayList<String> potentialPaths = new ArrayList<String>();
-		for(String name:fullyQualitiedTypeNames)
-			potentialPaths.add(pathPrefix + File.separator + name.replace(".", "/") + ".java");
-
-		return potentialPaths;
-	}
-
-	private ArrayList<String> getPotentialFullyQualitifedTypeNames(GraphBuilder preFixWholeCodeAST, String typeName) {
-		// get a fully qualified Type name
-		ArrayList<String> lstPackages = new ArrayList<String>();
-		ArrayList<String> lstTypes = new ArrayList<String>();
-
-		lstPackages.add(preFixWholeCodeAST.pkgDeclaration.getName().toString());
-		
-		// get imported packages or types
-		for(ImportDeclaration iD:(List<ImportDeclaration>)preFixWholeCodeAST.getImportDeclarations()){
-			if(iD.toString().contains("*"))
-				lstPackages.add(iD.getName().getFullyQualifiedName());
-			else
-				lstTypes.add(iD.getName().getFullyQualifiedName());
-		}
-
-		// generate a list of potential fully qualified type names
-		ArrayList<String> potentialFullyQualifiedName = new ArrayList<String>();
-		for(String name:lstTypes){
-			if(name.endsWith("." + typeName)){
-				potentialFullyQualifiedName.add(name);
-				return potentialFullyQualifiedName;
-			}
-		}
-
-		for(String name:lstPackages){
-			potentialFullyQualifiedName.add(name + "." + typeName);
-		}
-
-		return potentialFullyQualifiedName;
 	}
 	
 	/**
@@ -1804,21 +1598,6 @@ public class GraphBuilder {
 		return mapVarDecs;
 	}
 
-	public ArrayList<String> getFieldNames() {
-		
-		ArrayList<String> fieldNames = new ArrayList<String>();
-		
-		for(FieldDeclaration fieldDec:getFieldDeclarations()){
-			@SuppressWarnings("unchecked")
-			List<VariableDeclarationFragment>  varDecFrags = fieldDec.fragments();
-			for(VariableDeclarationFragment varDecFrag:varDecFrags){
-				fieldNames.add(varDecFrag.getName().toString());
-			}
-		}
-		
-		return fieldNames;
-	}
-
 	public ArrayList<String> getVariableNames(ASTNode node) {
 		ArrayList<String> localVarNames = new ArrayList<String>();
 		
@@ -1859,23 +1638,6 @@ public class GraphBuilder {
 			return (AbstractTypeDeclaration) node.getParent();
 		
 		return getTypeDeclationOf(node.getParent());
-	}
-
-	public ArrayList<String> getFieldNames(AbstractTypeDeclaration classWhereMethodExists) {
-		ArrayList<String> fieldNames = new ArrayList<String>();
-		
-		for(FieldDeclaration fieldDec:getFieldDeclarations()){
-			
-			if(!fieldDec.getParent().equals(classWhereMethodExists)) continue;
-			
-			@SuppressWarnings("unchecked")
-			List<VariableDeclarationFragment>  varDecFrags = fieldDec.fragments();
-			for(VariableDeclarationFragment varDecFrag:varDecFrags){
-				fieldNames.add(varDecFrag.getName().toString());
-			}
-		}
-		
-		return fieldNames;
 	}
 
 	public ArrayList<FieldAccess> getFieldAccesses(ASTNode node) {
