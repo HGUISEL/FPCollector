@@ -9,12 +9,13 @@ import java.util.Arrays;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import edu.handong.csee.isel.fpcollector.graph.ControlNode;
 import edu.handong.csee.isel.fpcollector.graph.GraphBuilder;
 
 public class InfoCollector {
 	static final int VAR = 0;
 	static final int FIELD = 1;
-	public ArrayList<Info> infos = new ArrayList<>();
+	public ArrayList<ControlNode> graphs = new ArrayList<>();
 	
 	public void run(String result_path) throws IOException {
 		File outputFile = new File(result_path);
@@ -24,29 +25,40 @@ public class InfoCollector {
 		String line = "";
 		int c = 0;
         while ((line = br.readLine()) != null) {
-        	if (line.startsWith("/")) {
+        	Info info = getInfo(line);
+        	if (info != null) {
         		c++;
-            	if (c % 10 == 0) System.out.println(c);
-            	
-        		String[] tokenList = line.split(",", -1);            	        		
+        		if (c % 10 == 0) System.out.println(c);
         		
-        		Info info = new Info();
-            	info.path = tokenList[0];
-            	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(getSource(tokenList[0]))));
-            	info.start = Integer.parseInt(getScope(tokenList[1], 0, info.sourceByLine));
-            	info.end = Integer.parseInt(getScope(tokenList[1], 1, info.sourceByLine));
-            	info.varNames.add(getVarName(tokenList[3]));
-            	if(info.varNames.get(0) == null) {
-            		info.varNames.remove(0);
-            		info.varNodes.addAll(getVarList(info));
-                	info.fieldNodes.addAll(getFieldList(info));
-                	info.nodesToStrings();
-            	}
-            	
-            	infos.add(info);                       
-        	}        
+    			GraphBuilder graphBuilder = new GraphBuilder(info);
+    			graphBuilder.run();
+    			graphs.add(graphBuilder.root);
+        	}
         }
         br.close();
+	}
+	
+	private Info getInfo(String line) throws IOException {
+		if (line.startsWith("/")) {
+    		String[] tokenList = line.split(",", -1);            	        		
+    		
+    		Info info = new Info();
+        	info.path = tokenList[0];
+        	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(getSource(tokenList[0]))));
+        	info.start = Integer.parseInt(getScope(tokenList[1], 0, info.sourceByLine));
+        	info.end = Integer.parseInt(getScope(tokenList[1], 1, info.sourceByLine));
+        	info.varNames.add(getVarName(tokenList[3]));
+        	if(info.varNames.get(0) == null) {
+        		info.varNames.remove(0);
+        		info.varNodes.addAll(getVarList(info));
+            	info.fieldNodes.addAll(getFieldList(info));
+            	info.nodesToStrings();
+        	}
+        	
+        	return info;                       
+    	}
+		
+		return null;
 	}
 	
 	private String getSource(String file_path) throws IOException {

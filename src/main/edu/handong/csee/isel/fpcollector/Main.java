@@ -104,22 +104,9 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		System.out.println("infoSize: " + collector.infos.size());
+		System.out.println("graphSize: " + collector.graphs.size());
 		
-		int count = 0;
-		ArrayList<ControlNode> graphs = new ArrayList<>();
-		
-		// 2. build Graph
-		for(Info info : collector.infos) {
-			count++;
-			if (count % 10 == 0) System.out.println(count);
-			GraphBuilder graphBuilder = new GraphBuilder(info);
-			graphBuilder.run();
-			graphs.add(graphBuilder.root);
-			collector.infos.remove(info);
-		}
-		
-		return graphs;
+		return collector.graphs;
 	}
 	
 	private static ArrayList<GraphInfo> getGraphInfo(ArrayList<ControlNode> graphs) {
