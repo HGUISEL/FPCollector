@@ -24,10 +24,11 @@ package edu.handong.csee.isel.fpcollector.graph;
 public class NodeInterpreter {
 	public String interpret(String graphString) {
 		String pattern = "";
-		pattern = getLevel(graphString);
-		pattern += " " + getState(graphString);
-		pattern += " " + getASTNodeType(graphString);
-		
+		for(int i = 0 ; i < (graphString.length()/9) ; i ++) {
+			pattern += "$" + getLevel(graphString);
+			pattern += " " + getState(graphString);
+			pattern += " " + getASTNodeType(graphString) + "";
+		}
 		return pattern;
 	}
 	
