@@ -106,16 +106,17 @@ public class Main {
 		
 		System.out.println("infoSize: " + collector.infos.size());
 		
-//		int count = 0;
+		int count = 0;
 		ArrayList<ControlNode> graphs = new ArrayList<>();
 		
 		// 2. build Graph
 		for(Info info : collector.infos) {
-//			count++;
-//			if (count % 10 == 0) System.out.println(count);
+			count++;
+			if (count % 10 == 0) System.out.println(count);
 			GraphBuilder graphBuilder = new GraphBuilder(info);
 			graphBuilder.run();
 			graphs.add(graphBuilder.root);
+			collector.infos.remove(info);
 		}
 		
 		return graphs;
@@ -165,8 +166,7 @@ public class Main {
 		
 		//rank graph
 		graphWriter.writeRankGraphTotalNum(fpcGraphComparator, tpcGraphComparator, projectName);			
-		graphWriter.writeRankGraph(fpcGraphComparator, tpcGraphComparator, projectName);	
-		System.out.println("Step 6 Clear");
+		graphWriter.writeRankGraph(fpcGraphComparator, tpcGraphComparator, projectName);
 	}
 	
 	public static void main(String[] args) {
@@ -216,7 +216,8 @@ public class Main {
 			
 		//Step 6.
 		clusterGraph(fpcGraphComparator, tpcGraphComparator, fpcGraphInfos, tpcGraphInfos, projectName);
-			
+		System.out.println("Step 6 Clear");
+		
 //			PatternVector patternVector = new PatternVector();
 //			//2. build AST
 //			BNFChecker tempBuilder = new BNFChecker();
