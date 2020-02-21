@@ -1,1 +1,1 @@
-category/java/errorprone.xml/NullAssignment
+category/java/errorprone.xml/AvoidDuplicateLiterals

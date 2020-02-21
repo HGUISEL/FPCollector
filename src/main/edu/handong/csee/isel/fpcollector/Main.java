@@ -107,24 +107,29 @@ public class Main {
 			// 2. build Graph
 			for(Info info : fpcInfos) {
 //				GraphDrawer gDrawer = new GraphDrawer();
-//				counta++;
+				counta++;
 //				System.out.println(FPCinfos.indexOf(info));
 				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 272) {
+				
 					graph.run(info);
 					fpcGraphs.add(graph.root);
-//				}
+				
+				
+					System.out.println(counta);
 				
 //				gDrawer.run(graph.root, counta);
 //				if (counta == 272) break;
 			}
 
 			for(Info info : tpcInfos) {
+				counta++;
 				GraphBuilder graph = new GraphBuilder();
-//				if(counta == 272) {
+				
 					graph.run(info);
 					tpcGraphs.add(graph.root);
-//				}
+				if(counta % 100 == 0) {
+					System.out.println(counta);
+				}
 			}
 			
 			System.out.println("Step 3 CLEAR");

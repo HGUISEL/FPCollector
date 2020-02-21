@@ -142,6 +142,7 @@ public class JavaASTParser {
 	ArrayList<Boolean> lstUseVar = new ArrayList<Boolean>();
 	ArrayList<ASTNode> lstViolatedVariablesNode = new ArrayList<>();
 	ArrayList<ASTNode> lstViolatedFieldNode = new ArrayList<>();
+	ArrayList<ASTNode> lstViolatedStringNode = new ArrayList<>();
 	
 	PackageDeclaration pkgDeclaration;
 
@@ -386,7 +387,29 @@ public class JavaASTParser {
 						}
 
 						return super.visit(node);
-					}			
+					}
+					
+					public boolean visit(StringLiteral node) {
+						//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+												
+						if (isNodeInMethodOrBlock(node)) {																					
+							if (info.varNames.contains(node.getLiteralValue())){
+								DataNode n = new DataNode(node, level, info);																																
+								
+								n.setType(VarState.Str);								
+								
+								if(isInCondition(node)) {
+									n.setInCondition(VarState.I);
+								} else {
+									n.setInCondition(VarState.O);
+								}
+								
+								root.nexts.add(n);																
+							}
+						}
+
+						return super.visit(node);
+					}
 					
 					public boolean visit(DoStatement node) {
 						if (isNodeInMethodOrBlock(node)) {
@@ -991,12 +1014,7 @@ public class JavaASTParser {
 					//Log.info(node);
 					return super.visit(node);
 				}
-
-				public boolean visit(final StringLiteral node) {
-					//Log.info("StringLiteral");
-					//Log.info(node);
-					return super.visit(node);
-				}
+				
 				public boolean visit(final SuperConstructorInvocation node) {
 					//Log.info("SuperConstructorInvocation");
 					//Log.info(node);
@@ -1140,6 +1158,16 @@ public class JavaASTParser {
 						return super.visit(node);
 					}
 					
+					public boolean visit(StringLiteral node) {
+						Integer lineNum = getLineNum(node.getStartPosition());
+						String nodeValue = node.toString();
+						String stringValue = nodeValue.substring(1, nodeValue.length()-1);
+						if(stringValue.equals(info.varNames.get(0)) && lineNum >= info.start && lineNum <= info.end) {
+							lstViolatedStringNode.add(node);
+						}
+						return super.visit(node);
+					}
+					
 					public boolean visit(FieldDeclaration node) {						
 						lstFieldMemberDeclaration.add(((VariableDeclarationFragment) node.fragments().get(0)).getName().getIdentifier());											
 						return super.visit(node);
@@ -1176,8 +1204,9 @@ public class JavaASTParser {
 			return lstViolatedField;
 		else if(type == 2)
 			return lstViolatedVariablesNode;
-		else 
+		else if(type == 3)
 			return lstViolatedFieldNode;
+		else return lstViolatedStringNode;
 	}
 
 	private boolean violatedNodeisIn(ASTNode node, ASTNode targetNode) {
@@ -1331,6 +1360,27 @@ public class JavaASTParser {
 	}
 	
 	private boolean isInCondition(SimpleName node) {
+		ASTNode tempParent = node.getParent();
+		while(true) {
+			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
+				break;
+			}
+			else if(tempParent instanceof ForStatement ||
+					tempParent instanceof IfStatement||
+					tempParent instanceof EnhancedForStatement||
+					tempParent instanceof WhileStatement ||
+					tempParent instanceof SwitchCase ||
+					tempParent instanceof SwitchExpression) {
+				return true;
+			} 
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
+		}
+		return false;
+	}
+	
+	private boolean isInCondition(StringLiteral node) {
 		ASTNode tempParent = node.getParent();
 		while(true) {
 			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {

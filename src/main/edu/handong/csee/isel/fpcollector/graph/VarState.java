@@ -24,7 +24,8 @@ About Type
 1. ArrIdxC for ArrayType whose index is composed with ++, -- or var
 2. ArrIdxF for ArrayType whose index is fixed integer
 3. NArr for None-ArrayType
+4. Str for String value
  * */
 public enum VarState {
-	DIN, DI, D, FDIN, FDI, FD, I, O, Ass, FAss, NAss, FNAss, Ref, FRef, ArrIdxC, ArrIdxF, NArr
+	DIN, DI, D, FDIN, FDI, FD, I, O, Ass, FAss, NAss, FNAss, Ref, FRef, ArrIdxC, ArrIdxF, NArr, Str
 }

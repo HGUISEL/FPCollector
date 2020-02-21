@@ -28,7 +28,7 @@ public class TFPCWriter {
 				if(reportInfo.split(":").length > 2 ) {
 					String filePath = reportInfo.split(":")[0];
 					String lineNumber = reportInfo.split(":")[1];
-					String errmsg = reportInfo.split(":")[2];
+					String errmsg = reportInfo.split(":\t")[1];
 					String contexts = getLineContext(filePath, lineNumber);
 					csvPrinter.printRecord(filePath, lineNumber, errmsg, contexts);
 				}

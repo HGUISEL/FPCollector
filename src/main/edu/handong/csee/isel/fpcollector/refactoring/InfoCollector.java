@@ -16,6 +16,7 @@ public class InfoCollector {
 	static final int FIELD = 1;
 	static final int VARNODE = 2;
 	static final int FIELDNODE = 3;
+	static final int STRINGNODE = 4;
 	
 	ArrayList<Info> outputInfo = new ArrayList<>();
 	
@@ -26,6 +27,8 @@ public class InfoCollector {
 		br.readLine();
 		String line = "";
 		int count = 0;
+		int DFA = 0;
+		int DL =0;
 		
         while ((line = br.readLine()) != null) {
         	       
@@ -38,19 +41,31 @@ public class InfoCollector {
             	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(info.source)));
             	info.start = Integer.parseInt(getScope(tokenList[1], 0, info.sourceByLine));
             	info.end = Integer.parseInt(getScope(tokenList[1], 1, info.sourceByLine));
-//            	if(count < 3900)
-//            	System.out.println(count);
-//            	if(count >= 3915) 
-//             		System.out.println(count);
-            	info.varNames.add(getVarName(tokenList[3]));
+            	if(count >= 420) 
+             		System.out.println(count);
+            	
+            	info.varNames.add(getVarNameDFA(tokenList[3]));
             	if(info.varNames.get(0) == null) {
             		info.varNames.remove(0);
+            		info.varNames.add(getVarName(tokenList[2]));
+            	}
+            	else DFA = 1;
+            	
+            	if(info.varNames.get(0) == null || info.varNames.size() == 0) {            		
             		info.varNodes.addAll(getVarList(info));
                 	info.fieldNodes.addAll(getFieldList(info));
                 	info.nodesToStrings();
             	} else {
-            		info.varNodes.addAll(getVarNode(info));
-            		info.fieldNodes.addAll(getFieldNode(info));
+            		if(DFA == 1) {
+	            		info.varNodes.addAll(getVarNode(info));
+	            		info.fieldNodes.addAll(getFieldNode(info));
+            		} else {
+            			info.varNodes.addAll(getStringNode(info));
+            		}
+            	}
+            	
+            	if(info.varNodes.size() == 0) {
+            		System.exit(0);
             	}
             	
             	outputInfo.add(info);                       
@@ -58,6 +73,11 @@ public class InfoCollector {
         }
         br.close();
 		return outputInfo;
+	}
+	
+	private ArrayList<ASTNode> getStringNode(Info info){
+		JavaASTParser tempParser = new JavaASTParser(info);
+		return tempParser.getViolatedVariableList(info.source, STRINGNODE);
 	}
 	
 	private ArrayList<ASTNode> getVarNode(Info info){
@@ -123,7 +143,20 @@ public class InfoCollector {
 		}
 	}
 	
-	private String getVarName(String token) {
+	private String getVarName(String token) {		
+		String newToken = token.replace("\"\"", "$");
+		token = token.replace("\"\"", "\"");
+		int firstIdx = newToken.indexOf("$");
+		int lastIdx = newToken.lastIndexOf("$");
+		newToken = token.substring(firstIdx+1, lastIdx);
+		
+//		if(tokenList.length == 1) {
+//			return null;
+//		}
+		return newToken;
+	}
+	
+	private String getVarNameDFA(String token) {		
 		String[] tokenList = token.split("'");
 		if(tokenList.length == 1) {
 			return null;
