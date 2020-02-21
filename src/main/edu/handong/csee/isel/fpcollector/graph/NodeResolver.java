@@ -58,8 +58,8 @@ public class NodeResolver {
 			int violatedNodeEndPosition;
 			int nodeStartPosition;
 			int nodeEndPosition;
-			if(n.info.varNodes.size() == 0) {
-				for(ASTNode tempNode : n.info.fieldNodes) {
+			if(n.varNodes.size() == 0) {
+				for(ASTNode tempNode : n.fieldNodes) {
 					violatedNodeStartPosition = tempNode.getStartPosition();
 					violatedNodeEndPosition = violatedNodeStartPosition + tempNode.getLength();
 					nodeStartPosition = n.node.getStartPosition();
@@ -80,8 +80,8 @@ public class NodeResolver {
 					tempS += graphToString((ControlNode) n);
 				}
 			}
-			else if(n.info.fieldNodes.size() == 0) {
-				for(ASTNode tempNode : n.info.varNodes) {
+			else if(n.fieldNodes.size() == 0) {
+				for(ASTNode tempNode : n.varNodes) {
 					violatedNodeStartPosition = tempNode.getStartPosition();
 					violatedNodeEndPosition = violatedNodeStartPosition + tempNode.getLength();
 					nodeStartPosition = n.node.getStartPosition();
@@ -101,8 +101,8 @@ public class NodeResolver {
 					tempS += graphToString((ControlNode) n);
 				}
 			}
-			else if(n.info.fieldNodes.size() != 0 && n.info.varNodes.size() != 0) {
-				for(ASTNode tempNode : n.info.varNodes) {
+			else if(n.fieldNodes.size() != 0 && n.varNodes.size() != 0) {
+				for(ASTNode tempNode : n.varNodes) {
 					violatedNodeStartPosition = tempNode.getStartPosition();
 					violatedNodeEndPosition = violatedNodeStartPosition + tempNode.getLength();
 					nodeStartPosition = n.node.getStartPosition();
@@ -118,7 +118,7 @@ public class NodeResolver {
 						tempS += addASTNodeType(n);
 					}							
 				}
-				for(ASTNode tempNode : n.info.fieldNodes) {
+				for(ASTNode tempNode : n.fieldNodes) {
 					violatedNodeStartPosition = tempNode.getStartPosition();
 					violatedNodeEndPosition = violatedNodeStartPosition + tempNode.getLength();
 					nodeStartPosition = n.node.getStartPosition();

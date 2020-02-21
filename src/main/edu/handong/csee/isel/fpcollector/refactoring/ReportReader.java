@@ -8,45 +8,33 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
 public class ReportReader {
-	public ArrayList<String> reportInformation;
 	public ArrayList<SimpleEntry<String, String>> alarmedCodes = new ArrayList<>();
 	
 	public void readReport(String reportFilePath) {
-		
-		reportInformation = readReportFile(reportFilePath);
-		alarmedCodes = readCodes(reportInformation);
+		readReportFile(reportFilePath);
 	}
 	
-	private ArrayList<String> readReportFile(String path){
-		ArrayList<String> resultInfo = new ArrayList<>();
+	private void readReportFile(String path){
 		File f = new File(path);
+		
 		try {
 			FileReader fReader =new FileReader(f);
 			BufferedReader fBufReader = new BufferedReader(fReader);
 			String str = "";
 			
+			int lineNum = 0;
+			
 			while((str = fBufReader.readLine()) != null) {
-				resultInfo.add(str);
+				if(str.split(":").length > 2) {
+					lineNum = Integer.parseInt(str.split(":")[1]);
+					alarmedCodes.add(new SimpleEntry<String, String>(readLineOfCode(str, lineNum), str));
+				}
 			}
 			fBufReader.close();
 		} 
 		catch (IOException e) {
 				e.printStackTrace();
 		}
-		return resultInfo;
-	}
-	
-	private ArrayList<SimpleEntry<String, String>> readCodes(ArrayList<String> reportInformation){
-		ArrayList<SimpleEntry<String, String>> alarmedCodes = new ArrayList<>();
-		int lineNum = 0;
-		
-		for(String reportInstance : reportInformation) {
-			if(reportInstance.split(":").length > 2) {
-				lineNum = Integer.parseInt(reportInstance.split(":")[1]);
-				alarmedCodes.add(new SimpleEntry<String, String>(readLineOfCode(reportInstance, lineNum), reportInstance));
-			}
-		}
-		return alarmedCodes;
 	}
 	
 	private String readLineOfCode(String reportInstance, int lineNum) {
