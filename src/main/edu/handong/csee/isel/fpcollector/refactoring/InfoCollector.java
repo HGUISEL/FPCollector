@@ -28,7 +28,10 @@ public class InfoCollector {
         	Info info = getInfo(line);
         	if (info != null) {
         		c++;
-        		if (c % 10 == 0) System.out.println(c);
+        		if (c % 10 == 0) {
+        			System.out.println(c);
+//                    System.out.println("Heap Size(M) : " + Runtime.getRuntime().freeMemory() / (1024 * 1024) + " MB");
+        		}
         		
     			GraphBuilder graphBuilder = new GraphBuilder(info);
     			graphBuilder.run();

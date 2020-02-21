@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import edu.handong.csee.isel.fpcollector.graph.ControlNode;
-import edu.handong.csee.isel.fpcollector.graph.GraphBuilder;
 import edu.handong.csee.isel.fpcollector.graph.GraphComparator;
 import edu.handong.csee.isel.fpcollector.graph.GraphInfo;
 import edu.handong.csee.isel.fpcollector.graph.GraphInfoGetter;
@@ -12,7 +11,6 @@ import edu.handong.csee.isel.fpcollector.graph.GraphWriter;
 import edu.handong.csee.isel.fpcollector.graph.NodeResolver;
 import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
-import edu.handong.csee.isel.fpcollector.refactoring.Info;
 import edu.handong.csee.isel.fpcollector.refactoring.InfoCollector;
 import edu.handong.csee.isel.fpcollector.refactoring.Input;
 import edu.handong.csee.isel.fpcollector.refactoring.ReportComparator;
@@ -157,6 +155,9 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
+//        System.out.println("Heap Size(M) : " + Runtime.getRuntime().totalMemory() / (1024 * 1024) + " MB");
+//        System.out.println("Max Heap Size(M) : " + Runtime.getRuntime().maxMemory() / (1024 * 1024) + " MB");
+	        
 		// 1. Preparing for Collecting False Positive Candidates
 		String[] strs = getPMDReport(args);
 		
@@ -204,74 +205,5 @@ public class Main {
 		//Step 6.
 		clusterGraph(fpcGraphComparator, tpcGraphComparator, fpcGraphInfos, tpcGraphInfos, projectName);
 		System.out.println("Step 6 Clear");
-		
-//			PatternVector patternVector = new PatternVector();
-//			//2. build AST
-//			BNFChecker tempBuilder = new BNFChecker();
-//			int countB = 0;
-//			for(Info info: infos) {
-//				tempBuilder.run(info, patternVector);
-//				countB ++;
-//				System.out.println(countB);
-//			}
-//			GraphBuilder graph = new GraphBuilder();
-//			ArrayList<GraphNode> graphs = new ArrayList<>();
-//			graphs = graph.getGraph(tempBuilder.mASTs);
-////			tempBuilder.getBNF(tempBuilder.mASTs);
-//			tempBuilder.printPattern();
-			
-////////////////////////////////////////////////////////////////
-			
-			
-			
-			
-			
-			
-//			FPCollector getFPSuspects = new FPCollector();
-//			TPCollector getTP = new TPCollector();
-//			
-//			ContextExtractor getFalsePositiveContext = new ContextExtractor();
-//			ContextExtractor getTruePositiveContext = new ContextExtractor();
-//			ContextExtractor getBuggyContext = new ContextExtractor();
-//			Evaluator getScore = new Evaluator();
-//			PatternAdjustment adjust = new PatternAdjustment();
-//			HashMap<String, Integer> tpCodeContextNodes =new HashMap<>();
-//			HashMap<String, Integer> fpCodeContextNodes =new HashMap<>();
-//			HashMap<String, Integer> buggyCodeContextNodes =new HashMap<>();
-//		
-//			ArrayList<ContextPattern> truePositivePattern = new ArrayList<>();
-//			ArrayList<ContextPattern> falsePositivePattern = new ArrayList<>();
-//			ArrayList<ContextPattern> buggyPattern = new ArrayList<>();
-//			
-//			String[] information  = getFPSuspects.initiate(args);
-			
-//			if(!new File(information[2]).exists()) {
-//				getFPSuspects.run(information);
-//			} else {
-//				System.out.println("!!!!! FP Result File is Already Exists");
-//			}
-//			
-//			if(!new File(information[2].split("\\.csv")[0] + "_TP.csv").exists()) {
-//				getTP.run(information);
-//			} else {
-//				System.out.println("!!!!! TP Result File is Already Exists");
-//			}
-			
-//			tpCodeContextNodes = getTruePositiveContext.getPattern(information, TRUE_POSITIVE);
-//			buggyCodeContextNodes = getBuggyContext.getPattern(information, BUGGY);
-//			fpCodeContextNodes = getFalsePositiveContext.getPattern(information, FALSE_POSITIVE);
-//			
-//			for(Map.Entry<String, Integer> temp : fpCodeContextNodes.entrySet()) {
-//			//	System.out.println(temp.getKey());
-//			}
-//			
-////			tpCodeContextNodes = adjust.adjustTP(tpCodeContextNodes, buggyCodeContextNodes);
-////			buggyCodeContextNodes = adjust.adjustBP(tpCodeContextNodes, buggyCodeContextNodes);
-//			
-//			truePositivePattern = getTruePositiveContext.sortPattern(tpCodeContextNodes, TRUE_POSITIVE);
-//			buggyPattern = getBuggyContext.sortPattern(buggyCodeContextNodes, BUGGY);
-//			falsePositivePattern = getFalsePositiveContext.sortPattern(fpCodeContextNodes, FALSE_POSITIVE);
-//			
-//			getScore.run(truePositivePattern, falsePositivePattern, buggyPattern);
 		}
 }
