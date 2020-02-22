@@ -2,6 +2,7 @@ package edu.handong.csee.isel.fpcollector.graph;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +155,7 @@ public class JavaASTParser {
 		ASTParser parser = ASTParser.newParser(AST.JLS12);
 
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		char[] content = info.source.toCharArray();
+		char[] content = String.join("\n", info.sourceByLine).toCharArray();
 		parser.setSource(content);
 		//parser.setUnitName("temp.java");
 		Map<String, String> options = JavaCore.getOptions();
@@ -1103,12 +1104,12 @@ public class JavaASTParser {
 	}
 	
 	public ArrayList<ASTNode> getViolatedVariableList(String source, int type) {		
-		info.source = source;
+		info.sourceByLine = new ArrayList<>(Arrays.asList(source.split("\n")));
 		
 		ASTParser parser = ASTParser.newParser(AST.JLS12);
 
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		char[] content = info.source.toCharArray();
+		char[] content = String.join("\n", info.sourceByLine).toCharArray();
 		parser.setSource(content);
 		//parser.setUnitName("temp.java");
 		Map<String, String> options = JavaCore.getOptions();
@@ -1424,10 +1425,6 @@ public class JavaASTParser {
 	
 	public int getLineNum(int startPosition){
 		return cUnit.getLineNumber(startPosition);
-	}
-
-	public String getStringCode(){
-		return info.source;
 	}
 
 	public CompilationUnit getCompilationUnit(){

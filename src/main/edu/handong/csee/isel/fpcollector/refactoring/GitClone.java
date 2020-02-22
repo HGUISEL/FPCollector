@@ -6,22 +6,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class GitClone {
-	
 	public String clonedPath ="";
 	
 	public void clone(String gitAddress, String projectName) {
-		
 		File newDir = new File("git");
 		if(!newDir.exists()) {
 			newDir.mkdir();
 		}
 		
 		runClone(gitAddress, projectName, newDir);
-		
 	}
 	
 	private void runClone(String gitAddress, String projectName, File newDir) {
-		
 		try {
 			File clonePath = new File(newDir.toString() + File.separator + projectName);
 			

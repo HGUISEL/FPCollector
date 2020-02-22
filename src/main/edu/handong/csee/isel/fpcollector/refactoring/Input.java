@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Input {
-	
 	final static int SUCCESS = 1;
 	final static int FAILED = 0;
 	
@@ -18,7 +17,6 @@ public class Input {
 	public String projectName = "" ;
 	
 	public int getInput(String[] args) {
-		
 		if(args.length < 5) {
 			return FAILED;
 		}
@@ -36,7 +34,6 @@ public class Input {
 			return FAILED;
 		
 		return SUCCESS;
-		
 	}
 	
 	public String readFiles(String path) {

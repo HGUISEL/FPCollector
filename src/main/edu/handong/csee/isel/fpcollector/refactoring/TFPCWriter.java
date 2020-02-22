@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.AbstractMap.SimpleEntry;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -15,20 +16,20 @@ import org.apache.commons.csv.CSVPrinter;
 public class TFPCWriter {
 	public String fileName;
 	
-	public void writeContexts (ArrayList<String> FPC, String type) {
+	public void writeContexts (ArrayList<SimpleEntry<String, String>> FTPC, String type) {
 		fileName = "./" + type + "Candidate.csv";/* ./Result.csv */
 		try(
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
 									.withHeader("File Path", "Line number", "Error Message","Code Context"));
 			) {			
-			for(String reportInfoAndCode : FPC) {
+			for(SimpleEntry<String, String> ftpcPair : FTPC) {
+				String path = ftpcPair.getValue();
 				
-				String reportInfo = reportInfoAndCode.split("%%%%%")[0];
-				if(reportInfo.split(":").length > 2 ) {
-					String filePath = reportInfo.split(":")[0];
-					String lineNumber = reportInfo.split(":")[1];
-					String errmsg = reportInfo.split(":\t")[1];
+				if(path.split(":").length > 2 ) {
+					String filePath = path.split(":")[0];
+					String lineNumber = path.split(":")[1];
+					String errmsg = path.split(":")[2];
 					String contexts = getLineContext(filePath, lineNumber);
 					csvPrinter.printRecord(filePath, lineNumber, errmsg, contexts);
 				}
@@ -37,21 +38,22 @@ public class TFPCWriter {
 			writer.close();
 		}catch(IOException e){
 			e.printStackTrace();
-		} 
+		}
 	}
 	
-	public void writeContextsForDFA (ArrayList<String> FPC, String type) {
+	public void writeContextsForDFA (ArrayList<SimpleEntry<String, String>> FTPC, String type) {
 		fileName = "./" + type + "Candidate.csv";/* ./Result.csv */
 		try(
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
 									.withHeader("File Path", "Line number", "Anomaly", "Variable", "Code Context"));
-			) {			
-			for(String reportInfoAndCode : FPC) {
-				String reportInfo = reportInfoAndCode.split("%%%%%")[0];
-				String filePath = reportInfo.split(":")[0];
+			) {
+			for(SimpleEntry<String, String> ftpcPair : FTPC) {
+				String path = ftpcPair.getValue();
+				
+				String filePath = path.split(":")[0];
 //				String lineNumber = reportInfo.split(":")[1];
-				String errmsg = reportInfo.split(":")[2];
+				String errmsg = path.split(":")[2];
 				String anomaly = errmsg.substring(8, 10);
 				String var = errmsg.split("-anomaly for")[1];
 				String lineRange = var.split("lines")[1];
