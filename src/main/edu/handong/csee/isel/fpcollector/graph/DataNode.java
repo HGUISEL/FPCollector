@@ -8,6 +8,7 @@ public class DataNode extends GraphNode{
 	public VarState state;
 	public VarState inCondition;
 	public VarState type;
+	public VarState inAnnotation;
 	public ASTNode from;
 	
 	public DataNode(ASTNode node, int level, Info info) {
@@ -24,6 +25,10 @@ public class DataNode extends GraphNode{
 	
 	public void setInCondition(VarState inCondition) {
 		this.inCondition = inCondition;
+	}
+	
+	public void setInAnnotation(VarState inAnnotation) {
+		this.inAnnotation = inAnnotation;
 	}
 	
 	public void setType(VarState type) {

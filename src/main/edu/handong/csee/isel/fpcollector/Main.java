@@ -77,14 +77,8 @@ public class Main {
 		TFPCWriter fpcWriter = new TFPCWriter();
 		TFPCWriter tpcWriter = new TFPCWriter();
 		
-		if(ruleName.contains("DataflowAnomalyAnalysis")) {
-			fpcWriter.writeContextsForDFA(compareCurrentAndPast.FPC, projectName + "FPC");
-			tpcWriter.writeContextsForDFA(compareCurrentAndPast.TPC, projectName + "TPC");
-			
-		} else {
-			fpcWriter.writeContexts(compareCurrentAndPast.FPC, projectName + "FPC");
-			tpcWriter.writeContexts(compareCurrentAndPast.TPC, projectName + "TPC");
-		}
+		fpcWriter.writeContexts(compareCurrentAndPast.FPC, projectName + "FPC");
+		tpcWriter.writeContexts(compareCurrentAndPast.TPC, projectName + "TPC");
 
 		strs[0] = fpcWriter.fileName;
 		strs[1] = tpcWriter.fileName;
@@ -109,8 +103,12 @@ public class Main {
 	
 	private static ArrayList<GraphInfo> getGraphInfo(ArrayList<ControlNode> graphs) {
 		ArrayList<GraphInfo> graphInfos = new ArrayList<>();
-			
+			int count = 0;
 			for(ControlNode g : graphs) {
+				count++;
+				System.out.println("GraphInfo " + count);
+				if(count == 488) 
+					System.out.println("A");
 				GraphInfo tempGraphInfo = new GraphInfo(g);
 				GraphInfoGetter tempGetter = new GraphInfoGetter();
 //				g.printInfo();

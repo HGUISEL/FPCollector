@@ -22,17 +22,20 @@ public class TFPCWriter {
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
 									.withHeader("File Path", "Line number", "Error Message","Code Context"));
-			) {			
+			) {			int count = 0;
 			for(SimpleEntry<String, String> ftpcPair : FTPC) {
 				String path = ftpcPair.getValue();
-				
+//				if(count == 215) {
+//					System.out.println("h");
+//				}
 				if(path.split(":").length > 2 ) {
-					String filePath = path.split(":")[0];
-					String lineNumber = path.split(":")[1];
-					String errmsg = path.split(":")[2];
+					String filePath = path.split(":",3)[0];
+					String lineNumber = path.split(":",3)[1];
+					String errmsg = path.split(":",3)[2];
 					String contexts = getLineContext(filePath, lineNumber);
 					csvPrinter.printRecord(filePath, lineNumber, errmsg, contexts);
 				}
+				count++;
 			}
 			writer.flush();
 			writer.close();
@@ -41,35 +44,35 @@ public class TFPCWriter {
 		}
 	}
 	
-	public void writeContextsForDFA (ArrayList<SimpleEntry<String, String>> FTPC, String type) {
-		fileName = "./" + type + "Candidate.csv";/* ./Result.csv */
-		try(
-			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
-			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-									.withHeader("File Path", "Line number", "Anomaly", "Variable", "Code Context"));
-			) {
-			for(SimpleEntry<String, String> ftpcPair : FTPC) {
-				String path = ftpcPair.getValue();
-				
-				String filePath = path.split(":")[0];
-//				String lineNumber = reportInfo.split(":")[1];
-				String errmsg = path.split(":")[2];
-				String anomaly = errmsg.substring(8, 10);
-				String var = errmsg.split("-anomaly for")[1];
-				String lineRange = var.split("lines")[1];
-				if(!lineRange.matches(".+'.+'-'.+'.+")) continue;
-				String startLine = getRangeLineNum(lineRange)[0];
-				String endLine = getRangeLineNum(lineRange)[1];
-				lineRange = startLine + "-" + endLine;
-				String contexts = getLineContextForDFA(filePath, startLine, endLine);
-				csvPrinter.printRecord(filePath, lineRange, anomaly, var, contexts);
-			}
-			writer.flush();
-			writer.close();
-		}catch(IOException e){
-			e.printStackTrace();
-		} 
-	}
+//	public void writeContextsForDFA (ArrayList<SimpleEntry<String, String>> FTPC, String type) {
+//		fileName = "./" + type + "Candidate.csv";/* ./Result.csv */
+//		try(
+//			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
+//			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
+//									.withHeader("File Path", "Line number", "Anomaly", "Variable", "Code Context"));
+//			) {
+//			for(SimpleEntry<String, String> ftpcPair : FTPC) {
+//				String path = ftpcPair.getValue();
+//				
+//				String filePath = path.split(":")[0];
+////				String lineNumber = reportInfo.split(":")[1];
+//				String errmsg = path.split(":")[2];
+//				String anomaly = errmsg.substring(8, 10);
+//				String var = errmsg.split("-anomaly for")[1];
+//				String lineRange = var.split("lines")[1];
+//				if(!lineRange.matches(".+'.+'-'.+'.+")) continue;
+//				String startLine = getRangeLineNum(lineRange)[0];
+//				String endLine = getRangeLineNum(lineRange)[1];
+//				lineRange = startLine + "-" + endLine;
+//				String contexts = getLineContextForDFA(filePath, startLine, endLine);
+//				csvPrinter.printRecord(filePath, lineRange, anomaly, var, contexts);
+//			}
+//			writer.flush();
+//			writer.close();
+//		}catch(IOException e){
+//			e.printStackTrace();
+//		} 
+//	}
 	
 	private String[] getRangeLineNum(String lineRange) {
 		char temp;

@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -24,17 +25,18 @@ import org.eclipse.jdt.core.dom.WhileStatement;
  * <String> := <Level> <ControlState><ASTNodeType> | <Level><DataState><ASTNodeType>
  * <Level> := {x | 0 < x < 100 && x is Integer}
  * <ASTNodeType> := {1(SimpleName), 2(ThisExpression), 3(DoStatement), 4(IfStatement), 5(ConditionalExpression), 6(ForStatement), 7(WhileStatement),
- * 8(EnhancedForStatement), 9(TryStatement), 10(CatchClause), 11(SwitchStatement), 12(ReutrnStatement), 13(ThrowStatement)}
+ * 8(EnhancedForStatement), 9(TryStatement), 10(CatchClause), 11(SwitchStatement), 12(ReutrnStatement), 13(ThrowStatement), 14(StringLiteral)}
  * <ControlState> := <L> | <T> | <C>
- * <DataState> := (<Define> | <Reference>)<InCondition><Type><getFrom>
+ * <DataState> := (<Define> | <Reference>)<InCondition><InAnnotation><Type><getFrom>
  * 
- * <L> := 99999
- * <T> := 99998
- * <C> := 99997
+ * <L> := 999999
+ * <T> := 999998
+ * <C> := 999997
  * 
  * <Define> := 0(DIN) | 1(DI) | 2(D) | 3(FDIN) | 4(FDI) | 5(FD)
  * <Reference> := 6(Ass) | 7(FAss) | 8(Ref) | 9(FRef) | 10(NAss) | 11(FNAss)
  * <InCondition> := 0(I) | 1(O)
+ * <InAnnotation> := 0(IA) | 1(OA)
  * <Type> := 0(ArrIdxC) | 1(ArrIdxF) | 2(NArr)
  * <getFrom> := 0(null) | 1(not null)
  * 
@@ -70,6 +72,7 @@ public class NodeResolver {
 						tempS += addState(n);			
 						if(n instanceof DataNode) {
 							tempS += addInCondition(n);
+							tempS += addInAnnotation(n);
 							tempS += addType(n);
 							tempS += addFrom(n);				
 						}
@@ -91,6 +94,7 @@ public class NodeResolver {
 						tempS += addState(n);			
 						if(n instanceof DataNode) {
 							tempS += addInCondition(n);
+							tempS += addInAnnotation(n);
 							tempS += addType(n);
 							tempS += addFrom(n);				
 						}
@@ -112,6 +116,7 @@ public class NodeResolver {
 						tempS += addState(n);			
 						if(n instanceof DataNode) {
 							tempS += addInCondition(n);
+							tempS += addInAnnotation(n);
 							tempS += addType(n);
 							tempS += addFrom(n);				
 						}
@@ -129,6 +134,7 @@ public class NodeResolver {
 						tempS += addState(n);			
 						if(n instanceof DataNode) {
 							tempS += addInCondition(n);
+							tempS += addInAnnotation(n);
 							tempS += addType(n);
 							tempS += addFrom(n);				
 						}
@@ -157,11 +163,11 @@ public class NodeResolver {
 	private String addState(GraphNode n) {		
 		if(n instanceof ControlNode) {
 			if(((ControlNode) n).property == ControlState.L)
-				return "99999";
+				return "999999";
 			else if(((ControlNode) n).property == ControlState.T)
-				return "99998";
+				return "999998";
 			else if(((ControlNode) n).property == ControlState.C)
-				return "99997";
+				return "999997";
 		} else if (n instanceof DataNode) {
 			if(((DataNode) n).state == VarState.DIN)
 				return "00";
@@ -203,6 +209,18 @@ public class NodeResolver {
 		return null;
 	}
 	
+	private String addInAnnotation(GraphNode n) {
+		if(n instanceof DataNode) {
+			if(((DataNode) n).inAnnotation == VarState.IA) {
+				return "0";
+			}
+			else if(((DataNode) n).inAnnotation == VarState.NA) {
+				return "1";
+			}
+		}
+		return null;
+	}
+	
 	private String addType(GraphNode n) {
 		if(n instanceof DataNode) {
 			if(((DataNode) n).type == VarState.ArrIdxC) {
@@ -235,6 +253,9 @@ public class NodeResolver {
 			}
 			else if(n.node instanceof ThisExpression) {
 				return "02";
+			}
+			else if(n.node instanceof StringLiteral) {
+				return "14";
 			}
 		} else if(n instanceof ControlNode) {
 			if(n.node instanceof DoStatement) {
