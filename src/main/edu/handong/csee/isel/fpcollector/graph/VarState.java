@@ -20,12 +20,17 @@ In Condition
 1. I for in conditional statement/loop
 2. O for not in conditional statement/loop
 ---------------------------------------
+In Annotation
+1. IA for in annotation
+2. NA for not in annotation 
+---------------------------------------
 About Type
 1. ArrIdxC for ArrayType whose index is composed with ++, -- or var
 2. ArrIdxF for ArrayType whose index is fixed integer
 3. NArr for None-ArrayType
 4. Str for String value
  * */
+
 public enum VarState {
-	DIN, DI, D, FDIN, FDI, FD, I, O, Ass, FAss, NAss, FNAss, Ref, FRef, ArrIdxC, ArrIdxF, NArr, Str
+	DIN, DI, D, FDIN, FDI, FD, I, O, Ass, FAss, NAss, FNAss, Ref, FRef, ArrIdxC, ArrIdxF, NArr, Str, IA, NA
 }

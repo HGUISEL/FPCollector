@@ -123,6 +123,7 @@ public class GraphBuilder {
 	ArrayList<ASTNode> lstViolatedField = new ArrayList<>();
 	ArrayList<ASTNode> lstLevelNode = new ArrayList<ASTNode>();
 	ArrayList<Boolean> lstUseVar = new ArrayList<Boolean>();
+	ArrayList<ASTNode> lstViolatedStringNode = new ArrayList<>();
 	
 	PackageDeclaration pkgDeclaration;
 
@@ -156,6 +157,15 @@ public class GraphBuilder {
 			// Process the main body
 			try {
 				unit.accept(new ASTVisitor() {
+					
+					public boolean visit(AnnotationTypeDeclaration node) {
+						if(methodStart == 0 && methodEnd == 0) {
+							ControlNode n = new ControlNode(node, ControlState.S, level, info);
+							root = n;				
+							root.parent = null;
+						}
+						return super.visit(node);
+					}
 					
 					public boolean visit(TypeDeclaration node) {
 						if(methodStart == 0 && methodEnd == 0) {
@@ -280,7 +290,13 @@ public class GraphBuilder {
 									n.setInCondition(VarState.I);
 								} else {
 									n.setInCondition(VarState.O);
-								}						
+								}
+								
+								if(isInAnnotation(node)) {
+									n.setInAnnotation(VarState.IA);
+								} else {
+									n.setInAnnotation(VarState.NA);
+								}
 								
 								n.setFrom(getFrom(node));
 								
@@ -313,7 +329,13 @@ public class GraphBuilder {
 									n.setInCondition(VarState.I);
 								} else {
 									n.setInCondition(VarState.O);
-								}						
+								}				
+								
+								if(isInAnnotation(node)) {
+									n.setInAnnotation(VarState.IA);
+								} else {
+									n.setInAnnotation(VarState.NA);
+								}
 								
 								n.setFrom(getFrom(node));
 								
@@ -355,7 +377,13 @@ public class GraphBuilder {
 									n.setInCondition(VarState.I);
 								} else {
 									n.setInCondition(VarState.O);
-								}						
+								}
+								
+								if(isInAnnotation(node)) {
+									n.setInAnnotation(VarState.IA);
+								} else {
+									n.setInAnnotation(VarState.NA);
+								}
 								
 								n.setFrom(getFrom(node));
 								
@@ -364,7 +392,56 @@ public class GraphBuilder {
 						}
 
 						return super.visit(node);
-					}			
+					}
+					
+					public boolean visit(StringLiteral node) {
+						//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
+
+						if (isNodeInMethodOrBlock(node)) {																					
+							if (info.varNames.contains(node.getLiteralValue())){
+								DataNode n = new DataNode(node, level, info);																																
+
+								n.setType(VarState.Str);								
+								
+								if(isD(node) == VarState.D)
+									n.setState(VarState.D);
+								else if(isD(node) == VarState.DI)
+									n.setState(VarState.DI);
+								else if(isD(node) == VarState.Ref)
+									n.setState(VarState.Ref);
+								else if(isD(node) == VarState.DIN)
+									n.setState(VarState.DIN);
+								else if(isD(node) == VarState.Ass)
+									n.setState(VarState.Ass);
+								else if(isD(node) == VarState.NAss)
+									n.setState(VarState.NAss);
+								
+								if(checkType(node) == VarState.ArrIdxC)
+									n.setType(VarState.ArrIdxC);
+								else if(checkType(node) == VarState.ArrIdxF)
+									n.setType(VarState.ArrIdxF);
+								else if(checkType(node) == VarState.NArr)
+									n.setType(VarState.NArr);
+								
+								if(isInCondition(node)) {
+									n.setInCondition(VarState.I);
+								} else {
+									n.setInCondition(VarState.O);
+								}
+								if(isInAnnotation(node)) {
+									n.setInAnnotation(VarState.IA);
+								} else {
+									n.setInAnnotation(VarState.NA);
+								}
+								
+								n.setFrom(getFrom(node));
+
+								root.nexts.add(n);																
+							}
+						}
+
+						return super.visit(node);
+					}
 					
 					public boolean visit(DoStatement node) {
 						if (isNodeInMethodOrBlock(node)) {
@@ -718,12 +795,6 @@ public class GraphBuilder {
 						return super.visit(node);
 					}
 
-					public boolean visit(final AnnotationTypeDeclaration node) {
-						//Log.info("AnnotationTypeDeclaration");
-						//Log.info(node);
-						return super.visit(node);
-					}
-
 					public boolean visit(final AnnotationTypeMemberDeclaration node) {
 						//Log.info("AnnotationTypeMemberDeclaration");
 						//Log.info(node);
@@ -953,12 +1024,7 @@ public class GraphBuilder {
 					//Log.info(node);
 					return super.visit(node);
 				}
-
-				public boolean visit(final StringLiteral node) {
-					//Log.info("StringLiteral");
-					//Log.info(node);
-					return super.visit(node);
-				}
+				
 				public boolean visit(final SuperConstructorInvocation node) {
 					//Log.info("SuperConstructorInvocation");
 					//Log.info(node);
@@ -1106,6 +1172,23 @@ public class GraphBuilder {
 						}					
 						return super.visit(node);
 					}
+					
+					public boolean visit(StringLiteral node) {
+						Integer lineNum = getLineNum(node.getStartPosition());
+						String nodeValue = node.toString();
+						nodeValue = nodeValue.substring(1, nodeValue.length()-1);
+
+						if(nodeValue.equals(info.varNames.get(0)) && lineNum >= info.start && lineNum <= info.end) {
+							lstViolatedStringNode.add(node);
+						}
+						
+						else if(lstViolatedStringNode.size() == 0 && lineNum >= info.start -1 && lineNum <= info.end +1) {
+							lstViolatedStringNode.add(node);
+						}
+						
+						return super.visit(node);
+					}
+					
 				});
 			} catch (Exception e) {
 				System.out.println("Problem : " + e.toString());
@@ -1120,10 +1203,12 @@ public class GraphBuilder {
 		lstViolatedVariables.removeAll(lstViolatedField);
 		
 		//type 1 for field
-		if(type == 1)
-			return lstViolatedField;
-		
-		return lstViolatedVariables;
+		if(type == 0)
+			return lstViolatedVariables;
+		else if(type == 1)
+			return lstViolatedField;		
+		else
+			return lstViolatedStringNode;
 	}
 
 	private boolean violatedNodeisIn(ASTNode node, ASTNode targetNode) {
@@ -1149,7 +1234,7 @@ public class GraphBuilder {
 		return false;
 	}
 	
-	private ASTNode getFrom(SimpleName node) {
+	private ASTNode getFrom(ASTNode node) {
 		ASTNode tempParent = node.getParent();
 		while(true) {
 			if(tempParent instanceof Block || tempParent instanceof MethodDeclaration || tempParent instanceof TypeDeclaration) {
@@ -1179,7 +1264,7 @@ public class GraphBuilder {
 		return null;
 	}
 	
-	private VarState isD(SimpleName node) {
+	private VarState isD(ASTNode node) {
 		
 		ASTNode tempParent = node.getParent();
 //		System.out.println(tempParent.getClass().getSimpleName());
@@ -1250,7 +1335,7 @@ public class GraphBuilder {
 		return VarState.Ref;
 	}
 	
-	private VarState checkType(SimpleName node) {
+	private VarState checkType(ASTNode node) {
 		ASTNode tempParent = node.getParent();
 		
 		if(tempParent instanceof ArrayAccess) {
@@ -1277,6 +1362,90 @@ public class GraphBuilder {
 	}
 	
 	private boolean isInCondition(SimpleName node) {
+		ASTNode tempParent = node.getParent();
+		while(true) {
+			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
+				break;
+			}
+			else if(tempParent instanceof ForStatement ||
+					tempParent instanceof IfStatement||
+					tempParent instanceof EnhancedForStatement||
+					tempParent instanceof WhileStatement ||
+					tempParent instanceof SwitchCase ||
+					tempParent instanceof SwitchExpression) {
+				return true;
+			} 
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
+		}
+		return false;
+	}
+	
+	private boolean isInAnnotation(StringLiteral node) {
+		ASTNode tempParent = node.getParent();
+		while(true) {
+			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
+				break;
+			}
+			else if(tempParent instanceof NormalAnnotation ||
+					tempParent instanceof MarkerAnnotation||
+					tempParent instanceof SingleMemberAnnotation||
+					tempParent instanceof AnnotationTypeDeclaration ||
+					tempParent instanceof AnnotationTypeMemberDeclaration
+					) {
+				return true;
+			} 
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
+		}
+		return false;
+	}
+	
+	private boolean isInAnnotation(ThisExpression node) {
+		ASTNode tempParent = node.getParent();
+		while(true) {
+			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
+				break;
+			}
+			else if(tempParent instanceof NormalAnnotation ||
+					tempParent instanceof MarkerAnnotation||
+					tempParent instanceof SingleMemberAnnotation||
+					tempParent instanceof AnnotationTypeDeclaration ||
+					tempParent instanceof AnnotationTypeMemberDeclaration
+					) {
+				return true;
+			} 
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
+		}
+		return false;
+	}
+	
+	private boolean isInAnnotation(SimpleName node) {
+		ASTNode tempParent = node.getParent();
+		while(true) {
+			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {
+				break;
+			}
+			else if(tempParent instanceof NormalAnnotation ||
+					tempParent instanceof MarkerAnnotation||
+					tempParent instanceof SingleMemberAnnotation||
+					tempParent instanceof AnnotationTypeDeclaration ||
+					tempParent instanceof AnnotationTypeMemberDeclaration
+					) {
+				return true;
+			} 
+			if(tempParent.getParent() != null) {
+				tempParent = tempParent.getParent();
+			} else break;
+		}
+		return false;
+	}
+	
+	private boolean isInCondition(StringLiteral node) {
 		ASTNode tempParent = node.getParent();
 		while(true) {
 			if(tempParent instanceof MethodDeclaration || tempParent instanceof Block) {

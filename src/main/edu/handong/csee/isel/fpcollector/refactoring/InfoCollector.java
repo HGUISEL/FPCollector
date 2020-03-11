@@ -4,14 +4,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import edu.handong.csee.isel.fpcollector.graph.ControlNode;
 import edu.handong.csee.isel.fpcollector.graph.GraphBuilder;
-import edu.handong.csee.isel.fpcollector.graph.JavaASTParser;
 
 public class InfoCollector {
 	static final int VAR = 0;
@@ -23,55 +25,90 @@ public class InfoCollector {
 	public ArrayList<ControlNode> graphs = new ArrayList<>();
 	
 	public void run(String result_path) throws IOException {
-		File outputFile = new File(result_path);
-		BufferedReader br = new BufferedReader(new FileReader(outputFile));
+
 		
-		br.readLine();
-		String line = "";
-		int c = 0;
-        while ((line = br.readLine()) != null) {
-        	Info info = getInfo(line);
-        	if (info != null) {
-        		c++;
-        		if (c % 10 == 0) {
-        			System.out.println(c);
-//                    System.out.println("Heap Size(M) : " + Runtime.getRuntime().freeMemory() / (1024 * 1024) + " MB");
-        		}
-        		
-    			GraphBuilder graphBuilder = new GraphBuilder(info);
-    			graphBuilder.run();
-    			graphs.add(graphBuilder.root);
+		Reader outputFile = new FileReader(result_path);
+		Iterable<CSVRecord> records = CSVFormat.EXCEL.parse(outputFile);
+		int count = 0 ;
+		for (CSVRecord record : records) {			
+			if(record.get(0).equals("File Path")) continue;
+			count ++;
+			System.out.println(count);
+			if(count == 488) {
+				System.out.println("A");
+			}
+			Info info = new Info();			
+		    info.path = record.get(0);
+		    info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(getSource(info.path))));
+		    info.start = Integer.parseInt(getScope(record.get(1), 0, info.sourceByLine));
+		    info.end = Integer.parseInt(getScope(record.get(1), 1, info.sourceByLine));
+		    info.varNames.add(getVarName(record.get(2)));
+		    if(info.varNames.get(0) == null) {
+        		info.varNames.remove(0);
+        		info.varNodes.addAll(getVarList(info));
+            	info.fieldNodes.addAll(getFieldList(info));
+            	info.nodesToStrings();
         	}
-        }
-        br.close();
-	}
+        	if(info.varNodes.size() == 0) {
+        		info.varNodes.addAll(getStringNode(info));
+        	}
+        	if(info.varNodes.size() == 0) {
+        		System.out.println("Something Goes Wrong");
+        	}
+		    
+		    GraphBuilder graphBuilder = new GraphBuilder(info);
+			graphBuilder.run();
+			graphs.add(graphBuilder.root);
+		}
+
+//		File outputFile = new File(result_path);
+//		BufferedReader br = new BufferedReader(new FileReader(outputFile));
+		
+//		br.readLine();
+//		String line = "";
+//		int c = 0;
+//        while ((line = br.readLine()) != null) {
+//        	if(!line.startsWith("/")) continue;
+//        	if(c == 419)
+//        		System.out.println("a");
+//        	Info info = getInfo(line);
+//        	if (info != null) {
+//        		c++;
+////        		if (c % 10 == 0) {
+//        			System.out.println(c);
+////                    System.out.println("Heap Size(M) : " + Runtime.getRuntime().freeMemory() / (1024 * 1024) + " MB");
+////        		}
+//        		
+//    			GraphBuilder graphBuilder = new GraphBuilder(info);
+//    			graphBuilder.run();
+//    			graphs.add(graphBuilder.root);
+//        	}
+//        }
+//        br.close();
+	}	
 	
-	private ArrayList<ASTNode> getStringNode(Info info){
-		JavaASTParser tempParser = new JavaASTParser(info);
-		return tempParser.getViolatedVariableList(String.join("\n", info.sourceByLine), STRINGNODE);
-	}
-	
-	private Info getInfo(String line) throws IOException {
-		if (line.startsWith("/")) {
-    		String[] tokenList = line.split(",", -1);            	        		
+	private Info getInfo(String line) throws IOException {		
+    		String[] tokenList = line.split(",\"", 0);            	        		
     		
     		Info info = new Info();
-        	info.path = tokenList[0];
-        	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(getSource(tokenList[0]))));
-        	info.start = Integer.parseInt(getScope(tokenList[1], 0, info.sourceByLine));
-        	info.end = Integer.parseInt(getScope(tokenList[1], 1, info.sourceByLine));
-        	info.varNames.add(getVarName(tokenList[3]));
+        	info.path = tokenList[0].split(",")[0];
+        	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(getSource(info.path))));
+        	info.start = Integer.parseInt(getScope(tokenList[0].split(",")[1], 0, info.sourceByLine));
+        	info.end = Integer.parseInt(getScope(tokenList[0].split(",")[1], 1, info.sourceByLine));
+        	info.varNames.add(getVarName(tokenList[1]));
         	if(info.varNames.get(0) == null) {
         		info.varNames.remove(0);
         		info.varNodes.addAll(getVarList(info));
             	info.fieldNodes.addAll(getFieldList(info));
             	info.nodesToStrings();
         	}
-        	
-        	return info;                       
-    	}
-		
-		return null;
+        	if(info.varNodes.size() == 0) {
+        		info.varNodes.addAll(getStringNode(info));
+        	}
+        	if(info.varNodes.size() == 0) {
+        		System.out.println("Something Goes Wrong");
+        	}
+        	return info;                         
 	}
 	
 	private String getSource(String file_path) throws IOException {
@@ -128,15 +165,24 @@ public class InfoCollector {
 	}
 	
 	private String getVarName(String token) {		
-		String newToken = token.replace("\"\"", "$");
-		token = token.replace("\"\"", "\"");
-		int firstIdx = newToken.indexOf("$");
-		int lastIdx = newToken.lastIndexOf("$");
-		newToken = token.substring(firstIdx+1, lastIdx);
-		
-//		if(tokenList.length == 1) {
-//			return null;
-//		}
+		int start = 0;
+		int end = 0;
+		int flag = 0;
+		for(int i = 0 ; i < token.length(); i ++) {
+			if(flag == 0 && i< token.length()-1 && token.charAt(i)=='"') {
+				if(token.charAt(i-1) != '\\') {					
+					start = i+1;
+					flag = 1;
+				}
+			} else if(flag == 1 && i< token.length()-1 && token.charAt(i)=='"') {
+				if(token.charAt(i-1) != '\\') {
+					end = i;
+					flag = 2;
+				}
+			}
+		}
+
+		String newToken =token.substring(start, end);		
 		return newToken;
 	}
 	
@@ -146,6 +192,11 @@ public class InfoCollector {
 			return null;
 		}
 		return tokenList[1];
+	}
+	
+	private ArrayList<ASTNode> getStringNode(Info info){
+		GraphBuilder tempParser = new GraphBuilder(info);
+		return tempParser.getViolatedVariableList(String.join("\n", info.sourceByLine), STRINGNODE);
 	}
 	
 	private ArrayList<ASTNode> getVarList(Info info){
