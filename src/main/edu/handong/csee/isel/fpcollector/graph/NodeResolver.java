@@ -146,6 +146,9 @@ public class NodeResolver {
 				}
 			}
 		}		
+		if(tempS.length() > 10) {
+			System.out.println("A");
+		}
 		return tempS;		
 	}
 	
