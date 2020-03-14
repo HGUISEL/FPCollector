@@ -34,7 +34,7 @@ public class InfoCollector {
 			if(record.get(0).equals("File Path")) continue;
 			count ++;
 			System.out.println(count);
-			if(count == 488) {
+			if(count == 46) {
 				System.out.println("A");
 			}
 			Info info = new Info();			
@@ -42,17 +42,33 @@ public class InfoCollector {
 		    info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(getSource(info.path))));
 		    info.start = Integer.parseInt(getScope(record.get(1), 0, info.sourceByLine));
 		    info.end = Integer.parseInt(getScope(record.get(1), 1, info.sourceByLine));
-		    info.varNames.add(getVarName(record.get(2)));
-		    if(info.varNames.get(0) == null) {
-        		info.varNames.remove(0);
-        		info.varNodes.addAll(getVarList(info));
-            	info.fieldNodes.addAll(getFieldList(info));
-            	info.nodesToStrings();
-        	}
-        	if(info.varNodes.size() == 0) {
+		    //In case of String Literal
+		    info.varNames.add(getVarNameByDoubleQuotation(record.get(2)));
+		    //For String Literal
+        	if(info.varNames.get(0) != null && info.varNodes.size() == 0) {
         		info.varNodes.addAll(getStringNode(info));
-        	}
+        	} 
+		    //In case of DFA
+        	else if(info.varNames.get(0) == null) {
+		    	info.varNames.remove(0);
+		    	info.varNames.add(getVarNameBySingleQuotation(record.get(2)));
+		    	if(info.varNames.get(0) != null) {
+		    		info.varNodes.addAll(getVarList(info));
+		    	}
+		    	else {
+		    		//for other rules
+		    		info.varNames.remove(0);
+	        		info.varNodes.addAll(getVarList(info));
+	            	info.fieldNodes.addAll(getFieldList(info));
+	            	info.nodesToStrings();
+		    	}
+		    }
+		    
         	if(info.varNodes.size() == 0) {
+        		System.out.println("Something Goes Wrong");
+        	}
+        	
+        	if(info.varNodes.size() >1) {
         		System.out.println("Something Goes Wrong");
         	}
 		    
@@ -87,29 +103,29 @@ public class InfoCollector {
 //        br.close();
 	}	
 	
-	private Info getInfo(String line) throws IOException {		
-    		String[] tokenList = line.split(",\"", 0);            	        		
-    		
-    		Info info = new Info();
-        	info.path = tokenList[0].split(",")[0];
-        	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(getSource(info.path))));
-        	info.start = Integer.parseInt(getScope(tokenList[0].split(",")[1], 0, info.sourceByLine));
-        	info.end = Integer.parseInt(getScope(tokenList[0].split(",")[1], 1, info.sourceByLine));
-        	info.varNames.add(getVarName(tokenList[1]));
-        	if(info.varNames.get(0) == null) {
-        		info.varNames.remove(0);
-        		info.varNodes.addAll(getVarList(info));
-            	info.fieldNodes.addAll(getFieldList(info));
-            	info.nodesToStrings();
-        	}
-        	if(info.varNodes.size() == 0) {
-        		info.varNodes.addAll(getStringNode(info));
-        	}
-        	if(info.varNodes.size() == 0) {
-        		System.out.println("Something Goes Wrong");
-        	}
-        	return info;                         
-	}
+//	private Info getInfo(String line) throws IOException {		
+//    		String[] tokenList = line.split(",\"", 0);            	        		
+//    		
+//    		Info info = new Info();
+//        	info.path = tokenList[0].split(",")[0];
+//        	info.sourceByLine = new ArrayList<>(Arrays.asList(getSourceByLine(getSource(info.path))));
+//        	info.start = Integer.parseInt(getScope(tokenList[0].split(",")[1], 0, info.sourceByLine));
+//        	info.end = Integer.parseInt(getScope(tokenList[0].split(",")[1], 1, info.sourceByLine));
+//        	info.varNames.add(getVarNameByDoubleQuotation(tokenList[1]));
+//        	if(info.varNames.get(0) == null) {
+//        		info.varNames.remove(0);
+//        		info.varNodes.addAll(getVarList(info));
+//            	info.fieldNodes.addAll(getFieldList(info));
+//            	info.nodesToStrings();
+//        	}
+//        	if(info.varNodes.size() == 0) {
+//        		info.varNodes.addAll(getStringNode(info));
+//        	}
+//        	if(info.varNodes.size() == 0) {
+//        		System.out.println("Something Goes Wrong");
+//        	}
+//        	return info;                         
+//	}
 	
 	private String getSource(String file_path) throws IOException {
 		File f = new File(file_path);
@@ -164,7 +180,7 @@ public class InfoCollector {
 		}
 	}
 	
-	private String getVarName(String token) {		
+	private String getVarNameByDoubleQuotation(String token) {		
 		int start = 0;
 		int end = 0;
 		int flag = 0;
@@ -181,17 +197,21 @@ public class InfoCollector {
 				}
 			}
 		}
-
-		String newToken =token.substring(start, end);		
+		
+		if(start == 0 && end == 0) {
+			return null;
+		}
+		
+		String newToken =token.substring(start, end);	
 		return newToken;
 	}
 	
-	private String getVarNameDFA(String token) {		
+	private String getVarNameBySingleQuotation(String token) {		
 		String[] tokenList = token.split("'");
 		if(tokenList.length == 1) {
 			return null;
 		}
-		return tokenList[1];
+		return tokenList[3];
 	}
 	
 	private ArrayList<ASTNode> getStringNode(Info info){

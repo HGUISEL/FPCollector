@@ -1114,7 +1114,6 @@ public class GraphBuilder {
 	
 	public ArrayList<ASTNode> getViolatedVariableList(String source, int type) {
 		ASTParser parser = ASTParser.newParser(AST.JLS12);
-
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		char[] content = source.toCharArray();
 		parser.setSource(content);
@@ -1130,28 +1129,44 @@ public class GraphBuilder {
 		parser.setResolveBindings(false);
 		parser.setCompilerOptions(options);
 		parser.setStatementsRecovery(true);
-
+		
 		try {
 			final CompilationUnit unit = (CompilationUnit) parser.createAST(null);
 			cUnit = unit;
 
 			// Process the main body
 			try {
-				unit.accept(new ASTVisitor() {					
+				unit.accept(new ASTVisitor() {						
 					public boolean visit(SimpleName node) {
 						ASTNode parent = node.getParent();
 						Integer lineNum = getLineNum(node.getStartPosition());
+						ASTNode tempNode = parent;												
+						while(!(tempNode instanceof TypeDeclaration)) {
+							tempNode = tempNode.getParent();
+							if(tempNode instanceof CompilationUnit) {
+								return super.visit(node);
+							}
+						}
+												
+						TypeDeclaration belongClass = (TypeDeclaration) tempNode;						
+						Integer classStart = getLineNum(belongClass.getStartPosition());
+						Integer classEnd = getLineNum(belongClass.getStartPosition() + belongClass.getLength() - 1);						
 						
 						if((parent instanceof VariableDeclarationFragment || parent instanceof SingleVariableDeclaration) 
 								&& !(parent.getParent() instanceof FieldDeclaration)) {
-							lstVariableDeclaration.add(node.getIdentifier());
+							if(classStart <= info.start && classEnd >= info.end)
+								lstVariableDeclaration.add(node.getIdentifier());
 							
-							for(String temp : lstFieldMemberDeclaration)
-								lstVariableDeclaration.remove(temp);
+//							for(String temp : lstFieldMemberDeclaration)
+//								lstVariableDeclaration.remove(temp);
 						}
 						
 						if(lineNum >= info.start && lineNum <= info.end && lstVariableDeclaration.contains(node.getIdentifier())) {
-							lstViolatedVariables.add(node);
+							if(info.varNames.size() != 0) {
+								if(info.varNames.contains(node.toString()))
+									lstViolatedVariables.add(node);
+							}
+							else lstViolatedVariables.add(node);
 						}					
 						else if (lineNum >= info.start && lineNum <= info.end && lstFieldMemberDeclaration.contains(node.getIdentifier())) {
 							lstViolatedField.add(node);
