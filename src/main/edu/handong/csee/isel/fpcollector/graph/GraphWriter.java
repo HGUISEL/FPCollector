@@ -14,7 +14,7 @@ import org.apache.commons.csv.CSVPrinter;
 public class GraphWriter {
 	public String fileName;
 	
-	public void writeGraph(ArrayList<Entry<Integer, ArrayList<GraphInfo>>> graphs, String type, int totalSize) {
+	public void writeTotalNumRankGraph(ArrayList<Entry<Integer, ArrayList<GraphInfo>>> graphs, String type, int totalSize) {
 //		String fileName = ;/* ./Result.csv */
 		 fileName = "./" + type + "GraphRepresentation.csv";
 		
@@ -47,7 +47,7 @@ public class GraphWriter {
 		} 
 	}
 	
-	public void writeGraphS(ArrayList<Entry<String, ArrayList<GraphInfo>>> graphs, String type, int totalSize) {
+	public void writeNodeRankGraph(ArrayList<Entry<String, ArrayList<GraphInfo>>> graphs, String type, int totalSize) {
 //		String fileName = ;/* ./Result.csv */
 		 fileName = "./" + type + "GraphRepresentation.csv";
 		
@@ -73,113 +73,6 @@ public class GraphWriter {
 					csvPrinter.printRecord(path, method, graph, graphInfo);
 				}
 			}
-			writer.flush();
-			writer.close();
-		}catch(IOException e){
-			e.printStackTrace();
-		} 
-	}
-	
-	public void writeRankGraph(GraphComparator fpcGraphCompartor, GraphComparator tpcGraphCompartor, String projectName) {
-//		String fileName = ;/* ./Result.csv */
-		 fileName = "./" + projectName + "NodeRankGraphRepresentation.csv";
-		 
-		 ArrayList<Entry<String, ArrayList<GraphInfo>>> fpcGraphs = fpcGraphCompartor.clusterByTotalNodeRank;
-		 ArrayList<Entry<String, ArrayList<GraphInfo>>> tpcGraphs = tpcGraphCompartor.clusterByTotalNodeRank;
-		 int fpcTotalSize = fpcGraphCompartor.totalGraphSize;
-		 int tpcTotalSize = tpcGraphCompartor.totalGraphSize;
-		 
-		try(
-			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
-			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-									.withHeader("Information \\ EXIST", "TPC: O / FPC: O", "TPC: O / FPC: X", "TPC: X / FPC: O", "TPC: X / FPC: X"));
-			) {
-			String TPCFPC = "";
-			String TPC = "";
-			String FPC = "";
-			String None = "None";
-			NodeInterpreter interpreter = new NodeInterpreter();
-			for (Entry<String, ArrayList<GraphInfo>> fpcGraph : fpcGraphs) {
-				boolean existTPC = false;
-				for (Entry<String, ArrayList<GraphInfo>> tpcGraph : tpcGraphs) {
-					if (tpcGraph.getKey().equals(fpcGraph.getKey())) {
-						existTPC = true;
-						
-						TPCFPC += "Pattern : "+ interpreter.interpret(fpcGraph.getKey()) 
-										+ " : (fpc: " + fpcGraph.getValue().size() 
-										+ " / " + (double)fpcGraph.getValue().size()/fpcTotalSize*100 
-										+ ") (tpc: " + tpcGraph.getValue().size() 
-										+ " / " + (double)tpcGraph.getValue().size()/tpcTotalSize*100 + ")\n";
-						tpcGraphs.remove(tpcGraph);
-						break;
-					}
-				}
-				if (!existTPC) 
-					FPC += "Pattern : "+ interpreter.interpret(fpcGraph.getKey()) 
-								+ " : (fpc: " + fpcGraph.getValue().size() 
-								+ " / " + (double)fpcGraph.getValue().size()/fpcTotalSize*100 + ")\n";
-			}
-			
-			for (Entry<String, ArrayList<GraphInfo>> tpcGraph : tpcGraphs) {
-				TPC += "Pattern : "+ interpreter.interpret(tpcGraph.getKey()) 
-							+ " : (tpc: " + tpcGraph.getValue().size() 
-							+ " / " + (double)tpcGraph.getValue().size()/tpcTotalSize*100 + ")\n";
-			}
-			
-			csvPrinter.printRecord("Information", TPCFPC, TPC, FPC, None);
-			writer.flush();
-			writer.close();
-		}catch(IOException e){
-			e.printStackTrace();
-		} 
-	}
-	
-	public void writeRankGraphTotalNum(GraphComparator fpcGraphCompartor, GraphComparator tpcGraphCompartor, String projectName) {
-//		String fileName = ;/* ./Result.csv */
-		 fileName = "./" + projectName + "NumRankGraphRepresentation.csv";
-		 
-		 ArrayList<Entry<Integer, ArrayList<GraphInfo>>> fpcGraphs = fpcGraphCompartor.clusterByTotalNumRank;
-		 ArrayList<Entry<Integer, ArrayList<GraphInfo>>> tpcGraphs = tpcGraphCompartor.clusterByTotalNumRank;
-		 int fpcTotalSize = fpcGraphCompartor.totalGraphSize;
-		 int tpcTotalSize = tpcGraphCompartor.totalGraphSize;
-		 
-		try(
-			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
-			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-									.withHeader("Information \\ EXIST", "TPC: O / FPC: O", "TPC: O / FPC: X", "TPC: X / FPC: O", "TPC: X / FPC: X"));
-			) {
-			String TPCFPC = "";
-			String TPC = "";
-			String FPC = "";
-			String None = "None";
-					
-			for (Entry<Integer, ArrayList<GraphInfo>> fpcGraph : fpcGraphs) {
-				boolean existTPC = false;
-				for (Entry<Integer, ArrayList<GraphInfo>> tpcGraph : tpcGraphs) {
-					if (tpcGraph.getKey().equals(fpcGraph.getKey())) {
-						existTPC = true;
-						TPCFPC += "Number of Size "+ fpcGraph.getKey() 
-										+ " : (fpc: " + fpcGraph.getValue().size() 
-										+ " / " + (double)fpcGraph.getValue().size()/fpcTotalSize*100 
-										+ ") (tpc: " + tpcGraph.getValue().size() 
-										+ " / " + (double)tpcGraph.getValue().size()/tpcTotalSize*100 + ")\n";
-						tpcGraphs.remove(tpcGraph);
-						break;
-					}
-				}
-				if (!existTPC) 
-					FPC += "Number of Size "+ fpcGraph.getKey() 
-								+ " : (fpc: " + fpcGraph.getValue().size() 
-								+ " / " + (double)fpcGraph.getValue().size()/fpcTotalSize*100 + ")\n";
-			}
-			
-			for (Entry<Integer, ArrayList<GraphInfo>> tpcGraph : tpcGraphs) {
-				TPC += "Number of Size "+ tpcGraph.getKey() 
-							+ " : (tpc: " + tpcGraph.getValue().size() 
-							+ " / " + (double)tpcGraph.getValue().size()/tpcTotalSize*100 + ")\n";
-			}
-			
-			csvPrinter.printRecord("Information", TPCFPC, TPC, FPC, None);
 			writer.flush();
 			writer.close();
 		}catch(IOException e){
