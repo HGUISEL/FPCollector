@@ -24,8 +24,17 @@ public class InfoCollector {
 
 	public ArrayList<ControlNode> graphs = new ArrayList<>();
 	
-	public void run(String result_path) throws IOException {
-
+	public void run(String result_path, int phase) throws IOException {
+		int firstInstance = 0;
+		if(phase == 1) {
+			firstInstance = 1;
+		} else if(phase == 2) {
+			firstInstance = 2000;
+		} else if(phase == 3) {
+			firstInstance = 4000;
+		}
+		
+		int limit = phase * 2000;
 		
 		Reader outputFile = new FileReader(result_path);
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.parse(outputFile);
@@ -33,6 +42,11 @@ public class InfoCollector {
 		for (CSVRecord record : records) {			
 			if(record.get(0).equals("File Path")) continue;
 			count ++;
+			
+			if(count < firstInstance || count > limit) {
+				continue;
+			}
+						
 			System.out.println(count);
 			if(count == 1163) {
 				System.out.println("A");
@@ -105,6 +119,7 @@ public class InfoCollector {
 //        	}
 //        }
 //        br.close();
+		System.out.println("end");
 	}	
 	
 //	private Info getInfo(String line) throws IOException {		

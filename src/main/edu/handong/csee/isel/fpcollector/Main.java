@@ -16,6 +16,7 @@ import edu.handong.csee.isel.fpcollector.refactoring.GitCheckout;
 import edu.handong.csee.isel.fpcollector.refactoring.GitClone;
 import edu.handong.csee.isel.fpcollector.refactoring.InfoCollector;
 import edu.handong.csee.isel.fpcollector.refactoring.Input;
+import edu.handong.csee.isel.fpcollector.refactoring.InstanceChecker;
 import edu.handong.csee.isel.fpcollector.refactoring.ReportComparator;
 import edu.handong.csee.isel.fpcollector.refactoring.ReportReader;
 import edu.handong.csee.isel.fpcollector.refactoring.RunTool;
@@ -26,6 +27,8 @@ public class Main {
 	final static int SUCCESS = 1;
 	final static int CLONE = 2;
 	final static int CHECKOUT = 3;
+	final static int FPC = 4;
+	final static int TPC = 5;
 	
 	private static String[] getPMDReport(String[] args) {
 		String[] strs = new String[4];
@@ -89,12 +92,12 @@ public class Main {
 		return strs;
 	}
 	
-	private static ArrayList<ControlNode> drawGraph(String candidateFileName) {
+	private static ArrayList<ControlNode> drawGraph(String candidateFileName, int phase) {
 		// 1. read input
 		InfoCollector collector = new InfoCollector();
 		
 		try {
-			collector.run(candidateFileName);
+			collector.run(candidateFileName, phase);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -104,7 +107,7 @@ public class Main {
 		return collector.graphs;
 	}
 	
-	private static ArrayList<GraphInfo> getGraphInfo(ArrayList<ControlNode> graphs) {
+	private static ArrayList<GraphInfo> getGraphInfo(ArrayList<ControlNode> graphs, int phase) {
 		ArrayList<GraphInfo> graphInfos = new ArrayList<>();
 			int count = 0;
 			for(ControlNode g : graphs) {
@@ -122,7 +125,7 @@ public class Main {
 			return graphInfos;
 	}
 	
-	private static void clusterGraphByNodeNum(ArrayList<GraphInfo> fpcGraphInfos, ArrayList<GraphInfo> tpcGraphInfos, String projectName) {
+	private static void clusterGraphByNodeNum(ArrayList<GraphInfo> fpcGraphInfos, ArrayList<GraphInfo> tpcGraphInfos, String projectName, int phase) {
 		GraphNodeNumClusterer fpcGraphNodeNumClusterer = new GraphNodeNumClusterer(fpcGraphInfos);
 		GraphNodeNumClusterer tpcGraphNodeNumClusterer = new GraphNodeNumClusterer(tpcGraphInfos);
 		
@@ -140,7 +143,7 @@ public class Main {
 		graphRankWriter.writeRankGraphTotalNum(fpcGraphNodeNumClusterer, tpcGraphNodeNumClusterer, projectName);
 	}
 	
-	private static void clusterGraphByNode(ArrayList<GraphInfo> fpcGraphInfos, ArrayList<GraphInfo> tpcGraphInfos, String projectName) {
+	private static void clusterGraphByNode(ArrayList<GraphInfo> fpcGraphInfos, ArrayList<GraphInfo> tpcGraphInfos, String projectName, int phase) {
 		GraphNodeClusterer fpcGraphNodeClusterer = new GraphNodeClusterer(fpcGraphInfos);
 		GraphNodeClusterer tpcGraphNodeClusterer = new GraphNodeClusterer(tpcGraphInfos);
 		
@@ -166,7 +169,7 @@ public class Main {
 	public static void main(String[] args) {
 //        System.out.println("Heap Size(M) : " + Runtime.getRuntime().totalMemory() / (1024 * 1024) + " MB");
 //        System.out.println("Max Heap Size(M) : " + Runtime.getRuntime().maxMemory() / (1024 * 1024) + " MB");
-	        
+	    double numOfFPCRun = 0.0;
 		// 1. Preparing for Collecting False Positive Candidates
 		String[] strs = getPMDReport(args);
 		
@@ -189,23 +192,34 @@ public class Main {
 		ArrayList<ControlNode> fpcGraphs = new ArrayList<>();
 		ArrayList<ControlNode> tpcGraphs = new ArrayList<>();
 		
-		fpcGraphs = drawGraph(fpcCandidateFileName);
-		tpcGraphs = drawGraph(tpcCandidateFileName);
-		System.out.println("Step 3 CLEAR");
+		InstanceChecker instanceChecker = new InstanceChecker();
 		
-		//Step 4. Get Graph Information
+		instanceChecker.checkNum(fpcCandidateFileName, FPC);
+		instanceChecker.checkNum(fpcCandidateFileName, TPC);
+		
+		if(instanceChecker.fpcInstanceNumber > 2000) {
+			numOfFPCRun = Math.ceil((double) instanceChecker.fpcInstanceNumber / 2000);
+		}	
+		
 		ArrayList<GraphInfo> fpcGraphInfos = new ArrayList<>();
 		ArrayList<GraphInfo> tpcGraphInfos = new ArrayList<>();
 		
-		fpcGraphInfos = getGraphInfo(fpcGraphs);
-		tpcGraphInfos = getGraphInfo(tpcGraphs);
-		fpcGraphs = null;
-		tpcGraphs = null;
-		System.out.println("Step 4 Clear");
+		for(int i = 1 ; i <= numOfFPCRun; i ++) {
+			fpcGraphs = drawGraph(fpcCandidateFileName, i);
+			tpcGraphs = drawGraph(tpcCandidateFileName, i);
+			System.out.println("Step 3 CLEAR");
 			
-		//Step 5. Graph Clustering
-		clusterGraphByNodeNum(fpcGraphInfos, tpcGraphInfos, projectName);
-		clusterGraphByNode(fpcGraphInfos, tpcGraphInfos, projectName);
-		System.out.println("Step 5 Clear");
+			//Step 4. Get Graph Information
+			fpcGraphInfos = getGraphInfo(fpcGraphs, i);
+			tpcGraphInfos = getGraphInfo(tpcGraphs, i);
+			fpcGraphs = null;
+			tpcGraphs = null;
+			System.out.println("Step 4 Clear");
+		
+			//Step 5. Graph Clustering
+			clusterGraphByNodeNum(fpcGraphInfos, tpcGraphInfos, projectName, i);
+			clusterGraphByNode(fpcGraphInfos, tpcGraphInfos, projectName, i);
+			System.out.println("Step 5 Clear");
+		}
 	}
 }
