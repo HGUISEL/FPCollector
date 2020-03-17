@@ -34,7 +34,7 @@ public class InfoCollector {
 			if(record.get(0).equals("File Path")) continue;
 			count ++;
 			System.out.println(count);
-			if(count == 46) {
+			if(count == 1163) {
 				System.out.println("A");
 			}
 			Info info = new Info();			
@@ -54,6 +54,10 @@ public class InfoCollector {
 		    	info.varNames.add(getVarNameBySingleQuotation(record.get(2)));
 		    	if(info.varNames.get(0) != null) {
 		    		info.varNodes.addAll(getVarList(info));
+		    		if(info.varNodes.size() == 0) {
+		    			info.fieldNames.addAll(info.varNames);
+		    			info.fieldNodes.addAll(getFieldList(info));
+		    		}
 		    	}
 		    	else {
 		    		//for other rules
@@ -64,7 +68,7 @@ public class InfoCollector {
 		    	}
 		    }
 		    
-        	if(info.varNodes.size() == 0) {
+        	if(info.varNodes.size() == 0 && info.fieldNodes.size() == 0) {
         		System.out.println("Something Goes Wrong");
         	}
         	

@@ -1140,7 +1140,10 @@ public class GraphBuilder {
 					public boolean visit(SimpleName node) {
 						ASTNode parent = node.getParent();
 						Integer lineNum = getLineNum(node.getStartPosition());
-						ASTNode tempNode = parent;												
+						ASTNode tempNode = parent;		
+//						if(lineNum == 124) {
+//							System.out.println("a");
+//						}
 						while(!(tempNode instanceof TypeDeclaration)) {
 							tempNode = tempNode.getParent();
 							if(tempNode instanceof CompilationUnit) {
@@ -1164,7 +1167,8 @@ public class GraphBuilder {
 						if(lineNum >= info.start && lineNum <= info.end && lstVariableDeclaration.contains(node.getIdentifier())) {
 							if(info.varNames.size() != 0) {
 								if(info.varNames.contains(node.toString()))
-									lstViolatedVariables.add(node);
+										if(lstViolatedVariables.size() == 0)
+											lstViolatedVariables.add(node);
 							}
 							else lstViolatedVariables.add(node);
 						}					
