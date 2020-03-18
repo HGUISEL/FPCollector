@@ -67,7 +67,7 @@ public class NodeInterpreter {
 			}
 			switch(stateVec.charAt(3)){
 			case '0' : state += ", In Annotation"; break;
-			case '1' : ; break;
+			case '1' : state += ", Not in Annotation"; break;
 			}
 			switch(stateVec.charAt(4)){
 				case '0' : state += ", Array whose Index is Variable"; break;
