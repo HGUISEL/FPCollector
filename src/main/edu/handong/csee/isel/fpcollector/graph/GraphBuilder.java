@@ -1157,7 +1157,7 @@ public class GraphBuilder {
 						
 						if((parent instanceof VariableDeclarationFragment || parent instanceof SingleVariableDeclaration) 
 								&& !(parent.getParent() instanceof FieldDeclaration)) {
-							if(classStart <= info.start && classEnd >= info.end)
+							if(classStart <= info.start && classEnd >= info.end && !(parent.getParent() instanceof MethodDeclaration))
 								lstVariableDeclaration.add(node.getIdentifier());
 							
 //							for(String temp : lstFieldMemberDeclaration)
@@ -1192,21 +1192,21 @@ public class GraphBuilder {
 						return super.visit(node);
 					}
 					
-					public boolean visit(StringLiteral node) {
-						Integer lineNum = getLineNum(node.getStartPosition());
-						String nodeValue = node.toString();
-						nodeValue = nodeValue.substring(1, nodeValue.length()-1);
-
-						if(nodeValue.equals(info.varNames.get(0)) && lineNum >= info.start && lineNum <= info.end) {
-							lstViolatedStringNode.add(node);
-						}
-						
-						else if(lstViolatedStringNode.size() == 0 && lineNum >= info.start -1 && lineNum <= info.end +1) {
-							lstViolatedStringNode.add(node);
-						}
-						
-						return super.visit(node);
-					}
+//					public boolean visit(StringLiteral node) {
+//						Integer lineNum = getLineNum(node.getStartPosition());
+//						String nodeValue = node.toString();
+//						nodeValue = nodeValue.substring(1, nodeValue.length()-1);
+//
+//						if(nodeValue.equals(info.varNames.get(0)) && lineNum >= info.start && lineNum <= info.end) {
+//							lstViolatedStringNode.add(node);
+//						}
+//						
+//						else if(lstViolatedStringNode.size() == 0 && lineNum >= info.start -1 && lineNum <= info.end +1) {
+//							lstViolatedStringNode.add(node);
+//						}
+//						
+//						return super.visit(node);
+//					}
 					
 				});
 			} catch (Exception e) {
@@ -1284,7 +1284,9 @@ public class GraphBuilder {
 	}
 	
 	private VarState isD(ASTNode node) {
-		
+		if(node.toString().equals("indexOfOpenBracket")) {
+			System.out.println("a");
+		}
 		ASTNode tempParent = node.getParent();
 //		System.out.println(tempParent.getClass().getSimpleName());
 	

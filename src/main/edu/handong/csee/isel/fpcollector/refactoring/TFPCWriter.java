@@ -22,10 +22,15 @@ public class TFPCWriter {
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
 									.withHeader("File Path", "Line number", "Error Message","Code Context"));
-			) {			int count = 0;
+			) {		
+			int count = 0;
+			ArrayList<String> dupChecker = new ArrayList<>();
+			
 			for(SimpleEntry<String, String> ftpcPair : FTPC) {
 				String path = ftpcPair.getValue();
-//				if(count == 215) {
+				if(dupChecker.contains(path))
+					continue;
+//				if(count == 215) { 
 //					System.out.println("h");
 //				}
 				if(path.split(":").length > 2 ) {
@@ -35,6 +40,7 @@ public class TFPCWriter {
 					String contexts = getLineContext(filePath, lineNumber);
 					csvPrinter.printRecord(filePath, lineNumber, errmsg, contexts);
 				}
+				dupChecker.add(path);
 				count++;
 			}
 			writer.flush();
