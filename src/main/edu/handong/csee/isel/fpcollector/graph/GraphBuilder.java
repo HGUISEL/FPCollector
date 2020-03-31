@@ -1193,18 +1193,19 @@ public class GraphBuilder {
 					}
 					
 					public boolean visit(StringLiteral node) {
-						Integer lineNum = getLineNum(node.getStartPosition());
-						String nodeValue = node.toString();
-						nodeValue = nodeValue.substring(1, nodeValue.length()-1);
+						if (type != 0 && type != 1) {
+							Integer lineNum = getLineNum(node.getStartPosition());
+							String nodeValue = node.toString();
+							nodeValue = nodeValue.substring(1, nodeValue.length()-1);
 
-						if(nodeValue.equals(info.varNames.get(0)) && lineNum >= info.start && lineNum <= info.end) {
-							lstViolatedStringNode.add(node);
+							if(nodeValue.equals(info.varNames.get(0)) && lineNum >= info.start && lineNum <= info.end) {
+								lstViolatedStringNode.add(node);
+							}
+							
+							else if(lstViolatedStringNode.size() == 0 && lineNum >= info.start -1 && lineNum <= info.end +1) {
+								lstViolatedStringNode.add(node);
+							}
 						}
-						
-						else if(lstViolatedStringNode.size() == 0 && lineNum >= info.start -1 && lineNum <= info.end +1) {
-							lstViolatedStringNode.add(node);
-						}
-						
 						return super.visit(node);
 					}
 					
