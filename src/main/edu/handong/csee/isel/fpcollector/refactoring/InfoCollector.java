@@ -34,7 +34,7 @@ public class InfoCollector {
 			if(record.get(0).equals("File Path")) continue;
 			count ++;
 			System.out.println(count);
-			if(count == 1163) {
+			if(count == 7) {
 				System.out.println("A");
 			}
 			Info info = new Info();			

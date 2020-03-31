@@ -68,7 +68,7 @@ public class GraphWriter {
 					String path = tempGraph.root.path;
 					String method = tempGraph.root.node.toString();
 					String graph = tempGraph.root.writeInfo();
-					String graphInfo = tempGraph.getNumberInfo();
+					String graphInfo = "Pattern : " + g.getKey() + "\n" + tempGraph.getNumberInfo();
 		
 					csvPrinter.printRecord(path, method, graph, graphInfo);
 				}

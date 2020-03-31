@@ -1157,7 +1157,7 @@ public class GraphBuilder {
 						
 						if((parent instanceof VariableDeclarationFragment || parent instanceof SingleVariableDeclaration) 
 								&& !(parent.getParent() instanceof FieldDeclaration)) {
-							if(classStart <= info.start && classEnd >= info.end)
+							if(classStart <= info.start && classEnd >= info.end && !(parent.getParent() instanceof MethodDeclaration))
 								lstVariableDeclaration.add(node.getIdentifier());
 							
 //							for(String temp : lstFieldMemberDeclaration)
@@ -1285,7 +1285,9 @@ public class GraphBuilder {
 	}
 	
 	private VarState isD(ASTNode node) {
-		
+		if(node.toString().equals("indexOfOpenBracket")) {
+			System.out.println("a");
+		}
 		ASTNode tempParent = node.getParent();
 //		System.out.println(tempParent.getClass().getSimpleName());
 	
