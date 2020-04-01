@@ -348,9 +348,12 @@ public class GraphBuilder {
 					
 					public boolean visit(ThisExpression node) {
 						//System.out.println("level : " + level + ", node : " + node.getClass().getSimpleName() + ", isDefine : " + isDefine  + ", isScope : " + isScope);
-												
+						if(node.getQualifier() != null) {
+							return super.visit(node);
+						}
 						if (isNodeInMethodOrBlock(node)) {																					
-							if (info.fieldNames.contains("this")/*&& getLineNum(node.getStartPosition()) >= Integer.parseInt(info.start)*/){
+							if (info.fieldNames.contains("this")&& getLineNum(node.getStartPosition()) >= info.start 
+									&& getLineNum(node.getStartPosition() + node.getLength()) <= info.end){
 								DataNode n = new DataNode(node, level, info);
 								
 								if(isD(node) == VarState.D)
@@ -1185,8 +1188,7 @@ public class GraphBuilder {
 					
 					public boolean visit(ThisExpression node) {
 						Integer lineNum = getLineNum(node.getStartPosition());						
-						
-						if(lineNum == info.start) {
+						if(lineNum >= info.start && lineNum <=info.end) {
 							lstViolatedField.add(node);
 						}					
 						return super.visit(node);
@@ -1231,6 +1233,19 @@ public class GraphBuilder {
 		}
 		
 		lstViolatedVariables.removeAll(lstViolatedField);
+		
+		ArrayList<ASTNode> lstArrangedViolatedField = new ArrayList<>();
+		
+//		for(ASTNode tempNode : lstViolatedField) {
+//			if(tempNode instanceof ThisExpression) {
+//				if(lstViolatedField.contains(((ThisExpression) tempNode).getQualifier())) {
+//					lstArrangedViolatedField.add(tempNode);
+//				}
+//				else {
+//					lstArrangedViolatedField.add(tempNode);
+//				}
+//			}
+//		}
 		
 		//type 1 for field
 		if(type == 0)
