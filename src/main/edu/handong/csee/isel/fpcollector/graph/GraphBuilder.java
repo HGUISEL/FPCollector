@@ -1209,6 +1209,16 @@ public class GraphBuilder {
 						return super.visit(node);
 					}
 					
+					public boolean visit(Assignment node) {
+						ASTNode rhs = node.getRightHandSide();
+						if(rhs instanceof NullLiteral) {
+							if(!lstViolatedField.contains(node.getRightHandSide()))
+								lstViolatedField.add(node.getLeftHandSide());
+						}
+						
+						return super.visit(node);
+					}
+					
 				});
 			} catch (Exception e) {
 				System.out.println("Problem : " + e.toString());

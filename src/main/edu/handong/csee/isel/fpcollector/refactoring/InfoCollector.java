@@ -34,7 +34,7 @@ public class InfoCollector {
 			if(record.get(0).equals("File Path")) continue;
 			count ++;
 			System.out.println(count);
-			if(count == 7) {
+			if(count == 59) {
 				System.out.println("A");
 			}
 			Info info = new Info();			
@@ -72,9 +72,9 @@ public class InfoCollector {
         		System.out.println("Something Goes Wrong");
         	}
         	
-        	if(info.varNodes.size() >1) {
-        		System.out.println("Something Goes Wrong");
-        	}
+//        	if(info.varNodes.size() >1) {
+//        		System.out.println("Something Goes Wrong");
+//        	}
 		    
 		    GraphBuilder graphBuilder = new GraphBuilder(info);
 			graphBuilder.run();
