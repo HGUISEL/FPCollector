@@ -12,7 +12,7 @@ plugins {
 }
 
 apply plugin : 'application'
-mainClassName = 'FPCollector.Main'
+mainClassName = 'edu.handong.csee.isel.fpcollector.Main'
 
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
