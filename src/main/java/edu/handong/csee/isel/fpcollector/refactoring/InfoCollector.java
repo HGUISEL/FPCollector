@@ -35,7 +35,7 @@ public class InfoCollector {
 			count ++;
 			System.out.println(count);
 			if(count == 59) {
-				System.out.println("A");
+//				System.out.println("A");
 			}
 			Info info = new Info();			
 		    info.path = record.get(0);
@@ -69,7 +69,7 @@ public class InfoCollector {
 		    }
 		    
         	if(info.varNodes.size() == 0 && info.fieldNodes.size() == 0) {
-        		System.out.println("Something Goes Wrong");
+//        		System.out.println("Something Goes Wrong");
         	}
         	
 //        	if(info.varNodes.size() >1) {
